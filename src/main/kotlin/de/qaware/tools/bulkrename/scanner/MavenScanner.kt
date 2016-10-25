@@ -23,7 +23,7 @@ import java.util.stream.Collectors
  */
 class MavenScanner : Scanner {
 
-    object MavenScannerConstants {
+    companion object MavenScannerConstants {
         const val MAIN_SUBDIRECTORY: String = "src/main"
         const val TEST_SUBDIRECTORY: String = "src/test"
         const val JAVA_EXTENSION: String = ".java"
@@ -32,7 +32,7 @@ class MavenScanner : Scanner {
     override fun scanCodebase(rootDir: Path): Codebase {
 
         val modules: List<Module> = Files.find(rootDir, 50, BiPredicate { path, attrs ->
-            attrs.isRegularFile && path.fileName.toString().equals("pom.xml")
+            attrs.isRegularFile && path.fileName.toString() == "pom.xml"
         })
                 .filter { p -> !p.contains(Paths.get("target")) }
                 .map { p -> createModule(p) }
@@ -77,13 +77,11 @@ class MavenScanner : Scanner {
     private fun getEntity(filePath: Path, fileType: FileType): String {
         if (fileType == FileType.JAVA) {
             val inputStream = FileInputStream(filePath.toFile())
-            try {
-                val compilationUnit = JavaParser.parse(inputStream)
+            inputStream.use {
+                val compilationUnit = JavaParser.parse(it)
                 val classVisitor = ClassVisitor()
                 classVisitor.visit(compilationUnit, compilationUnit.`package`.packageName)
                 return classVisitor.fullyQualifiedClassName
-            } finally {
-                inputStream.close()
             }
         }
         return filePath.fileName.toString()
@@ -116,7 +114,7 @@ class MavenScanner : Scanner {
         var fullyQualifiedClassName: String = ""
 
         override fun visit(n: ClassOrInterfaceDeclaration?, arg: String?) {
-            if (arg != null){
+            if (arg != null) {
                 fullyQualifiedClassName = arg + "."
             }
             if (n != null) {
