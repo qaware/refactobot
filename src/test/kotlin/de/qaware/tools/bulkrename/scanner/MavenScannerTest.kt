@@ -30,7 +30,7 @@ class MavenScannerTest {
         assertTrue("List must contain file", { containsFile(module_a.mainFiles, "ClassA.java", "de.qaware.tools.bulkrename.scanner.test.a.ClassA", FileType.JAVA) })
         assertTrue("List must contain file", { containsFile(module_a.mainFiles, "InterfaceA.java", "de.qaware.tools.bulkrename.scanner.test.a.InterfaceA", FileType.JAVA) })
         assertTrue("List must contain file", { containsFile(module_a.mainFiles, "AnnotationA.java", "de.qaware.tools.bulkrename.scanner.test.a.AnnotationA", FileType.JAVA) })
-        assertTrue("List must contain file", { containsFile(module_a.mainFiles, "other_file", "other_file", FileType.OTHER) })
+        assertTrue("List must contain file", { containsFile(module_a.mainFiles, "other_file", "", FileType.OTHER) })
         assertTrue("Count of files in list must match", { module_a.mainFiles.count() == 4 })
 
         assertTrue("List must contain file", { containsFile(module_a.testFiles, "TestClassA.java", "de.qaware.tools.bulkrename.scanner.test.a.TestClassA", FileType.JAVA) })

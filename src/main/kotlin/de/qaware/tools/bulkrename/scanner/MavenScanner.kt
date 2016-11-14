@@ -37,43 +37,72 @@ class MavenScanner : Scanner {
             attrs.isRegularFile && path.fileName.toString() == "pom.xml"
         })
                 .filter { p -> !p.contains(Paths.get("target")) }
-                .map { p -> createModule(p) }
+                .map { p -> createModule(p, rootDir) }
                 .collect(Collectors.toList<Module>())
 
         return Codebase(rootDir, modules)
     }
 
 
-    fun createModule(pathToPom: Path): Module {
+    /**
+     * Creates a model of the Maven module residing in the given path.
+     * @param pathToPom the absolute path to the pom.xml describing the Maven module
+     * @param codebaseRootDir the absolute path to the codebase root
+     * @return a module, relative to the given codebase root.
+     */
+    fun createModule(pathToPom: Path, codebaseRootDir: Path): Module {
 
-        val rootPath = pathToPom.parent
+        val absoluteModulePath = pathToPom.parent
+        val relativeModulePath = codebaseRootDir.relativize(absoluteModulePath)
 
-        val mainPath = rootPath.resolve(MavenScannerConstants.MAIN_SUBDIRECTORY)
-        val testPath = rootPath.resolve(MavenScannerConstants.TEST_SUBDIRECTORY)
+        val mainFiles = findAllFilesRecursively(absoluteModulePath, MavenScannerConstants.MAIN_SUBDIRECTORY)
+        val testFiles = findAllFilesRecursively(absoluteModulePath, MavenScannerConstants.TEST_SUBDIRECTORY)
 
-        val mainFiles = findAllFilesRecursively(mainPath)
-        val testFiles = findAllFilesRecursively(testPath)
+        val moduleName = absoluteModulePath.fileName.toString()
 
-        return Module(rootPath.fileName.toString(),
-                rootPath,
+        return Module(moduleName,
+                relativeModulePath,
                 mainFiles,
                 testFiles)
     }
 
-    private fun findAllFilesRecursively(rootDir: Path): List<File> {
-        val paths = findAllFilePathsRecursively(rootDir)
-        return parseFiles(paths)
+    /**
+     * Finds all files residing in the given search location.
+     * This may be any given subdirectory below the given absoluteModuleRoot.
+     *
+     * @param absoluteModuleRoot the module root
+     * @param relativeSubdir a relative subdirectory (e.g. "src/main"
+     */
+    private fun findAllFilesRecursively(absoluteModuleRoot: Path, relativeSubdir: String): List<File> {
+        val absoluteScanPath = absoluteModuleRoot.resolve(relativeSubdir)
+        val filePaths = findAllFilePathsRecursively(absoluteScanPath)
+        return parseFiles(filePaths, absoluteModuleRoot)
     }
 
-    private fun parseFiles(filePaths: Iterable<Path>): List<File> {
-        return filePaths.map { p -> parseFile(p) }.toList()
+    /**
+     * Parses all files in the given locations and returns a simplified file model
+     * relative to the given absolute module root path.
+     *
+     * @param filePaths the absolute paths to the files
+     * @param absoluteModuleRoot the module root path
+     */
+    private fun parseFiles(filePaths: Iterable<Path>, absoluteModuleRoot: Path): List<File> {
+        return filePaths.map { p -> parseFile(p, absoluteModuleRoot) }
     }
 
-    private fun parseFile(filePath: Path): File {
+    /**
+     * Parses a file in the given location and returns a simplified file model
+     * relative to the given absolute module root path.
+     *
+     * @param filePath the absolute paths to the file
+     * @param absoluteModuleRoot the module root path
+     */
+    private fun parseFile(filePath: Path, absoluteModuleRoot: Path): File {
         val name = filePath.fileName.toString()
         val type = getFileTypeFromFileName(name)
         val entity = parseEntityFromPath(filePath, type)
-        return File(filePath, name, entity, type)
+        val relativeFilePath = absoluteModuleRoot.relativize(filePath).parent
+        return File(relativeFilePath, name, entity, type)
     }
 
     /**
@@ -82,7 +111,7 @@ class MavenScanner : Scanner {
      * @param filePath the path to the target file
      * @param fileType the file type of the target file
      * @return the fully qualified entity name if the file type and the top level entity can be determined,
-     *         the file name otherwise.
+     *         an empty string otherwise.
      */
     private fun parseEntityFromPath(filePath: Path, fileType: FileType): String {
         var entityName: String = ""
@@ -94,9 +123,6 @@ class MavenScanner : Scanner {
                 entityVisitor.visit(compilationUnit, compilationUnit.`package`.packageName)
                 entityName = entityVisitor.fullyQualifiedEntityName
             }
-        }
-        if (entityName == "") {
-            entityName = filePath.fileName.toString()
         }
         return entityName
     }
