@@ -1,7 +1,6 @@
 package de.qaware.tools.bulkrename.extractor
 
 import com.github.javaparser.JavaParser
-import com.github.javaparser.ast.ImportDeclaration
 import com.github.javaparser.ast.type.ClassOrInterfaceType
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
 import org.junit.Test
@@ -33,12 +32,13 @@ class JavaParserExperimentTest {
      */
     private class ImportDeclarationVisitor : VoidVisitorAdapter<Unit>() {
 
-        override fun visit(importDeclaration: ImportDeclaration, arg: Unit) {
-
-            println("Found import: " + importDeclaration.name + " at position " + importDeclaration.range)
-
-            super.visit(importDeclaration, arg)
-        }
+//        override fun visit(importDeclaration: ImportDeclaration, arg: Unit) {
+//
+//            println("Found import: " + importDeclaration.name + " at position " + importDeclaration.range)
+//            println("Found import: " + importDeclaration.name + " at position " + importDeclaration.range)
+//
+//            super.visit(importDeclaration, arg)
+//        }
 
         override fun visit(typeReference: ClassOrInterfaceType, arg: Unit) {
 
