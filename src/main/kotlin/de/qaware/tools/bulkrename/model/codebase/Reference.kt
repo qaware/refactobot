@@ -1,7 +1,12 @@
 package de.qaware.tools.bulkrename.model.codebase
 
 /**
- * Created by f.engel on 16.11.2016.
+ * References from one file to the other.
+ *
+ * References are pieces of text in the origin that must be adapted when the target file is moved or renamed.
+ * They come in different syntactic forms, which is reflected by their type.
+ *
+ * @author Florian Engel floraian.engel@qaware.de
  */
 data class Reference (
         val origin: File,

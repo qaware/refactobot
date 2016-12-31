@@ -1,9 +1,24 @@
 package de.qaware.tools.bulkrename.model.codebase
 
 /**
- * Created by f.engel on 16.11.2016.
+ * Types of references.
+ *
+ * @author Florian Engel florian.engel@qaware.de
  */
-
 enum class ReferenceType {
-     IMPORT, FQ_CLASS_OR_INTERFACE_REFERENCE, CLASS_OR_INTERFACE_REFERENCE
+
+    /**
+     * An import declaration
+     */
+    IMPORT,
+
+    /**
+     * A fully-qualified type reference
+     */
+    FQ_CLASS_OR_INTERFACE_REFERENCE,
+
+    /**
+     * A simple type reference
+     */
+    CLASS_OR_INTERFACE_REFERENCE
 }
