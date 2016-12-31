@@ -6,6 +6,8 @@ import com.github.javaparser.ast.expr.QualifiedNameExpr
 import com.github.javaparser.ast.type.ClassOrInterfaceType
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
 import de.qaware.tools.bulkrename.model.codebase.*
+import de.qaware.tools.bulkrename.model.reference.Reference
+import de.qaware.tools.bulkrename.model.reference.ReferenceType
 import java.io.FileInputStream
 import java.nio.file.Path
 import java.util.*

@@ -1,7 +1,7 @@
 package de.qaware.tools.bulkrename.extractor
 
 import de.qaware.tools.bulkrename.model.codebase.Codebase
-import de.qaware.tools.bulkrename.model.codebase.Reference
+import de.qaware.tools.bulkrename.model.reference.Reference
 
 /**
  * Extracts file references from a given codebase. Both source and target of the reference must
