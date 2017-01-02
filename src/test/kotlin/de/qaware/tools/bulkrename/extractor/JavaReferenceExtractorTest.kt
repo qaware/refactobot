@@ -10,7 +10,7 @@ import kotlin.test.fail
 /**
  * Test class for the JavaReferenceExtractor.
  *
- * Created by f.engel on 15.11.2016.
+ * @author Florian Engel florian.engel@qaware.de
  */
 class JavaReferenceExtractorTest {
 
@@ -46,7 +46,7 @@ class JavaReferenceExtractorTest {
 //        assertTrue { filesWithoutIncomingReferences.filter { it.value.isNotEmpty() }.isEmpty() }
     }
 
-    private fun getFileByEntity(codebase: Codebase, fileName: String): File {
-        return codebase.modules.flatMap { it.sourceFolders }.flatMap { it.files }.find { it.entity == fileName } ?: fail("Cannot find file.")
-    }
+    private fun getFileByEntity(codebase: Codebase, fileName: String): File =
+            codebase.modules.flatMap { it.sourceFolders }.flatMap { it.files }.find { it.entity == fileName } ?: fail("Cannot find file.")
+
 }
