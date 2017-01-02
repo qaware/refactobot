@@ -1,12 +1,6 @@
 package de.qaware.tools.bulkrename.scanner
 
-import com.github.javaparser.JavaParser
-import com.github.javaparser.ast.body.AnnotationDeclaration
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
-import com.github.javaparser.ast.body.EnumDeclaration
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter
 import de.qaware.tools.bulkrename.model.codebase.*
-import java.io.FileInputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -24,8 +18,6 @@ class MavenScanner : Scanner {
 
     companion object MavenScannerConstants {
         val SOURCE_FOLDER_LOCATIONS = listOf("src/main/java", "src/test/java")
-        const val MAIN_SUBDIRECTORY: String = "src/main"
-        const val TEST_SUBDIRECTORY: String = "src/test"
         const val JAVA_EXTENSION: String = ".java"
     }
 
@@ -89,31 +81,8 @@ class MavenScanner : Scanner {
     private fun parseFile(filePath: Path, absoluteModuleRoot: Path): File {
         val name = filePath.fileName.toString()
         val type = getFileTypeFromFileName(name)
-        val entity = parseEntityFromPath(filePath, type)
         val relativeFilePath = absoluteModuleRoot.relativize(filePath).parent
-        return File(relativeFilePath, name, entity, type)
-    }
-
-    /**
-     * Parses the (fully qualified) top-level entity name from the given location.
-     *
-     * @param filePath the path to the target file
-     * @param fileType the file type of the target file
-     * @return the fully qualified entity name if the file type and the top level entity can be determined,
-     *         an empty string otherwise.
-     */
-    private fun parseEntityFromPath(filePath: Path, fileType: FileType): String {
-        var entityName: String = ""
-        if (fileType == FileType.JAVA) {
-            val inputStream = FileInputStream(filePath.toFile())
-            inputStream.use {
-                val compilationUnit = JavaParser.parse(it)
-                val entityVisitor = TopLevelEntityVisitor()
-                entityVisitor.visit(compilationUnit, compilationUnit.`package`.packageName)
-                entityName = entityVisitor.fullyQualifiedEntityName
-            }
-        }
-        return entityName
+        return File(relativeFilePath, name, type)
     }
 
     private fun getFileTypeFromFileName(fileName: String): FileType {
@@ -136,45 +105,5 @@ class MavenScanner : Scanner {
             }
         }
         return foundFiles
-    }
-
-    /**
-     * A visitor used for the JavaParser. Takes all supported top level
-     * entities and their package name as parameter and offers the fully
-     * qualified entity name as property.
-     */
-    private class TopLevelEntityVisitor : VoidVisitorAdapter<String>() {
-
-        var fullyQualifiedEntityName: String = ""
-
-        override fun visit(n: ClassOrInterfaceDeclaration?, arg: String?) {
-            if (n != null) {
-                storeFullyQualifiedEntityName(n.name, arg)
-            }
-            super.visit(n, arg)
-        }
-
-        override fun visit(n: EnumDeclaration?, arg: String?) {
-            if (n != null) {
-                storeFullyQualifiedEntityName(n.name, arg)
-            }
-            super.visit(n, arg)
-        }
-
-        override fun visit(n: AnnotationDeclaration?, arg: String?) {
-            if (n != null) {
-                storeFullyQualifiedEntityName(n.name, arg)
-            }
-            super.visit(n, arg)
-        }
-
-        private fun storeFullyQualifiedEntityName(entityName: String?, packageName: String?) {
-            if (packageName != null) {
-                fullyQualifiedEntityName = packageName + "."
-            }
-            if (entityName != null) {
-                fullyQualifiedEntityName += entityName
-            }
-        }
     }
 }

@@ -58,17 +58,15 @@ class SequentialExpanderTest{
         // Create two files, file1 should be matched and transformed, file 2 should not be matched.
         val path1 = File("de/qaware/tools/bulkrename/test").toPath()
         val name1 = "TestDTO.java"
-        val entity1 = "de.qaware.tools.bulkrename.test.TestDTO"
         val type1 = FileType.JAVA
 
-        val file1 = de.qaware.tools.bulkrename.model.codebase.File(path1, name1, entity1, type1)
+        val file1 = de.qaware.tools.bulkrename.model.codebase.File(path1, name1, type1)
 
         val path2 = File("de/qaware/tools/bulkrename/test").toPath()
         val name2 = "TestEntity.java"
-        val entity2 = "de.qaware.tools.bulkrename.test.TestEntity"
         val type2 = FileType.JAVA
 
-        val file2 = de.qaware.tools.bulkrename.model.codebase.File(path2, name2, entity2, type2)
+        val file2 = de.qaware.tools.bulkrename.model.codebase.File(path2, name2, type2)
 
         val moduleName = "foo"
         val modulePath = File("bar").toPath()

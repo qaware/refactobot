@@ -7,7 +7,7 @@ package de.qaware.tools.bulkrename.util
  * @param filename the filename
  * @return the class name.
  */
-fun fileToClass(filename : String) : String {
+fun fileToClass(filename: String): String {
     if (!filename.endsWith(".java")) {
         throw IllegalArgumentException("Expecting file extension '.java', but got " + filename)
     }
@@ -21,5 +21,5 @@ fun fileToClass(filename : String) : String {
  * @param className the fully qualified class name.
  * @return the corresponding file name.
  */
-fun classToFile(className : String) : String =
+fun classToFile(className: String) : String =
         className.replace('.', '/') + ".java"

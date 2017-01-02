@@ -1,5 +1,6 @@
 package de.qaware.tools.bulkrename.model.codebase
 
+import de.qaware.tools.bulkrename.util.fileToClass
 import java.nio.file.Path
 
 /**
@@ -20,13 +21,15 @@ data class File(
         val fileName: String,
 
         /**
-         * The name of the entity that this file represents, e.g., a class.
-         * The representation is subject to the FileType.
-         *
-         * If this does not apply, may be empty.
+         * The type of the file.
          */
-        val entity: String,
-
         val type: FileType
-)
+) {
+
+    val entity : String =
+            if (type == FileType.JAVA)
+                fileToClass(path.resolve(fileName).joinToString("/"))
+            else ""
+
+}
 
