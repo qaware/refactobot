@@ -4,8 +4,11 @@ import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.codebase.Module
 import de.qaware.tools.bulkrename.model.codebase.SourceFolder
-import de.qaware.tools.bulkrename.model.plan.*
-import java.nio.file.Path
+import de.qaware.tools.bulkrename.model.plan.NewFileLocation
+import de.qaware.tools.bulkrename.model.plan.RefactoringSubject
+import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
+import de.qaware.tools.bulkrename.model.plan.Step
+import java.nio.file.Paths
 import java.util.*
 
 /**
@@ -15,9 +18,9 @@ import java.util.*
  *
  * @author Florian Engel florian.engel@qaware.de
  */
-class SequentialExpander : Expander {
+class SequentialExpander(val codebase: Codebase) : Expander {
 
-    override fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan, codebase: Codebase): FullRefactoringPlan {
+    override fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, NewFileLocation> {
         var transformationMap = initializeTransformationMap(codebase)
         for (step in refactoringPlan.steps) {
             transformationMap = expandStepToTransformationMap(step, transformationMap)
@@ -25,10 +28,26 @@ class SequentialExpander : Expander {
         return createRefactoringPlanFromTransformationMap(transformationMap)
     }
 
-    private fun createRefactoringPlanFromTransformationMap(transformationMap: Map<File, ExpandedStep>): FullRefactoringPlan {
-        val instructionMap = HashMap<File, FileRefactoringInstruction>()
-        transformationMap.forEach { instructionMap.put(it.key, FileRefactoringInstruction(it.value.targetExpression)) }
-        return FullRefactoringPlan(instructionMap)
+    private fun createRefactoringPlanFromTransformationMap(transformationMap: Map<File, ExpandedStep>): Map<File, NewFileLocation> {
+        val instructionMap = HashMap<File, NewFileLocation>()
+        transformationMap.forEach { instructionMap.put(it.key, createNewFileLocation(it.value.targetExpression)) }
+        return instructionMap
+    }
+
+    private fun createNewFileLocation(expansionResult: Map<RefactoringSubject, String>): NewFileLocation {
+
+        val newFileName = expansionResult[RefactoringSubject.FILE_NAME]!!
+        val newFilePath = expansionResult[RefactoringSubject.FILE_PATH]!!
+        val newModuleName = expansionResult[RefactoringSubject.MODULE_NAME]
+        val newModulePath = expansionResult[RefactoringSubject.MODULE_PATH]
+
+        val newModule = codebase.modules.find { it.name == newModuleName }
+                ?: throw IllegalStateException("Unknown module " + newModuleName)
+        val newSourceFolder = newModule.sourceFolders.find { it.path == newModulePath }
+                ?: throw IllegalStateException("No source folder with path " + newModulePath + " in module " + newModule.name)
+
+        return NewFileLocation(newModule, newSourceFolder, Paths.get(newFilePath), newFileName)
+
     }
 
     /**
@@ -52,16 +71,16 @@ class SequentialExpander : Expander {
         val moduleTransformationMap = HashMap<File, ExpandedStep>()
         val moduleRootPath = module.modulePath
         for (sourceFolder in module.sourceFolders) {
-            moduleTransformationMap.putAll(initializeTransformationMapForFolder(sourceFolder, moduleRootPath, module.name))
+            moduleTransformationMap.putAll(initializeTransformationMapForFolder(sourceFolder, module.name))
         }
         return moduleTransformationMap
     }
 
-    private fun initializeTransformationMapForFolder(folder: SourceFolder, moduleRootPath: Path, moduleName: String): Map<File, ExpandedStep> {
+    private fun initializeTransformationMapForFolder(folder: SourceFolder, moduleName: String): Map<File, ExpandedStep> {
         val moduleFilesTransformationMap = HashMap<File, ExpandedStep>()
         for (file in folder.files) {
             val sourceModuleName = moduleName
-            val sourceModulePath = moduleRootPath.toString()
+            val sourceModulePath = folder.path
             val sourceFileName = file.fileName
             val sourceFilePath = file.path.toString()
             val sourceExpressions = mapOf(Pair(RefactoringSubject.MODULE_NAME, sourceModuleName),
@@ -69,7 +88,7 @@ class SequentialExpander : Expander {
                     Pair(RefactoringSubject.FILE_NAME, sourceFileName),
                     Pair(RefactoringSubject.FILE_PATH, sourceFilePath))
             val targetExpressions = emptyMap<RefactoringSubject, String>()
-            moduleFilesTransformationMap.put(file, ExpandedStep(sourceExpressions, targetExpressions))
+            moduleFilesTransformationMap.put(file, ExpandedStep(sourceExpressions, sourceExpressions))
         }
         return moduleFilesTransformationMap
     }

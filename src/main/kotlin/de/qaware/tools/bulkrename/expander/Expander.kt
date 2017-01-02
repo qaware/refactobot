@@ -1,7 +1,7 @@
 package de.qaware.tools.bulkrename.expander
 
-import de.qaware.tools.bulkrename.model.codebase.Codebase
-import de.qaware.tools.bulkrename.model.plan.FullRefactoringPlan
+import de.qaware.tools.bulkrename.model.codebase.File
+import de.qaware.tools.bulkrename.model.plan.NewFileLocation
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
 
 /**
@@ -13,6 +13,6 @@ import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
  */
 interface Expander {
 
-        fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan, codebase: Codebase): FullRefactoringPlan
+        fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, NewFileLocation>
 
 }
