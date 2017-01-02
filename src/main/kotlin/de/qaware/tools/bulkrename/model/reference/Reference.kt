@@ -1,7 +1,6 @@
 package de.qaware.tools.bulkrename.model.reference
 
 import de.qaware.tools.bulkrename.model.codebase.File
-import de.qaware.tools.bulkrename.model.codebase.Location
 
 /**
  * References from one file to the other.
