@@ -1,6 +1,6 @@
 package de.qaware.tools.bulkrename.executor
 
-import de.qaware.tools.bulkrename.model.action.Action
+import de.qaware.tools.bulkrename.model.action.FileOperation
 
 /**
  * Executer that executes a list of Actions.
@@ -9,14 +9,14 @@ import de.qaware.tools.bulkrename.model.action.Action
  */
 class Executor {
 
-    fun executeActions(actions: List<Action>) {
+    fun executeActions(actions: List<FileOperation>) {
         //mutable copy of actions
-        val mutableActions = actions as MutableList<Action>
-        var doneActions = listOf<Action>()
+        val mutableActions = actions as MutableList<FileOperation>
+        var doneActions = listOf<FileOperation>()
 
         for (action in mutableActions) {
             if(!doneActions.contains(action)) {
-                var actionsForSameFile = listOf<Action>()
+                var actionsForSameFile = listOf<FileOperation>()
                 actionsForSameFile += action
                 doneActions += action
 //                for (otherAction in mutableActions) {

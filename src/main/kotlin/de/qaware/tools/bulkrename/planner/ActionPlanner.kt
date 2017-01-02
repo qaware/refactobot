@@ -1,6 +1,6 @@
 package de.qaware.tools.bulkrename.planner
 
-import de.qaware.tools.bulkrename.model.action.Action
+import de.qaware.tools.bulkrename.model.action.FileOperation
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.plan.NewFileLocation
@@ -16,19 +16,19 @@ class ActionPlanner {
     /**
      * Plans all needed actions for a given refactoring plan with references
      */
-    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: List<Reference>, codebase: Codebase) : List<Action> {
+    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: List<Reference>, codebase: Codebase) : List<FileOperation> {
 
-        val actions : List<Action> = listOf()
+        val actions : List<FileOperation> = listOf()
 
         val referencesByFile: Map<File, List<Reference>> = allReferences.groupBy(Reference::target)
-        val moveActions = mutableListOf<Action>()
+        val moveActions = mutableListOf<FileOperation>()
 
         for ((file, newLocation) in refactoringPlan) {
 
             if (fileIsMoved(file, newLocation)) {
 
-                moveActions += Action.MoveFile(sourceFile = file.fullPath.resolve(file.fileName),
-                        targetFile = newLocation.fullPath.resolve(newLocation.fileName))
+//                moveActions += FileOperation.MoveFile(sourceFile = file.fullPath.resolve(file.fileName),
+//                        targetFile = newLocation.fullPath.resolve(newLocation.fileName))
 
                 // find all references to the file
                 val references = referencesByFile[file] ?: emptyList()

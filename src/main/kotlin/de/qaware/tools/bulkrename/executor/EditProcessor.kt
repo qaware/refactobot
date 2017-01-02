@@ -1,0 +1,28 @@
+package de.qaware.tools.bulkrename.executor
+
+import de.qaware.tools.bulkrename.model.action.FileOperation
+import java.io.Writer
+
+/**
+ * Code to apply edit operations on files and strings.
+ *
+ * @author Alexander Krauss alexander.krauss@qaware.de
+ */
+class EditProcessor(input : List<String>, private val output: Writer) {
+
+    private val source = LineSource(input);
+
+    fun applyEdits(edits: List<FileOperation.Edit>) {
+
+        for ((start, end, replacementString) in edits) {
+
+            // copy over any material before the edit location
+            output.write(source.readUpTo(start));
+
+            // discard the text up to the end location, and write out the replacement instead
+            source.readUpTo(end)
+            output.write(replacementString)
+        }
+        output.write(source.readRest())
+    }
+}
