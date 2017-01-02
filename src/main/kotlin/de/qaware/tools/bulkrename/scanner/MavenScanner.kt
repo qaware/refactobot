@@ -37,16 +37,16 @@ class MavenScanner : Scanner {
     /**
      * Creates a model of the Maven module residing in the given path.
      * @param pathToPom the absolute path to the pom.xml describing the Maven module
-     * @param codebaseRootDir the absolute path to the codebase root
+     * @param codebaseRoot the absolute path to the codebase root
      * @return a module, relative to the given codebase root.
      */
-    fun createModule(pathToPom: Path, codebaseRootDir: Path): Module {
+    fun createModule(pathToPom: Path, codebaseRoot: Path): Module {
 
         val absoluteModulePath = pathToPom.parent
-        val relativeModulePath = codebaseRootDir.relativize(absoluteModulePath)
+        val relativeModulePath = codebaseRoot.relativize(absoluteModulePath)
 
         val sourceFolders = SOURCE_FOLDER_LOCATIONS
-                .map { path -> createSourceFolder(absoluteModulePath, path) }
+                .map { path -> createSourceFolder(absoluteModulePath, path, codebaseRoot) }
                 .filter { !it.files.isEmpty() } // source roots containing no files are considered non-existing
 
         val moduleName = absoluteModulePath.fileName.toString()
@@ -62,12 +62,13 @@ class MavenScanner : Scanner {
      *
      * @param absoluteModuleRoot the module root
      * @param relativeSubdir a relative subdirectory (e.g. "src/main"
+     * @param codebaseRoot the codebase root path
      * @return the source folder
      */
-    private fun createSourceFolder(absoluteModuleRoot: Path, relativeSubdir: String): SourceFolder {
+    private fun createSourceFolder(absoluteModuleRoot: Path, relativeSubdir: String, codebaseRoot: Path): SourceFolder {
         val absoluteScanPath = absoluteModuleRoot.resolve(relativeSubdir)
         val filePaths = scanDirectory(absoluteScanPath)
-        val files = filePaths.map { p -> parseFile(p, absoluteScanPath) }
+        val files = filePaths.map { p -> parseFile(p, absoluteScanPath, codebaseRoot) }
         return SourceFolder(relativeSubdir, files)
     }
 
@@ -76,13 +77,15 @@ class MavenScanner : Scanner {
      * relative to the given absolute module root path.
      *
      * @param filePath the absolute paths to the file
-     * @param absoluteModuleRoot the module root path
+     * @param sourceRoot the source folder root path
+     * @param codebaseRoot the code base root path
      */
-    private fun parseFile(filePath: Path, absoluteModuleRoot: Path): File {
+    private fun parseFile(filePath: Path, sourceRoot: Path, codebaseRoot: Path): File {
         val name = filePath.fileName.toString()
         val type = getFileTypeFromFileName(name)
-        val relativeFilePath = absoluteModuleRoot.relativize(filePath).parent
-        return File(relativeFilePath, name, type)
+        val relativeFilePath = sourceRoot.relativize(filePath).parent
+        val fullPath = codebaseRoot.relativize(filePath).parent
+        return File(fullPath, relativeFilePath, name, type)
     }
 
     private fun getFileTypeFromFileName(fileName: String): FileType {

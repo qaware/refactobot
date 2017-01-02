@@ -10,6 +10,11 @@ import java.nio.file.Path
 data class File(
 
         /**
+         * The full path to the file, relative to the codebase root.
+         */
+        val fullPath: Path,
+
+        /**
          * The path to the file (not including the file name), relative to the source folder root.
          */
         val path: Path,
