@@ -1,60 +1,35 @@
 package de.qaware.tools.bulkrename.executor
 
 import de.qaware.tools.bulkrename.model.action.FileOperation
+import de.qaware.tools.bulkrename.model.codebase.Codebase
+import java.io.File
+import java.io.FileWriter
+import java.nio.file.Files
 
 /**
  * Executer that executes a list of Actions.
  *
- * @author Alexander Lannes alexander.lannes@qaware.de
+ * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class Executor {
+class Executor(private val codebase: Codebase) {
 
-    fun executeActions(actions: List<FileOperation>) {
-        //mutable copy of actions
-        val mutableActions = actions as MutableList<FileOperation>
-        var doneActions = listOf<FileOperation>()
+    /**
+     * Executes a single file move/edit operation
+     */
+    fun execute(operation: FileOperation) {
+        val rootPath = codebase.rootPath
+        val sourcePath = rootPath.resolve(operation.sourceFile)
+        val targetPath = rootPath.resolve(operation.targetFile)
 
-        for (action in mutableActions) {
-            if(!doneActions.contains(action)) {
-                var actionsForSameFile = listOf<FileOperation>()
-                actionsForSameFile += action
-                doneActions += action
-//                for (otherAction in mutableActions) {
-//                    if (action != otherAction && action.changedFile == otherAction.changedFile && !doneActions.contains(otherAction)) {
-//                        actionsForSameFile += otherAction
-//                        doneActions += otherAction
-//                    }
-//                }
-//                var sortedActionsForFile = listOf<Action>()
-//
-//
-//                if(action.actionType == ActionType.EDIT_ACTION) {
-//                    sortedActionsForFile += action
-//                } else {
-//                    for (a in actionsForSameFile) {
-//                      if (a.actionType == ActionType.EDIT_ACTION) {
-//                          sortedActionsForFile += a
-//                          break
-//                      }
-//                    }
-//                }
-//                for (a in actionsForSameFile) {
-//                    if (a.actionType == ActionType.EDIT_ACTION) {
-//                        val fileAction = a as EditAction
-//                        for (sortedAction in sortedActionsForFile) {
-//                            if ((sortedAction as EditAction).range.line < fileAction.range.line && (sortedAction as EditAction).range.column < fileAction.range.column) {
-//                                //TODO
-//                                break
-//                            }
-//                        }
-//                    }
-//                }
-//
-//
-//                val file = File(actionsForSameFile[0].changedFile)
-//                val writer = file.writer(Charset.defaultCharset())
-            }
+        if (Files.exists(targetPath)) {
+            throw IllegalStateException("Target file already exists: " + operation.targetFile)
         }
 
+        val lines = File(sourcePath.toUri()).readLines()
+
+        Files.createDirectories(targetPath.parent)
+        val writer = FileWriter(targetPath.toFile())
+        EditProcessor(lines, writer).applyEdits(operation.edits)
+        Files.delete(sourcePath)
     }
 }

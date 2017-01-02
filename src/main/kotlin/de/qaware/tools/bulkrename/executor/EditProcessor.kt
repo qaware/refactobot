@@ -24,5 +24,6 @@ class EditProcessor(input : List<String>, private val output: Writer) {
             output.write(replacementString)
         }
         output.write(source.readRest())
+        output.close()
     }
 }
