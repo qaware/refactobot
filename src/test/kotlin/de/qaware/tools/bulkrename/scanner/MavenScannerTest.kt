@@ -27,19 +27,19 @@ class MavenScannerTest {
 
         // Entities
         val module_a = codebase.modules.filter { m -> m.name == "maven_test_module_a" }.first()
-        assertTrue("List must contain file", { containsFile(module_a.mainFiles, "ClassA.java", "de.qaware.tools.bulkrename.scanner.test.a.ClassA", FileType.JAVA) })
-        assertTrue("List must contain file", { containsFile(module_a.mainFiles, "InterfaceA.java", "de.qaware.tools.bulkrename.scanner.test.a.InterfaceA", FileType.JAVA) })
-        assertTrue("List must contain file", { containsFile(module_a.mainFiles, "AnnotationA.java", "de.qaware.tools.bulkrename.scanner.test.a.AnnotationA", FileType.JAVA) })
+        assertTrue("List must contain file", { containsFile(module_a.mainFiles, "ClassA.java", "org.example.codebase.a.ClassA", FileType.JAVA) })
+        assertTrue("List must contain file", { containsFile(module_a.mainFiles, "InterfaceA.java", "org.example.codebase.a.InterfaceA", FileType.JAVA) })
+        assertTrue("List must contain file", { containsFile(module_a.mainFiles, "AnnotationA.java", "org.example.codebase.a.AnnotationA", FileType.JAVA) })
         assertTrue("List must contain file", { containsFile(module_a.mainFiles, "other_file", "", FileType.OTHER) })
         assertTrue("Count of files in list must match", { module_a.mainFiles.count() == 4 })
 
-        assertTrue("List must contain file", { containsFile(module_a.testFiles, "TestClassA.java", "de.qaware.tools.bulkrename.scanner.test.a.TestClassA", FileType.JAVA) })
-        assertTrue("List must contain file", { containsFile(module_a.testFiles, "TestClassB.java", "de.qaware.tools.bulkrename.scanner.test.a.TestClassB", FileType.JAVA) })
+        assertTrue("List must contain file", { containsFile(module_a.testFiles, "TestClassA.java", "org.example.codebase.a.TestClassA", FileType.JAVA) })
+        assertTrue("List must contain file", { containsFile(module_a.testFiles, "TestClassB.java", "org.example.codebase.a.TestClassB", FileType.JAVA) })
         assertTrue("Count of files in list must match", { module_a.testFiles.count() == 2 })
 
         val module_b = codebase.modules.filter { m -> m.name == "maven_test_module_b" }.first()
-        assertTrue("List must contain file", { containsFile(module_b.mainFiles, "ClassB.java", "de.qaware.tools.bulkrename.scanner.test.b.ClassB", FileType.JAVA) })
-        assertTrue("List must contain file", { containsFile(module_b.mainFiles, "EnumB.java", "de.qaware.tools.bulkrename.scanner.test.b.EnumB", FileType.JAVA) })
+        assertTrue("List must contain file", { containsFile(module_b.mainFiles, "ClassB.java", "org.example.codebase.b.ClassB", FileType.JAVA) })
+        assertTrue("List must contain file", { containsFile(module_b.mainFiles, "EnumB.java", "org.example.codebase.b.EnumB", FileType.JAVA) })
         assertTrue("Count of files in list must match", { module_b.mainFiles.count() == 2 })
 
         assertTrue("List must be empty", { module_b.testFiles.isEmpty() })

@@ -1,4 +1,4 @@
-package de.qaware.tools.bulkrename.scanner.test.a;
+package org.example.codebase.a;
 
 import java.lang.annotation.*;
 

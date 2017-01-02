@@ -25,19 +25,19 @@ class JavaReferenceExtractorTest {
         val references = JavaReferenceExtractor().extractReferences(codebase)
 
         // Check if all references are identified correctly
-        val interfaceA = getFileByEntity(codebase, "de.qaware.tools.bulkrename.scanner.test.a.InterfaceA")
-        val classA = getFileByEntity(codebase, "de.qaware.tools.bulkrename.scanner.test.a.ClassA")
-        val testClassA = getFileByEntity(codebase, "de.qaware.tools.bulkrename.scanner.test.a.TestClassA")
+        val interfaceA = getFileByEntity(codebase, "org.example.codebase.a.InterfaceA")
+        val classA = getFileByEntity(codebase, "org.example.codebase.a.ClassA")
+        val testClassA = getFileByEntity(codebase, "org.example.codebase.a.TestClassA")
 
 //        assertEquals(2, references[interfaceA]!!.size)
 //        assertTrue { references[interfaceA]!!.containsAll(setOf(classA, testClassA)) }
 //
-//        val testClassB = getFileByEntity(codebase, "de.qaware.tools.bulkrename.scanner.test.a.TestClassB")
+//        val testClassB = getFileByEntity(codebase, "org.example.codebase.a.TestClassB")
 //        assertEquals(1, references[testClassB]!!.size)
 //        assertTrue { references[testClassB]!!.contains(testClassA) }
 //
-//        val enumB = getFileByEntity(codebase, "de.qaware.tools.bulkrename.scanner.test.b.EnumB")
-//        val classB = getFileByEntity(codebase, "de.qaware.tools.bulkrename.scanner.test.b.ClassB")
+//        val enumB = getFileByEntity(codebase, "org.example.codebase.b.EnumB")
+//        val classB = getFileByEntity(codebase, "org.example.codebase.b.ClassB")
 //        assertEquals(1, references[enumB]!!.size)
 //        assertTrue { references[enumB]!!.contains(classB) }
 //

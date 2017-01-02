@@ -1,5 +1,6 @@
-package de.qaware.tools.bulkrename.scanner.test.a;
-import de.qaware.tools.bulkrename.scanner.test.a.InterfaceA;
+package org.example.codebase.a;
+
+import org.example.codebase.a.InterfaceA;
 
 public class ClassA implements InterfaceA<String> {
 
