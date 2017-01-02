@@ -1,10 +1,6 @@
 package de.qaware.tools.bulkrename.executor
 
 import de.qaware.tools.bulkrename.model.action.Action
-import de.qaware.tools.bulkrename.model.action.ActionType
-import de.qaware.tools.bulkrename.model.action.EditAction
-import java.io.File
-import java.nio.charset.Charset
 
 /**
  * Executer that executes a list of Actions.
@@ -23,40 +19,40 @@ class Executor {
                 var actionsForSameFile = listOf<Action>()
                 actionsForSameFile += action
                 doneActions += action
-                for (otherAction in mutableActions) {
-                    if (action != otherAction && action.changedFile == otherAction.changedFile && !doneActions.contains(otherAction)) {
-                        actionsForSameFile += otherAction
-                        doneActions += otherAction
-                    }
-                }
-                var sortedActionsForFile = listOf<Action>()
-
-
-                if(action.actionType == ActionType.EDIT_ACTION) {
-                    sortedActionsForFile += action
-                } else {
-                    for (a in actionsForSameFile) {
-                      if (a.actionType == ActionType.EDIT_ACTION) {
-                          sortedActionsForFile += a
-                          break
-                      }
-                    }
-                }
-                for (a in actionsForSameFile) {
-                    if (a.actionType == ActionType.EDIT_ACTION) {
-                        val fileAction = a as EditAction
-                        for (sortedAction in sortedActionsForFile) {
-                            if ((sortedAction as EditAction).range.line < fileAction.range.line && (sortedAction as EditAction).range.column < fileAction.range.column) {
-                                //TODO
-                                break
-                            }
-                        }
-                    }
-                }
-
-
-                val file = File(actionsForSameFile[0].changedFile)
-                val writer = file.writer(Charset.defaultCharset())
+//                for (otherAction in mutableActions) {
+//                    if (action != otherAction && action.changedFile == otherAction.changedFile && !doneActions.contains(otherAction)) {
+//                        actionsForSameFile += otherAction
+//                        doneActions += otherAction
+//                    }
+//                }
+//                var sortedActionsForFile = listOf<Action>()
+//
+//
+//                if(action.actionType == ActionType.EDIT_ACTION) {
+//                    sortedActionsForFile += action
+//                } else {
+//                    for (a in actionsForSameFile) {
+//                      if (a.actionType == ActionType.EDIT_ACTION) {
+//                          sortedActionsForFile += a
+//                          break
+//                      }
+//                    }
+//                }
+//                for (a in actionsForSameFile) {
+//                    if (a.actionType == ActionType.EDIT_ACTION) {
+//                        val fileAction = a as EditAction
+//                        for (sortedAction in sortedActionsForFile) {
+//                            if ((sortedAction as EditAction).range.line < fileAction.range.line && (sortedAction as EditAction).range.column < fileAction.range.column) {
+//                                //TODO
+//                                break
+//                            }
+//                        }
+//                    }
+//                }
+//
+//
+//                val file = File(actionsForSameFile[0].changedFile)
+//                val writer = file.writer(Charset.defaultCharset())
             }
         }
 

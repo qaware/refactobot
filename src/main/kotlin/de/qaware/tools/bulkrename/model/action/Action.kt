@@ -1,20 +1,17 @@
 package de.qaware.tools.bulkrename.model.action
 
+import java.nio.file.Path
+
 /**
- * Interface for actions of the refactoring
+ * Data type for actions.
  *
- * @author Alexander Lannes alexander.lannes@qaware.de
+ * @author Alexander Krauss alexander.krauss@qaware.de
  */
-abstract class Action {
+sealed class Action {
 
-    /**
-     *  The file that is changed
-     */
-    abstract val changedFile: String
+    class MoveFile(val sourceFile: Path, val targetFile: Path): Action()
 
-    /**
-     * Action type to differ between move and edit action
-     */
-    abstract val actionType: ActionType
+    class EditText(val file: Path, val range: Range, val newText: String): Action()
+
 }
 

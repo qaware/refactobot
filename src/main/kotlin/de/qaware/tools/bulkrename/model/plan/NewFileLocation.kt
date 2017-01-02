@@ -30,5 +30,9 @@ data class NewFileLocation(
          * The new filename
          */
         val fileName: String
-)
+) {
+
+        val fullPath = module.modulePath.resolve(sourceFolder.path).resolve(path)
+
+}
 
