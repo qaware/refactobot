@@ -22,25 +22,25 @@ class SequentialExpanderTest{
     fun testExpandRefactoringPlan(){
 
         // Create two steps which build upon each other
-        val sourceExpressions1 = hashMapOf(
+        val sourceExpressions1 = mapOf(
             Pair(RefactoringSubject.MODULE_NAME, Regex("foo")),
             Pair(RefactoringSubject.MODULE_PATH, Regex("bar")),
             Pair(RefactoringSubject.FILE_NAME, Regex("([a-zA-Z]*)DTO.java")),
             Pair(RefactoringSubject.FILE_PATH, Regex("""de\\qaware\\tools\\bulkrename\\([a-zA-Z\\]*)"""))
         )
-        val targetExpressions1 = hashMapOf(
+        val targetExpressions1 = mapOf(
                 Pair(RefactoringSubject.MODULE_NAME, Regex("FOO")),
                 Pair(RefactoringSubject.MODULE_PATH, Regex("BAR")),
                 Pair(RefactoringSubject.FILE_NAME, Regex("$1Dto.java")),
                 Pair(RefactoringSubject.FILE_PATH, Regex("""de\\qaware\\tools\\bulkrename\\foobar\\$1"""))
         )
-        val sourceExpressions2 = hashMapOf(
+        val sourceExpressions2 = mapOf(
                 Pair(RefactoringSubject.MODULE_NAME, Regex("FOO")),
                 Pair(RefactoringSubject.MODULE_PATH, Regex("BAR")),
                 Pair(RefactoringSubject.FILE_NAME, Regex("([a-zA-Z]*)Dto.java")),
                 Pair(RefactoringSubject.FILE_PATH, Regex("""de\\qaware\\tools\\bulkrename\\foobar\\([a-zA-Z\\]*)"""))
         )
-        val targetExpressions2 = hashMapOf(
+        val targetExpressions2 = mapOf(
                 Pair(RefactoringSubject.MODULE_NAME, Regex("foobar")),
                 Pair(RefactoringSubject.MODULE_PATH, Regex("barfoo")),
                 Pair(RefactoringSubject.FILE_NAME, Regex("$1Bean.java")),

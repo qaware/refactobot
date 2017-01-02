@@ -64,7 +64,7 @@ class SequentialExpander : Expander {
             val sourceModulePath = moduleRootPath.toString()
             val sourceFileName = file.fileName
             val sourceFilePath = file.path.toString()
-            val sourceExpressions = hashMapOf(Pair(RefactoringSubject.MODULE_NAME, sourceModuleName),
+            val sourceExpressions = mapOf(Pair(RefactoringSubject.MODULE_NAME, sourceModuleName),
                     Pair(RefactoringSubject.MODULE_PATH, sourceModulePath),
                     Pair(RefactoringSubject.FILE_NAME, sourceFileName),
                     Pair(RefactoringSubject.FILE_PATH, sourceFilePath))
