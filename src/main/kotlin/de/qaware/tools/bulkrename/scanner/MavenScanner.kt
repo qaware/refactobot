@@ -5,10 +5,7 @@ import com.github.javaparser.ast.body.AnnotationDeclaration
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import com.github.javaparser.ast.body.EnumDeclaration
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
-import de.qaware.tools.bulkrename.model.codebase.Codebase
-import de.qaware.tools.bulkrename.model.codebase.File
-import de.qaware.tools.bulkrename.model.codebase.FileType
-import de.qaware.tools.bulkrename.model.codebase.Module
+import de.qaware.tools.bulkrename.model.codebase.*
 import java.io.FileInputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -26,6 +23,7 @@ import java.util.stream.Collectors
 class MavenScanner : Scanner {
 
     companion object MavenScannerConstants {
+        val SOURCE_FOLDER_LOCATIONS = listOf("src/main/java", "src/test/java")
         const val MAIN_SUBDIRECTORY: String = "src/main"
         const val TEST_SUBDIRECTORY: String = "src/test"
         const val JAVA_EXTENSION: String = ".java"
@@ -55,15 +53,15 @@ class MavenScanner : Scanner {
         val absoluteModulePath = pathToPom.parent
         val relativeModulePath = codebaseRootDir.relativize(absoluteModulePath)
 
-        val mainFiles = findAllFilesRecursively(absoluteModulePath, MavenScannerConstants.MAIN_SUBDIRECTORY)
-        val testFiles = findAllFilesRecursively(absoluteModulePath, MavenScannerConstants.TEST_SUBDIRECTORY)
+        val sourceFolders = SOURCE_FOLDER_LOCATIONS
+                .map { path -> createSourceFolder(absoluteModulePath, path) }
+                .filter { !it.files.isEmpty() } // source roots containing no files are considered non-existing
 
         val moduleName = absoluteModulePath.fileName.toString()
 
         return Module(moduleName,
                 relativeModulePath,
-                mainFiles,
-                testFiles)
+                sourceFolders)
     }
 
     /**
@@ -72,22 +70,13 @@ class MavenScanner : Scanner {
      *
      * @param absoluteModuleRoot the module root
      * @param relativeSubdir a relative subdirectory (e.g. "src/main"
+     * @return the source folder
      */
-    private fun findAllFilesRecursively(absoluteModuleRoot: Path, relativeSubdir: String): List<File> {
+    private fun createSourceFolder(absoluteModuleRoot: Path, relativeSubdir: String): SourceFolder {
         val absoluteScanPath = absoluteModuleRoot.resolve(relativeSubdir)
-        val filePaths = findAllFilePathsRecursively(absoluteScanPath)
-        return parseFiles(filePaths, absoluteModuleRoot)
-    }
-
-    /**
-     * Parses all files in the given locations and returns a simplified file model
-     * relative to the given absolute module root path.
-     *
-     * @param filePaths the absolute paths to the files
-     * @param absoluteModuleRoot the module root path
-     */
-    private fun parseFiles(filePaths: Iterable<Path>, absoluteModuleRoot: Path): List<File> {
-        return filePaths.map { p -> parseFile(p, absoluteModuleRoot) }
+        val filePaths = scanDirectory(absoluteScanPath)
+        val files = filePaths.map { p -> parseFile(p, absoluteScanPath) }
+        return SourceFolder(relativeSubdir, files)
     }
 
     /**
@@ -134,13 +123,13 @@ class MavenScanner : Scanner {
         return FileType.OTHER
     }
 
-    private fun findAllFilePathsRecursively(rootDir: Path): List<Path> {
+    private fun scanDirectory(rootDir: Path): List<Path> {
         val foundFiles = ArrayList<Path>()
         if (Files.exists(rootDir)) {
             val directoryStream = Files.newDirectoryStream(rootDir)
             for (path in directoryStream) {
                 if (path.toFile().isDirectory) {
-                    foundFiles.addAll(findAllFilePathsRecursively(path))
+                    foundFiles.addAll(scanDirectory(path))
                 } else {
                     foundFiles.add(path)
                 }

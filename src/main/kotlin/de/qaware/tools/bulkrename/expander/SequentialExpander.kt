@@ -3,6 +3,7 @@ package de.qaware.tools.bulkrename.expander
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.codebase.Module
+import de.qaware.tools.bulkrename.model.codebase.SourceFolder
 import de.qaware.tools.bulkrename.model.plan.*
 import java.nio.file.Path
 import java.util.*
@@ -50,14 +51,15 @@ class SequentialExpander : Expander {
     private fun initializeTransformationMapForModule(module: Module): Map<File, ExpandedStep> {
         val moduleTransformationMap = HashMap<File, ExpandedStep>()
         val moduleRootPath = module.modulePath
-        moduleTransformationMap.putAll(initializeTransformationMapForFiles(module.mainFiles, moduleRootPath, module.name))
-        moduleTransformationMap.putAll(initializeTransformationMapForFiles(module.testFiles, moduleRootPath, module.name))
+        for (sourceFolder in module.sourceFolders) {
+            moduleTransformationMap.putAll(initializeTransformationMapForFolder(sourceFolder, moduleRootPath, module.name))
+        }
         return moduleTransformationMap
     }
 
-    private fun initializeTransformationMapForFiles(files: Iterable<File>, moduleRootPath: Path, moduleName: String): Map<File, ExpandedStep> {
+    private fun initializeTransformationMapForFolder(folder: SourceFolder, moduleRootPath: Path, moduleName: String): Map<File, ExpandedStep> {
         val moduleFilesTransformationMap = HashMap<File, ExpandedStep>()
-        for (file in files) {
+        for (file in folder.files) {
             val sourceModuleName = moduleName
             val sourceModulePath = moduleRootPath.toString()
             val sourceFileName = file.fileName

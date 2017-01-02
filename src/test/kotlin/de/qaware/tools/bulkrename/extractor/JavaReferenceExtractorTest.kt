@@ -47,6 +47,6 @@ class JavaReferenceExtractorTest {
     }
 
     private fun getFileByEntity(codebase: Codebase, fileName: String): File {
-        return codebase.modules.flatMap { it.mainFiles + it.testFiles }.find { it.entity == fileName } ?: fail("Cannot find file.")
+        return codebase.modules.flatMap { it.sourceFolders }.flatMap { it.files }.find { it.entity == fileName } ?: fail("Cannot find file.")
     }
 }

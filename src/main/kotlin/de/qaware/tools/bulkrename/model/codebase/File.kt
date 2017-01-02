@@ -10,7 +10,7 @@ import java.nio.file.Path
 data class File(
 
         /**
-         * The path to the file (not including the file name), relative to the module root.
+         * The path to the file (not including the file name), relative to the source folder root.
          */
         val path: Path,
 

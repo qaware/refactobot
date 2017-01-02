@@ -22,12 +22,7 @@ data class Module(
         val modulePath : Path,
 
         /**
-         * The list of files in the main tree.
+         * The source folders within this module.
          */
-        val mainFiles : List<File>,
-
-        /**
-         * The list of files in the test tree.
-         */
-        val testFiles : List<File>
+        val sourceFolders: List<SourceFolder>
 )

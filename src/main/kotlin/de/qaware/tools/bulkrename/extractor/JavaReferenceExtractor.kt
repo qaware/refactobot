@@ -28,8 +28,10 @@ class JavaReferenceExtractor : ReferenceExtractor {
     }
 
     private fun createEntityToFileMap(codebase: Codebase): Map<String, File> {
-        val filesInCodebase = codebase.modules.flatMap { it.mainFiles + it.testFiles }
-        return filesInCodebase.associateBy({ it.entity }, { it })
+        return codebase.modules
+                .flatMap { it.sourceFolders }
+                .flatMap { it.files }
+                .associateBy({ it.entity }, { it })
     }
 
     /**
@@ -42,21 +44,27 @@ class JavaReferenceExtractor : ReferenceExtractor {
      *
      */
     private fun extractReferencesFromModule(module: Module, codebaseRootPath: Path, knownFilesByEntity: Map<String, File>): Set<Reference> {
-        val filesInModule = module.mainFiles + module.testFiles
         val absoluteModulePath = codebaseRootPath.resolve(module.modulePath)
-        return filesInModule.flatMap { extractReferencesFromFile(it, absoluteModulePath, knownFilesByEntity) }.toSet()
+        return module.sourceFolders
+                .flatMap { folder -> extractReferencesFromSourceFolder(absoluteModulePath, folder, knownFilesByEntity) }
+                .toSet()
+    }
+
+    private fun extractReferencesFromSourceFolder(absoluteModulePath: Path, folder: SourceFolder, knownFilesByEntity: Map<String, File>) : List<Reference> {
+        val absoluteFolderPath = absoluteModulePath.resolve(folder.path)
+        return folder.files.flatMap { file -> extractReferencesFromFile(file, absoluteFolderPath, knownFilesByEntity) }
     }
 
     /**
      * Extracts all outgoing references from the given file, which are preset in the knownFilesByEntity-map.
      *
      * @param file the file to extract the references from
-     * @param absoluteModulePath the absolute path to the model containing the given file
+     * @param absoluteSourceFolderPath the absolute path to the model containing the given file
      * @param knownFilesByEntity a map of each known entity in the codebase to its file
      * @return a set of files which are referenced by the given file.
      */
-    private fun extractReferencesFromFile(file: File, absoluteModulePath: Path, knownFilesByEntity: Map<String, File>): Set<Reference> {
-        val filePath = absoluteModulePath.resolve(file.path).resolve(file.fileName)
+    private fun extractReferencesFromFile(file: File, absoluteSourceFolderPath: Path, knownFilesByEntity: Map<String, File>): Set<Reference> {
+        val filePath = absoluteSourceFolderPath.resolve(file.path).resolve(file.fileName)
         if (file.type == FileType.JAVA) {
             val inputStream = FileInputStream(filePath.toFile())
             inputStream.use {
