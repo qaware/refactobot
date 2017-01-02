@@ -6,9 +6,9 @@ import de.qaware.tools.bulkrename.model.reference.Location
 import de.qaware.tools.bulkrename.model.reference.Reference
 import de.qaware.tools.bulkrename.model.reference.ReferenceType
 import de.qaware.tools.bulkrename.scanner.MavenScanner
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.nio.file.Paths
-import kotlin.test.assertEquals
 import kotlin.test.fail
 
 /**
@@ -46,7 +46,7 @@ class JavaReferenceExtractorTest {
                 Reference(classB, enumB, Location(5, 13), Location(5, 40), ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE)
         )
 
-        assertEquals(extractedReferences, expectedReferences);
+        assertThat(extractedReferences).isEqualTo(expectedReferences);
     }
 
 

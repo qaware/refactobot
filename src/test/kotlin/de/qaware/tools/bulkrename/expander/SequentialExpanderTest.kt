@@ -5,9 +5,9 @@ import de.qaware.tools.bulkrename.model.plan.NewFileLocation
 import de.qaware.tools.bulkrename.model.plan.RefactoringSubject
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
 import de.qaware.tools.bulkrename.model.plan.Step
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.nio.file.Paths
-import kotlin.test.assertEquals
 
 /**
  * Test for SequentialExpander
@@ -77,6 +77,6 @@ class SequentialExpanderTest{
                 Pair(file2, NewFileLocation(moduleFoo, moduleFoo.sourceFolders[0], file2.path, file2.fileName)) // unchanged
         )
 
-        assertEquals(actualResult, expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 }

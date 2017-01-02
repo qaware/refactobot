@@ -24,6 +24,7 @@ dependencies {
     compile "com.github.javaparser:javaparser-core:2.5.1"
     testCompile 'junit:junit:4.11'
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile 'org.assertj:assertj-core:3.6.1'
 }
 
 task wrapper(type: Wrapper) {
