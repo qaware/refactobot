@@ -8,6 +8,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter
 import de.qaware.tools.bulkrename.model.codebase.*
 import de.qaware.tools.bulkrename.model.reference.Reference
 import de.qaware.tools.bulkrename.model.reference.ReferenceType
+import de.qaware.tools.bulkrename.util.fileToClass
 import java.io.FileInputStream
 import java.nio.file.Path
 import java.util.*
@@ -27,11 +28,16 @@ class JavaReferenceExtractor : ReferenceExtractor {
         return outgoingReferences
     }
 
+    private fun entityForFile(file : File) =
+            if (file.type == FileType.JAVA)
+                fileToClass(file.path.resolve(file.fileName).joinToString("/"))
+            else ""
+
     private fun createEntityToFileMap(codebase: Codebase): Map<String, File> {
         return codebase.modules
                 .flatMap { it.sourceFolders }
                 .flatMap { it.files }
-                .associateBy({ it.entity }, { it })
+                .associateBy({ entityForFile(it) }, { it })
     }
 
     /**

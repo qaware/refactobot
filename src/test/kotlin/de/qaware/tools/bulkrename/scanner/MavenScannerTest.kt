@@ -29,30 +29,28 @@ class MavenScannerTest {
         // Entities
         val module_a = codebase.modules.find { m -> m.name == "maven_test_module_a" }!!
         val mainFiles = module_a.sourceFolders.find { it.path == "src/main/java" }!!.files
-        assertTrue("List must contain file", { mainFiles.containsFile("ClassA.java", "org.example.codebase.a.ClassA", FileType.JAVA, "org/example/codebase/a") })
-        assertTrue("List must contain file", { mainFiles.containsFile("InterfaceA.java", "org.example.codebase.a.InterfaceA", FileType.JAVA, "org/example/codebase/a") })
-        assertTrue("List must contain file", { mainFiles.containsFile("AnnotationA.java", "org.example.codebase.a.AnnotationA", FileType.JAVA, "org/example/codebase/a") })
-        assertTrue("List must contain file", { mainFiles.containsFile("other_file", "", FileType.OTHER, "org/example/codebase/a") })
+        assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/ClassA.java", FileType.JAVA) })
+        assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/InterfaceA.java", FileType.JAVA) })
+        assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/AnnotationA.java", FileType.JAVA) })
+        assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/other_file", FileType.OTHER) })
         assertTrue("Count of files in list must match", { mainFiles.count() == 4 })
 
         val testFiles = module_a.sourceFolders.find { it.path == "src/test/java" }!!.files
-        assertTrue("List must contain file", { testFiles.containsFile("TestClassA.java", "org.example.codebase.a.TestClassA", FileType.JAVA, "org/example/codebase/a") })
-        assertTrue("List must contain file", { testFiles.containsFile("TestClassB.java", "org.example.codebase.a.TestClassB", FileType.JAVA, "org/example/codebase/a") })
+        assertTrue("List must contain file", { testFiles.containsFile("org/example/codebase/a/TestClassA.java", FileType.JAVA) })
+        assertTrue("List must contain file", { testFiles.containsFile("org/example/codebase/a/TestClassB.java", FileType.JAVA) })
         assertTrue("Count of files in list must match", { testFiles.count() == 2 })
 
         val module_b = codebase.modules.filter { m -> m.name == "maven_test_module_b" }.first()
         val mainFilesB = module_b.sourceFolders.find { it.path == "src/main/java" }!!.files
-        assertTrue("List must contain file", { mainFilesB.containsFile("ClassB.java", "org.example.codebase.b.ClassB", FileType.JAVA, "org/example/codebase/b") })
-        assertTrue("List must contain file", { mainFilesB.containsFile("EnumB.java", "org.example.codebase.b.EnumB", FileType.JAVA, "org/example/codebase/b") })
+        assertTrue("List must contain file", { mainFilesB.containsFile("org/example/codebase/b/ClassB.java", FileType.JAVA) })
+        assertTrue("List must contain file", { mainFilesB.containsFile("org/example/codebase/b/EnumB.java", FileType.JAVA) })
         assertTrue("Count of files in list must match", { mainFilesB.count() == 2 })
 
         assertNull(module_b.sourceFolders.find { it.path == "src/test/java" })
     }
 
-
-
-    private fun List<File>.containsFile(name: String, entity: String, type: FileType, path: String): Boolean {
-        return this.filter { f -> f.fileName == name && f.entity == entity && f.type == type && f.path == Paths.get(path) }.isNotEmpty()
+    private fun List<File>.containsFile(fullPath: String, type: FileType): Boolean {
+        return this.filter { f -> f.path.resolve(f.fileName) == Paths.get(fullPath) && f.type == type }.isNotEmpty()
     }
 
 }

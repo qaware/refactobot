@@ -10,14 +10,12 @@ import de.qaware.tools.bulkrename.model.plan.Step
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 
 /**
  * Test class for SequentialExpander
  *
  * @author Florian Engel florian.engel@qaware.de
  */
-
 class SequentialExpanderTest{
 
     @Test
@@ -89,9 +87,6 @@ class SequentialExpanderTest{
         assertEquals("de\\qaware\\tools\\bulkrename\\foobar\\test\\beans", refactoringInfoFile1.targets[RefactoringSubject.FILE_PATH])
         assertEquals("foobar", refactoringInfoFile1.targets[RefactoringSubject.MODULE_NAME])
         assertEquals("barfoo", refactoringInfoFile1.targets[RefactoringSubject.MODULE_PATH])
-
-        // No transformation was defined for entity, so no target is expected
-        assertFalse(refactoringInfoFile1.targets.containsKey(RefactoringSubject.ENTITY))
 
         // Second file should not match our source matchers, so there should be no targets
         val refactoringInfoFile2 = testResult.steps[file2]

@@ -25,9 +25,9 @@ class JavaReferenceExtractorTest {
         val references = JavaReferenceExtractor().extractReferences(codebase)
 
         // Check if all references are identified correctly
-        val interfaceA = getFileByEntity(codebase, "org.example.codebase.a.InterfaceA")
-        val classA = getFileByEntity(codebase, "org.example.codebase.a.ClassA")
-        val testClassA = getFileByEntity(codebase, "org.example.codebase.a.TestClassA")
+        val interfaceA = getFileByEntity(codebase, "InterfaceA.java")
+        val classA = getFileByEntity(codebase, "ClassA.java")
+        val testClassA = getFileByEntity(codebase, "TestClassA.java")
 
 //        assertEquals(2, references[interfaceA]!!.size)
 //        assertTrue { references[interfaceA]!!.containsAll(setOf(classA, testClassA)) }
@@ -47,6 +47,6 @@ class JavaReferenceExtractorTest {
     }
 
     private fun getFileByEntity(codebase: Codebase, fileName: String): File =
-            codebase.modules.flatMap { it.sourceFolders }.flatMap { it.files }.find { it.entity == fileName } ?: fail("Cannot find file.")
+            codebase.modules.flatMap { it.sourceFolders }.flatMap { it.files }.find { it.fileName == fileName } ?: fail("Cannot find file.")
 
 }
