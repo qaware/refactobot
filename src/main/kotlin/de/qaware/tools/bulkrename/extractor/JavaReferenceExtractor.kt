@@ -23,22 +23,18 @@ import java.util.*
 class JavaReferenceExtractor : ReferenceExtractor {
 
     override fun extractReferences(codebase: Codebase): Set<Reference> {
-        val knownFilesByEntity = createEntityToFileMap(codebase)
-        val outgoingReferences = codebase.modules.map { extractReferencesFromModule(it, codebase.rootPath, knownFilesByEntity) }
+        val filesByClass = createClassMap(codebase)
+        val outgoingReferences = codebase.modules.map { extractReferencesFromModule(it, codebase.rootPath, filesByClass) }
                 .reduce { left, right -> left.plus(right) }
         return outgoingReferences
     }
 
-    private fun entityForFile(file : File) =
-            if (file.type == FileType.JAVA)
-                fileToClass(file.path.resolve(file.fileName).joinToString("/"))
-            else ""
-
-    private fun createEntityToFileMap(codebase: Codebase): Map<String, File> {
+    private fun createClassMap(codebase: Codebase): Map<String, File> {
         return codebase.modules
                 .flatMap { it.sourceFolders }
                 .flatMap { it.files }
-                .associateBy({ entityForFile(it) }, { it })
+                .filter { it.type == FileType.JAVA }
+                .associateBy({ file -> fileToClass(file.path.resolve(file.fileName).joinToString("/")) }, { it })
     }
 
     /**
@@ -46,20 +42,20 @@ class JavaReferenceExtractor : ReferenceExtractor {
      *
      * @param module the module to extract the references from
      * @param codebaseRootPath the absolute root path of the codebase
-     * @param knownFilesByEntity a map of each known entity in the codebase to its file
+     * @param filesByClass a map of each known entity in the codebase to its file
      * @return a map of every file in the given module to a set of files which are referenced by that file.
      *
      */
-    private fun extractReferencesFromModule(module: Module, codebaseRootPath: Path, knownFilesByEntity: Map<String, File>): Set<Reference> {
+    private fun extractReferencesFromModule(module: Module, codebaseRootPath: Path, filesByClass: Map<String, File>): Set<Reference> {
         val absoluteModulePath = codebaseRootPath.resolve(module.modulePath)
         return module.sourceFolders
-                .flatMap { folder -> extractReferencesFromSourceFolder(absoluteModulePath, folder, knownFilesByEntity) }
+                .flatMap { folder -> extractReferencesFromSourceFolder(absoluteModulePath, folder, filesByClass) }
                 .toSet()
     }
 
-    private fun extractReferencesFromSourceFolder(absoluteModulePath: Path, folder: SourceFolder, knownFilesByEntity: Map<String, File>) : List<Reference> {
+    private fun extractReferencesFromSourceFolder(absoluteModulePath: Path, folder: SourceFolder, filesByClass: Map<String, File>) : List<Reference> {
         val absoluteFolderPath = absoluteModulePath.resolve(folder.path)
-        return folder.files.flatMap { file -> extractReferencesFromFile(file, absoluteFolderPath, knownFilesByEntity) }
+        return folder.files.flatMap { file -> extractReferencesFromFile(file, absoluteFolderPath, filesByClass) }
     }
 
     /**
@@ -67,10 +63,10 @@ class JavaReferenceExtractor : ReferenceExtractor {
      *
      * @param file the file to extract the references from
      * @param absoluteSourceFolderPath the absolute path to the model containing the given file
-     * @param knownFilesByEntity a map of each known entity in the codebase to its file
+     * @param filesByClass a map of each known entity in the codebase to its file
      * @return a set of files which are referenced by the given file.
      */
-    private fun extractReferencesFromFile(file: File, absoluteSourceFolderPath: Path, knownFilesByEntity: Map<String, File>): Set<Reference> {
+    private fun extractReferencesFromFile(file: File, absoluteSourceFolderPath: Path, filesByClass: Map<String, File>): Set<Reference> {
         val filePath = absoluteSourceFolderPath.resolve(file.path).resolve(file.fileName)
         if (file.type == FileType.JAVA) {
             val inputStream = FileInputStream(filePath.toFile())
@@ -79,27 +75,26 @@ class JavaReferenceExtractor : ReferenceExtractor {
                 val importVisitor = ReferencesVisitor()
                 importVisitor.visit(compilationUnit, compilationUnit.`package`.packageName)
                 val localReferences = importVisitor.references
-                return createReferencesFromLocalReferences(localReferences, file, knownFilesByEntity)
+                return createReferencesFromLocalReferences(localReferences, file, filesByClass)
             }
         }
         // todo other files
         return HashSet()
     }
 
-    private fun createReferencesFromLocalReferences(localReferences: Set<LocalReference>, sourceFile: File, knownFilesByEntity: Map<String, File>): Set<Reference> {
-        val references = HashSet<Reference>()
-        val relevantImports = localReferences.filter { it.referenceType == ReferenceType.IMPORT && knownFilesByEntity.containsKey(it.scope!! + "." + it.name) }
-        val fullyQualifiedClassReferences = localReferences.filter { it.referenceType == ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE && knownFilesByEntity.containsKey(it.scope!! + "." + it.name) }
-        val relevantUnqualifiedReferences = localReferences.filter { it.referenceType == ReferenceType.CLASS_OR_INTERFACE_REFERENCE && relevantImports.map { it.name }.contains(it.name) }
+    private fun createReferencesFromLocalReferences(rawReferences: Set<RawReference>, sourceFile: File, filesByClass: Map<String, File>): Set<Reference> {
+        val relevantImports = rawReferences.filter { it.referenceType == ReferenceType.IMPORT && filesByClass.containsKey(it.scope!! + "." + it.name) }
+        val fullyQualifiedClassReferences = rawReferences.filter { it.referenceType == ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE && filesByClass.containsKey(it.scope!! + "." + it.name) }
+        val relevantUnqualifiedReferences = rawReferences.filter { it.referenceType == ReferenceType.CLASS_OR_INTERFACE_REFERENCE && relevantImports.map { it.name }.contains(it.name) }
 
-        val importReferences = relevantImports.map { Reference(sourceFile, knownFilesByEntity[it.scope!! + "." + it.name]!!, it.begin, it.end, it.referenceType) }
-        val fqcReferences = fullyQualifiedClassReferences.map { Reference(sourceFile, knownFilesByEntity[it.scope!! + "." + it.name]!!, it.begin, it.end, it.referenceType) }
+        val importReferences = relevantImports.map { Reference(sourceFile, filesByClass[it.scope!! + "." + it.name]!!, it.begin, it.end, it.referenceType) }
+        val fqcReferences = fullyQualifiedClassReferences.map { Reference(sourceFile, filesByClass[it.scope!! + "." + it.name]!!, it.begin, it.end, it.referenceType) }
         val localToFQN = relevantImports.associateBy({ it.name }, { it.scope + "." + it.name })
-        val unqualifiedReferences = relevantUnqualifiedReferences.map { Reference(sourceFile, knownFilesByEntity[localToFQN[it.name]]!!, it.begin, it.end, it.referenceType) }
-        references.addAll(importReferences)
-        references.addAll(fqcReferences)
-        references.addAll(unqualifiedReferences)
-        return references
+        val unqualifiedReferences = relevantUnqualifiedReferences.map { Reference(sourceFile, filesByClass[localToFQN[it.name]]!!, it.begin, it.end, it.referenceType) }
+
+        return importReferences
+                .union(fqcReferences)
+                .union(unqualifiedReferences);
     }
 
     /**
@@ -108,18 +103,17 @@ class JavaReferenceExtractor : ReferenceExtractor {
      */
     private class ReferencesVisitor : VoidVisitorAdapter<String>() {
 
-        var references = HashSet<LocalReference>()
+        var references = HashSet<RawReference>()
 
         override fun visit(n: ImportDeclaration?, arg: String?) {
             if (n != null) {
-                val reference = LocalReference(
+                references.add(RawReference(
                         ReferenceType.IMPORT,
                         Location(n.name.begin.line, n.name.begin.column),
                         Location(n.name.end.line, n.name.end.column),
                         (n.name as? QualifiedNameExpr)?.qualifier?.toString() ?: throw UnsupportedOperationException("Imports must be qualified."),
                         n.name.name
-                )
-                references.add(reference)
+                ))
             }
             super.visit(n, arg)
         }
@@ -138,7 +132,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
                 }
                 val type = if (n.scope != null) ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE else ReferenceType.CLASS_OR_INTERFACE_REFERENCE
                 val endLocation = if (n.typeArguments.typeArguments.isEmpty()) Location(n.end.line, n.end.column) else Location(n.typeArguments.typeArguments.first().begin.line, n.typeArguments.typeArguments.first().begin.column - 2)
-                references.add(LocalReference(type,
+                references.add(RawReference(type,
                         Location(n.begin.line, n.begin.column),
                         endLocation,
                         n.scope?.toString(),
@@ -147,13 +141,9 @@ class JavaReferenceExtractor : ReferenceExtractor {
             }
             super.visit(n, arg)
         }
-
-        private fun validateClassOrInterfaceType(classOrInterfaceType: ClassOrInterfaceType){
-
-        }
     }
 
-    private data class LocalReference(
+    private data class RawReference(
             val referenceType: ReferenceType,
             val begin: Location,
             val end: Location,
