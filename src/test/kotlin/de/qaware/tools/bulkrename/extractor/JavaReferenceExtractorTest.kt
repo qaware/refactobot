@@ -3,8 +3,9 @@ package de.qaware.tools.bulkrename.extractor
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.operation.Location
-import de.qaware.tools.bulkrename.model.reference.OldReference
-import de.qaware.tools.bulkrename.model.reference.ReferenceType
+import de.qaware.tools.bulkrename.model.operation.Span
+import de.qaware.tools.bulkrename.model.reference.JavaQualifiedTypeReference
+import de.qaware.tools.bulkrename.model.reference.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.scanner.MavenScanner
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -37,13 +38,13 @@ class JavaReferenceExtractorTest {
         val testClassB = getFileByEntity(codebase, "TestClassB.java")
 
         val expectedReferences = setOf(
-                OldReference(classA, interfaceA, Location(3, 8), Location(3, 40), ReferenceType.IMPORT),
-                OldReference(classA, interfaceA, Location(5, 32), Location(5, 41), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
-                OldReference(classA, interfaceA, Location(7, 13), Location(7, 22), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
-                OldReference(testClassA, testClassB, Location(2, 8), Location(2, 40), ReferenceType.IMPORT),
-                OldReference(testClassA, testClassB, Location(6, 13), Location(6, 22), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
-                OldReference(testClassA, interfaceA, Location(7, 13), Location(7, 45), ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE),
-                OldReference(classB, enumB, Location(5, 13), Location(5, 40), ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE)
+                JavaQualifiedTypeReference(classA, interfaceA, Span(Location(3, 8), Location(3, 40))),
+                JavaSimpleTypeReference(classA, interfaceA, Span(Location(5, 32), Location(5, 41))),
+                JavaSimpleTypeReference(classA, interfaceA, Span(Location(7, 13), Location(7, 22))),
+                JavaQualifiedTypeReference(testClassA, testClassB, Span(Location(2, 8), Location(2, 40))),
+                JavaSimpleTypeReference(testClassA, testClassB, Span(Location(6, 13), Location(6, 22))),
+                JavaQualifiedTypeReference(testClassA, interfaceA, Span(Location(7, 13), Location(7, 45))),
+                JavaQualifiedTypeReference(classB, enumB, Span(Location(5, 13), Location(5, 40)))
         )
 
         assertThat(extractedReferences).isEqualTo(expectedReferences);
