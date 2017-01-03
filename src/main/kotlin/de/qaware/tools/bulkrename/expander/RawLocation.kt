@@ -30,9 +30,23 @@ data class RawLocation(
                 RefactoringSubject.SOURCE_ROOT -> this.copy(sourceRoot = newValue)
             }
 
-    fun ruleMatches(rule : Map.Entry<RefactoringSubject, Step.Replacement>): Boolean =
+    private fun ruleMatches(rule : Map.Entry<RefactoringSubject, Step.Replacement>): Boolean =
             rule.value.regex.matches(getByKey(rule.key))
 
-    fun applyRule(rule : Map.Entry<RefactoringSubject, Step.Replacement>): RawLocation =
+    private fun applyRule(rule : Map.Entry<RefactoringSubject, Step.Replacement>): RawLocation =
             updateByKey(rule.key, getByKey(rule.key).replace(rule.value.regex, rule.value.replacement))
+
+    fun applyStep(step: Step): RawLocation =
+
+            // if all regexes match their corresponding components...
+            if (step.replacements.all { ruleMatches(it) }) {
+
+                // apply all rule components
+                step.replacements.entries.fold(this, RawLocation::applyRule)
+
+            } else {
+                // otherwise ignore this rule
+                this;
+            }
+
 }

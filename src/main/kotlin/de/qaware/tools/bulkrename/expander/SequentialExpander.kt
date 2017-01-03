@@ -4,7 +4,6 @@ import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.plan.NewFileLocation
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
-import de.qaware.tools.bulkrename.model.plan.Step
 import java.nio.file.Paths
 import java.util.*
 
@@ -18,11 +17,25 @@ import java.util.*
 class SequentialExpander(val codebase: Codebase) : Expander {
 
     override fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, NewFileLocation> {
-        var transformationMap = initializeTransformationMap(codebase)
-        for (step in refactoringPlan.steps) {
-            transformationMap = transformationMap.mapValues { applyStep(step, it.value) }
+        val fullRefactoringPlan = HashMap<File, NewFileLocation>()
+
+        // for each file in the codebase...
+        for (module in codebase.modules) {
+            for (folder in module.sourceFolders) {
+                for (file in folder.files) {
+
+                    // ...apply all transformations to its location...
+                    var location = RawLocation(module.name, folder.path, file.path.toString(), file.fileName)
+                    for (step in refactoringPlan.steps) {
+                        location = location.applyStep(step)
+                    }
+
+                    // ...and save the result as the final location of the file
+                    fullRefactoringPlan.put(file, createNewFileLocation(location))
+                }
+            }
         }
-        return transformationMap.mapValues { entry -> createNewFileLocation(entry.value) }
+        return fullRefactoringPlan
     }
 
     private fun createNewFileLocation(expansionResult: RawLocation): NewFileLocation {
@@ -41,46 +54,4 @@ class SequentialExpander(val codebase: Codebase) : Expander {
 
     }
 
-    /**
-     * Initializes a simple map of all files in the given codebase to an initial no-op step.
-     *
-     * The step's source information is set to the current file information, while the step's target
-     * information is empty.
-     *
-     * @param codebase the codebase for which the transformation map should be created
-     * @return a map of every file in the codebase to a no-op step
-     */
-    private fun initializeTransformationMap(codebase: Codebase): Map<File, RawLocation> {
-        val transformationMap = HashMap<File, RawLocation>()
-
-        for (module in codebase.modules) {
-            for (folder in module.sourceFolders) {
-                for (file in folder.files) {
-                    transformationMap.put(file, RawLocation(module.name, folder.path, file.path.toString(), file.fileName))
-                }
-            }
-        }
-        return transformationMap
-    }
-
-    /**
-     * Applies the given current step onto the given last step (if it matches)
-     *
-     * @param step the step to apply
-     * @param location the location to apply the given step to
-     * @return new location
-     */
-    private fun applyStep(step: Step, location: RawLocation): RawLocation {
-
-        // if all regexes match their corresponding components...
-        if (step.replacements.all { location.ruleMatches(it) }) {
-
-            // apply all rule components
-            return step.replacements.entries.fold(location, RawLocation::applyRule)
-
-        } else {
-            // otherwise ignore this rule
-            return location;
-        }
-    }
 }
