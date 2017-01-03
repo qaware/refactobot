@@ -18,13 +18,12 @@ class RealCodebaseTest {
 
         BulkRenameTool.refactorMavenCodebase(Paths.get("P:/codebase2/code"),
                 SchematicRefactoringPlan(listOf(
-                        renameStep(Regex("(.*)DaoBean\\.java"), Regex("$1DaoImpl.java"))
+                        renameStep(Regex("(.*)DaoBean\\.java"), "$1DaoImpl.java")
                 )))
     }
 
 
-    private fun renameStep(from: Regex, to: Regex) =
-            Step(mapOf(Pair(RefactoringSubject.FILE_NAME, from)),
-                    mapOf(Pair(RefactoringSubject.FILE_NAME, to)))
+    private fun renameStep(from: Regex, to: String) =
+            Step(mapOf(Pair(RefactoringSubject.FILE_NAME, Step.Replacement(from, to))))
 
 }

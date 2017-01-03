@@ -3,7 +3,6 @@ package de.qaware.tools.bulkrename.expander
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.plan.NewFileLocation
-import de.qaware.tools.bulkrename.model.plan.RefactoringSubject
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
 import de.qaware.tools.bulkrename.model.plan.Step
 import java.nio.file.Paths
@@ -21,24 +20,24 @@ class SequentialExpander(val codebase: Codebase) : Expander {
     override fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, NewFileLocation> {
         var transformationMap = initializeTransformationMap(codebase)
         for (step in refactoringPlan.steps) {
-            transformationMap = expandStepToTransformationMap(step, transformationMap)
+            transformationMap = transformationMap.mapValues { applyStep(step, it.value) }
         }
-        return transformationMap.mapValues { entry -> createNewFileLocation(entry.value.targetExpression) }
+        return transformationMap.mapValues { entry -> createNewFileLocation(entry.value) }
     }
 
-    private fun createNewFileLocation(expansionResult: Map<RefactoringSubject, String>): NewFileLocation {
+    private fun createNewFileLocation(expansionResult: RawLocation): NewFileLocation {
 
-        val newFileName = expansionResult[RefactoringSubject.FILE_NAME]!!
-        val newFilePath = expansionResult[RefactoringSubject.FILE_PATH]!!
-        val newModuleName = expansionResult[RefactoringSubject.MODULE_NAME]
-        val newModulePath = expansionResult[RefactoringSubject.MODULE_PATH]
+        val fileName = expansionResult.filename
+        val path = expansionResult.path
+        val moduleName = expansionResult.moduleName
+        val sourceRoot = expansionResult.sourceRoot
 
-        val newModule = codebase.modules.find { it.name == newModuleName }
-                ?: throw IllegalStateException("Unknown module " + newModuleName)
-        val newSourceFolder = newModule.sourceFolders.find { it.path == newModulePath }
-                ?: throw IllegalStateException("No source folder with path " + newModulePath + " in module " + newModule.name)
+        val newModule = codebase.modules.find { it.name == moduleName }
+                ?: throw IllegalStateException("Unknown module " + moduleName)
+        val newSourceFolder = newModule.sourceFolders.find { it.path == sourceRoot }
+                ?: throw IllegalStateException("No source folder with path " + sourceRoot + " in module " + newModule.name)
 
-        return NewFileLocation(newModule, newSourceFolder, Paths.get(newFilePath), newFileName)
+        return NewFileLocation(newModule, newSourceFolder, Paths.get(path), fileName)
 
     }
 
@@ -51,19 +50,13 @@ class SequentialExpander(val codebase: Codebase) : Expander {
      * @param codebase the codebase for which the transformation map should be created
      * @return a map of every file in the codebase to a no-op step
      */
-    private fun initializeTransformationMap(codebase: Codebase): Map<File, ExpandedStep> {
-        val transformationMap = HashMap<File, ExpandedStep>()
+    private fun initializeTransformationMap(codebase: Codebase): Map<File, RawLocation> {
+        val transformationMap = HashMap<File, RawLocation>()
 
         for (module in codebase.modules) {
             for (folder in module.sourceFolders) {
                 for (file in folder.files) {
-
-                    val expressions = mapOf(Pair(RefactoringSubject.MODULE_NAME, module.name),
-                            Pair(RefactoringSubject.MODULE_PATH, folder.path),
-                            Pair(RefactoringSubject.FILE_NAME, file.fileName),
-                            Pair(RefactoringSubject.FILE_PATH, file.path.toString()))
-
-                    transformationMap.put(file, ExpandedStep(expressions, expressions))
+                    transformationMap.put(file, RawLocation(module.name, folder.path, file.path.toString(), file.fileName))
                 }
             }
         }
@@ -71,87 +64,23 @@ class SequentialExpander(val codebase: Codebase) : Expander {
     }
 
     /**
-     * Applies the given (collapsed) step to all (expanded) steps in the transformation map.
-     *
-     * @param step the collapsed step to expand
-     * @param transformationMap the transformation map containing all expanded steps
-     * @return an updated version of the given transformation map with the given step applied to all steps it matched.
-     */
-    private fun expandStepToTransformationMap(step: Step, transformationMap: Map<File, ExpandedStep>): Map<File, ExpandedStep> {
-        validateStep(step)
-        return transformationMap.mapValues { applyStepOnStep(step, it.value) }
-    }
-
-    /**
-     * Returns a flat version of a step in which source steps are replaced by existing target steps.
-     * Since the target steps may not exist, the returned map describes the resulting file after the step has been applied.
-     * If no target step is defined for a step type, the expression is returned as is (source).
-     *
-     * @param step the step to merge
-     * @return a map of step types to expressions, target expression if defined in the given step, source expression otherwise.
-     */
-    private fun getMergedStepExpressions(step: ExpandedStep): Map<RefactoringSubject, String> {
-
-        return step.sourceExpressions.plus(step.targetExpression)
-    }
-
-    /**
      * Applies the given current step onto the given last step (if it matches)
      *
-     * @param currentStep the step to apply
-     * @param lastStep the step to apply the given currentStep onto
-     * @return lastStep with the currentStep applied onto it
+     * @param step the step to apply
+     * @param location the location to apply the given step to
+     * @return new location
      */
-    private fun applyStepOnStep(currentStep: Step, lastStep: ExpandedStep): ExpandedStep {
+    private fun applyStep(step: Step, location: RawLocation): RawLocation {
 
-        if (!allMatch(currentStep, lastStep)) {
-            return lastStep
-        }
+        // if all regexes match their corresponding components...
+        if (step.replacements.all { location.ruleMatches(it) }) {
 
-        val mergedLastStepExpressions = getMergedStepExpressions(lastStep)
-        val resultStepExpressions = HashMap<RefactoringSubject, String>()
-        for (stepType in RefactoringSubject.values()) {
-            if (currentStep.targetExpression.containsKey(stepType)) {
-                val targetExpression = currentStep.targetExpression[stepType]!!
-                val transformedExpression = currentStep.sourceExpressions[stepType]!!.replace(mergedLastStepExpressions[stepType]!!, targetExpression.toString())
-                resultStepExpressions.put(stepType, transformedExpression)
-            }
-        }
-        return ExpandedStep(lastStep.sourceExpressions, resultStepExpressions)
-    }
+            // apply all rule components
+            return step.replacements.entries.fold(location, RawLocation::applyRule)
 
-    /**
-     * Checks if all source expressions in the given currentStep match the given lastStep.
-     *
-     * @param currentStep the step whose source expressions should be checked
-     * @param lastStep the subject of the expression check
-     * @return true, if all source expressions in currentStep would match a file on which lastStep has been executed.
-     */
-    private fun allMatch(currentStep: Step, lastStep: ExpandedStep): Boolean {
-        val mergedLastStepExpressions = getMergedStepExpressions(lastStep)
-        for (stepType in RefactoringSubject.values()) {
-            if (currentStep.sourceExpressions.containsKey(stepType)) {
-                val regex = currentStep.sourceExpressions[stepType]!!
-                if (!regex.matches(mergedLastStepExpressions[stepType]!!)) {
-                    return false
-                }
-            }
-        }
-        return true
-    }
-
-    /**
-     * Checks if a step is valid, throws an argument exception if the step could not be executed.
-     *
-     * @param step the step to check
-     */
-    private fun validateStep(step: Step) {
-        // This just checks if every target expression also has a source expression.
-        // Depending on the degree of automation it might be sensible to also check for other invalid steps
-        for (stepType in RefactoringSubject.values()) {
-            if (step.targetExpression.containsKey(stepType) && !step.sourceExpressions.containsKey(stepType)) {
-                throw IllegalArgumentException()
-            }
+        } else {
+            // otherwise ignore this rule
+            return location;
         }
     }
 }

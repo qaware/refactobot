@@ -8,16 +8,10 @@ package de.qaware.tools.bulkrename.model.plan
  */
 data class Step(
 
-        /**
-         * A map with a matcher expression (value) for arbitrary refactoring subjects (e.g. file name) which should be matched.
-         * Must at least contain an expression for every subject defined in targetExpression.
-         */
-        val sourceExpressions: Map<RefactoringSubject, Regex>,
+        val replacements: Map<RefactoringSubject, Replacement>
 
-        /**
-         * A map with a target expression (value) for arbitrary refactoring subjects. A source expression must
-         * exist for every refactoring subject contained in this map.
-         */
-        val targetExpression: Map<RefactoringSubject, Regex>
+) {
 
-)
+        data class Replacement(val regex: Regex, val replacement: String)
+
+}

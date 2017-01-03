@@ -43,24 +43,15 @@ class SequentialExpanderTest{
 
         val refactoringPlan = SchematicRefactoringPlan(listOf(
                 Step(mapOf(
-                        Pair(RefactoringSubject.MODULE_NAME, Regex("foo")),
-                        Pair(RefactoringSubject.FILE_NAME, Regex("([a-zA-Z]*)DTO.java")),
-                        Pair(RefactoringSubject.FILE_PATH, Regex("""de\\qaware\\tools\\bulkrename\\([a-zA-Z\\]*)"""))
-                ), mapOf(
-                        Pair(RefactoringSubject.MODULE_NAME, Regex("FOO")),
-                        Pair(RefactoringSubject.FILE_NAME, Regex("$1Dto.java")),
-                        Pair(RefactoringSubject.FILE_PATH, Regex("""de\\qaware\\tools\\bulkrename\\foobar\\$1"""))
+                        Pair(RefactoringSubject.MODULE_NAME, Step.Replacement(Regex("foo"), "FOO")),
+                        Pair(RefactoringSubject.FILE_NAME, Step.Replacement(Regex("([a-zA-Z]*)DTO.java"), "$1Dto.java")),
+                        Pair(RefactoringSubject.FILE_PATH, Step.Replacement(Regex("""de\\qaware\\tools\\bulkrename\\([a-zA-Z\\]*)"""), """de\\qaware\\tools\\bulkrename\\foobar\\$1"""))
                 )),
                 Step(mapOf(
-                        Pair(RefactoringSubject.MODULE_NAME, Regex("FOO")),
-                        Pair(RefactoringSubject.MODULE_PATH, Regex("src/main/java")),
-                        Pair(RefactoringSubject.FILE_NAME, Regex("([a-zA-Z]*)Dto.java")),
-                        Pair(RefactoringSubject.FILE_PATH, Regex("""de\\qaware\\tools\\bulkrename\\foobar\\([a-zA-Z\\]*)"""))
-                ), mapOf(
-                        Pair(RefactoringSubject.MODULE_NAME, Regex("foobar")),
-                        Pair(RefactoringSubject.MODULE_PATH, Regex("src/test/java")),
-                        Pair(RefactoringSubject.FILE_NAME, Regex("$1Bean.java")),
-                        Pair(RefactoringSubject.FILE_PATH, Regex("""de\\qaware\\tools\\bulkrename\\foobar\\$1\\beans"""))
+                        Pair(RefactoringSubject.MODULE_NAME, Step.Replacement(Regex("FOO"), "foobar")),
+                        Pair(RefactoringSubject.SOURCE_ROOT, Step.Replacement(Regex("src/main/java"), "src/test/java")),
+                        Pair(RefactoringSubject.FILE_NAME, Step.Replacement(Regex("([a-zA-Z]*)Dto.java"), "$1Bean.java")),
+                        Pair(RefactoringSubject.FILE_PATH, Step.Replacement(Regex("""de\\qaware\\tools\\bulkrename\\foobar\\([a-zA-Z\\]*)"""), """de\\qaware\\tools\\bulkrename\\foobar\\$1\\beans"""))
                 ))
         ))
 
@@ -80,9 +71,7 @@ class SequentialExpanderTest{
 
         val refactoringPlan = SchematicRefactoringPlan(listOf(
                 Step(mapOf(
-                        Pair(RefactoringSubject.FILE_NAME, Regex("([a-zA-Z]*)DTO.java"))
-                ), mapOf(
-                        Pair(RefactoringSubject.FILE_NAME, Regex("$1Dto.java"))
+                        Pair(RefactoringSubject.FILE_NAME, Step.Replacement(Regex("([a-zA-Z]*)DTO.java"), "$1Dto.java"))
                 ))
         ))
 
@@ -90,7 +79,7 @@ class SequentialExpanderTest{
         val actualResult = SequentialExpander(codebase).expandRefactoringPlan(refactoringPlan)
 
         val expectedResult = mapOf(
-                Pair(file1, NewFileLocation(moduleFoobar, moduleFoobar.sourceFolders[0], Paths.get("de/qaware/tools/bulkrename/foobar/test/beans"), "TestBean.java")),
+                Pair(file1, NewFileLocation(moduleFoo, moduleFoo.sourceFolders[0], Paths.get("de/qaware/tools/bulkrename/test"), "TestDto.java")),
                 Pair(file2, NewFileLocation(moduleFoo, moduleFoo.sourceFolders[0], file2.path, file2.fileName)) // unchanged
         )
 
