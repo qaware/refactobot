@@ -14,13 +14,13 @@ class EditProcessor(input : List<String>, private val output: Writer) {
 
     fun applyEdits(edits: List<FileOperation.Edit>) {
 
-        for ((start, end, replacementString) in edits) {
+        for ((span, replacementString) in edits) {
 
             // copy over any material before the edit location
-            output.write(source.readUpTo(start));
+            output.write(source.readUpTo(span.start));
 
             // discard the text up to the end location, and write out the replacement instead
-            source.readUpTo(end)
+            source.readUpTo(span.end)
             output.write(replacementString)
         }
         output.write(source.readRest())

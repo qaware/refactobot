@@ -2,6 +2,7 @@ package de.qaware.tools.bulkrename.executor
 
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.model.operation.Location
+import de.qaware.tools.bulkrename.model.operation.Span
 import org.junit.Test
 import java.io.StringWriter
 import kotlin.test.assertEquals
@@ -36,8 +37,8 @@ class EditProcessorTest {
         val writer = StringWriter()
 
         EditProcessor(EXAMPLE_LINES, writer).applyEdits(listOf(
-                FileOperation.Edit(Location(0, 17), Location(0, 17), "nice "),
-                FileOperation.Edit(Location(1, 5), Location(3, 0), "was edited automatically. ")
+                FileOperation.Edit(Span(Location(0, 17), Location(0, 17)), "nice "),
+                FileOperation.Edit(Span(Location(1, 5), Location(3, 0)), "was edited automatically. ")
         ))
 
         assertEquals(writer.toString(), """

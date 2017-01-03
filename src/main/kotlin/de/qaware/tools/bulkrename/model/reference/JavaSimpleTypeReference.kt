@@ -16,6 +16,6 @@ import de.qaware.tools.bulkrename.util.fileToClass
 data class JavaSimpleTypeReference(override val origin: File, override val target: File, val span: Span): Reference {
 
     override fun getAdjustment(newTarget: NewFileLocation) =
-        FileOperation.Edit(span.start, span.end, fileToClass(newTarget.fileName))
+        FileOperation.Edit(span, fileToClass(newTarget.fileName))
 
 }

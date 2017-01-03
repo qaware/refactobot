@@ -18,7 +18,7 @@ data class JavaQualifiedTypeReference(override val origin: File, override val ta
 
     override fun getAdjustment(newTarget: NewFileLocation): FileOperation.Edit {
         val newFqcn = fileToClass(newTarget.path.resolve(newTarget.fileName).joinToString("/"))
-        return FileOperation.Edit(span.start, span.end, newFqcn)
+        return FileOperation.Edit(span, newFqcn)
     }
 
 }

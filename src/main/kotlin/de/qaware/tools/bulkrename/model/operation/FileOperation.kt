@@ -19,6 +19,6 @@ data class FileOperation(val sourceFile: Path, val targetFile: Path, val edits: 
      * @property range the range to replace
      * @property replacementString the new text to put into this range.
      */
-    data class Edit(val start: Location, val end: Location, val replacementString: String)
+    data class Edit(val span: Span, val replacementString: String)
 }
 

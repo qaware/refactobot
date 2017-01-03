@@ -3,6 +3,7 @@ package de.qaware.tools.bulkrename.executor
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.model.operation.Location
+import de.qaware.tools.bulkrename.model.operation.Span
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -38,7 +39,7 @@ class ExecutorTest {
 
         val operations = listOf(
                 FileOperation(source1, target1, listOf(
-                        FileOperation.Edit(Location(0, 6), Location(0, 11), "Universe")
+                        FileOperation.Edit(Span(Location(0, 6), Location(0, 11)), "Universe")
                 )),
                 FileOperation(source2, target2, emptyList())
         )
