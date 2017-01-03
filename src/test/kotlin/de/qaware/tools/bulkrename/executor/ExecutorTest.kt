@@ -1,6 +1,5 @@
 package de.qaware.tools.bulkrename.executor
 
-import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.operation.Span
@@ -44,7 +43,7 @@ class ExecutorTest {
                 FileOperation(source2, target2, emptyList())
         )
 
-        val executor = Executor(Codebase(codebase, emptyList()))
+        val executor = Executor(codebase)
 
         operations.forEach { executor.execute(it) }
 

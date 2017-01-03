@@ -1,23 +1,22 @@
 package de.qaware.tools.bulkrename.executor
 
-import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * Executer that executes a list of Actions.
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class Executor(private val codebase: Codebase) {
+class Executor(private val rootPath: Path) {
 
     /**
      * Executes a single file move/edit operation
      */
     fun execute(operation: FileOperation) {
-        val rootPath = codebase.rootPath
         val sourcePath = rootPath.resolve(operation.sourceFile)
         val targetPath = rootPath.resolve(operation.targetFile)
 

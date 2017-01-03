@@ -15,6 +15,6 @@ interface ActionPlanner {
     /**
      * Given a refactoring plan and a list of references, compute the operations that must be made to each file.
      */
-    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: List<Reference>) : List<FileOperation>
+    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: Set<Reference>) : List<FileOperation>
 
 }
