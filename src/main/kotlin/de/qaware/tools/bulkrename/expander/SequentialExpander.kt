@@ -2,8 +2,6 @@ package de.qaware.tools.bulkrename.expander
 
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
-import de.qaware.tools.bulkrename.model.codebase.Module
-import de.qaware.tools.bulkrename.model.codebase.SourceFolder
 import de.qaware.tools.bulkrename.model.plan.NewFileLocation
 import de.qaware.tools.bulkrename.model.plan.RefactoringSubject
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
@@ -55,34 +53,21 @@ class SequentialExpander(val codebase: Codebase) : Expander {
      */
     private fun initializeTransformationMap(codebase: Codebase): Map<File, ExpandedStep> {
         val transformationMap = HashMap<File, ExpandedStep>()
+
         for (module in codebase.modules) {
-            transformationMap.putAll(initializeTransformationMapForModule(module))
+            for (folder in module.sourceFolders) {
+                for (file in folder.files) {
+
+                    val expressions = mapOf(Pair(RefactoringSubject.MODULE_NAME, module.name),
+                            Pair(RefactoringSubject.MODULE_PATH, folder.path),
+                            Pair(RefactoringSubject.FILE_NAME, file.fileName),
+                            Pair(RefactoringSubject.FILE_PATH, file.path.toString()))
+
+                    transformationMap.put(file, ExpandedStep(expressions, expressions))
+                }
+            }
         }
         return transformationMap
-    }
-
-    private fun initializeTransformationMapForModule(module: Module): Map<File, ExpandedStep> {
-        val moduleTransformationMap = HashMap<File, ExpandedStep>()
-        for (sourceFolder in module.sourceFolders) {
-            moduleTransformationMap.putAll(initializeTransformationMapForFolder(sourceFolder, module.name))
-        }
-        return moduleTransformationMap
-    }
-
-    private fun initializeTransformationMapForFolder(folder: SourceFolder, moduleName: String): Map<File, ExpandedStep> {
-        val moduleFilesTransformationMap = HashMap<File, ExpandedStep>()
-        for (file in folder.files) {
-            val sourceModuleName = moduleName
-            val sourceModulePath = folder.path
-            val sourceFileName = file.fileName
-            val sourceFilePath = file.path.toString()
-            val sourceExpressions = mapOf(Pair(RefactoringSubject.MODULE_NAME, sourceModuleName),
-                    Pair(RefactoringSubject.MODULE_PATH, sourceModulePath),
-                    Pair(RefactoringSubject.FILE_NAME, sourceFileName),
-                    Pair(RefactoringSubject.FILE_PATH, sourceFilePath))
-            moduleFilesTransformationMap.put(file, ExpandedStep(sourceExpressions, sourceExpressions))
-        }
-        return moduleFilesTransformationMap
     }
 
     /**
@@ -94,17 +79,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
      */
     private fun expandStepToTransformationMap(step: Step, transformationMap: Map<File, ExpandedStep>): Map<File, ExpandedStep> {
         validateStep(step)
-        val resultTransformationMap = HashMap<File, ExpandedStep>()
-        for (file in transformationMap.keys) {
-            if (allMatch(step, transformationMap[file]!!)) {
-                // transformationMap[file] cannot be null since we iterate over keys we got from the map
-                resultTransformationMap.put(file, applyStepOnStep(step, transformationMap[file]!!))
-            } else {
-                // same here
-                resultTransformationMap.put(file, transformationMap[file]!!)
-            }
-        }
-        return resultTransformationMap
+        return transformationMap.mapValues { applyStepOnStep(step, it.value) }
     }
 
     /**
@@ -116,25 +91,23 @@ class SequentialExpander(val codebase: Codebase) : Expander {
      * @return a map of step types to expressions, target expression if defined in the given step, source expression otherwise.
      */
     private fun getMergedStepExpressions(step: ExpandedStep): Map<RefactoringSubject, String> {
-        val mergedStepExpressions = HashMap<RefactoringSubject, String>()
-        for (stepType in RefactoringSubject.values()) {
-            if (step.targetExpression.containsKey(stepType)) {
-                mergedStepExpressions.put(stepType, step.targetExpression[stepType]!!)
-            } else {
-                mergedStepExpressions.put(stepType, step.sourceExpressions[stepType]!!)
-            }
-        }
-        return mergedStepExpressions
+
+        return step.sourceExpressions.plus(step.targetExpression)
     }
 
     /**
-     * Applies the given current step onto the given last step.
+     * Applies the given current step onto the given last step (if it matches)
      *
      * @param currentStep the step to apply
      * @param lastStep the step to apply the given currentStep onto
      * @return lastStep with the currentStep applied onto it
      */
     private fun applyStepOnStep(currentStep: Step, lastStep: ExpandedStep): ExpandedStep {
+
+        if (!allMatch(currentStep, lastStep)) {
+            return lastStep
+        }
+
         val mergedLastStepExpressions = getMergedStepExpressions(lastStep)
         val resultStepExpressions = HashMap<RefactoringSubject, String>()
         for (stepType in RefactoringSubject.values()) {
@@ -174,8 +147,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
      */
     private fun validateStep(step: Step) {
         // This just checks if every target expression also has a source expression.
-        // Depending on the degree of automation it might be sensible to also check for other invalid steps,
-        // e.g. file name change without entity change for java classes etc.
+        // Depending on the degree of automation it might be sensible to also check for other invalid steps
         for (stepType in RefactoringSubject.values()) {
             if (step.targetExpression.containsKey(stepType) && !step.sourceExpressions.containsKey(stepType)) {
                 throw IllegalArgumentException()
