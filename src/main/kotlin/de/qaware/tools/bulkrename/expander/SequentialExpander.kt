@@ -25,13 +25,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
         for (step in refactoringPlan.steps) {
             transformationMap = expandStepToTransformationMap(step, transformationMap)
         }
-        return createRefactoringPlanFromTransformationMap(transformationMap)
-    }
-
-    private fun createRefactoringPlanFromTransformationMap(transformationMap: Map<File, ExpandedStep>): Map<File, NewFileLocation> {
-        val instructionMap = HashMap<File, NewFileLocation>()
-        transformationMap.forEach { instructionMap.put(it.key, createNewFileLocation(it.value.targetExpression)) }
-        return instructionMap
+        return transformationMap.mapValues { entry -> createNewFileLocation(entry.value.targetExpression) }
     }
 
     private fun createNewFileLocation(expansionResult: Map<RefactoringSubject, String>): NewFileLocation {
@@ -69,7 +63,6 @@ class SequentialExpander(val codebase: Codebase) : Expander {
 
     private fun initializeTransformationMapForModule(module: Module): Map<File, ExpandedStep> {
         val moduleTransformationMap = HashMap<File, ExpandedStep>()
-        val moduleRootPath = module.modulePath
         for (sourceFolder in module.sourceFolders) {
             moduleTransformationMap.putAll(initializeTransformationMapForFolder(sourceFolder, module.name))
         }
@@ -87,7 +80,6 @@ class SequentialExpander(val codebase: Codebase) : Expander {
                     Pair(RefactoringSubject.MODULE_PATH, sourceModulePath),
                     Pair(RefactoringSubject.FILE_NAME, sourceFileName),
                     Pair(RefactoringSubject.FILE_PATH, sourceFilePath))
-            val targetExpressions = emptyMap<RefactoringSubject, String>()
             moduleFilesTransformationMap.put(file, ExpandedStep(sourceExpressions, sourceExpressions))
         }
         return moduleFilesTransformationMap
