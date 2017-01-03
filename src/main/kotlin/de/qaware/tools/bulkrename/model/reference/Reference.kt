@@ -12,7 +12,11 @@ import de.qaware.tools.bulkrename.model.plan.NewFileLocation
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-abstract class Reference(val origin: File, val target: File) {
+interface Reference {
+
+    val origin : File
+
+    val target: File
 
     /**
      * Defines how the reference must be adjusted when the target is moved.

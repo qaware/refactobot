@@ -14,7 +14,7 @@ import de.qaware.tools.bulkrename.util.fileToClass
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class JavaQualifiedTypeReference(origin: File, target: File, val span: Span): Reference(origin, target) {
+data class JavaQualifiedTypeReference(override val origin: File, override val target: File, val span: Span): Reference {
 
     override fun getAdjustment(newTarget: NewFileLocation): FileOperation.Edit {
         val newFqcn = fileToClass(newTarget.path.resolve(newTarget.fileName).joinToString("/"))
