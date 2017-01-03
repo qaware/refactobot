@@ -3,6 +3,7 @@ package de.qaware.tools.bulkrename.scanner
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.codebase.FileType
 import de.qaware.tools.bulkrename.model.codebase.Module
+import de.qaware.tools.bulkrename.test.TestData
 import org.junit.Test
 import java.nio.file.Paths
 import kotlin.test.assertNull
@@ -18,8 +19,7 @@ class MavenScannerTest {
 
     @Test
     fun scanMavenCodebase() {
-        val testFolderLocation = this.javaClass.classLoader.getResource("maven_test_modules")
-        val codebase = MavenScanner().scanCodebase(Paths.get(testFolderLocation.toURI()))
+        val codebase = MavenScanner().scanCodebase(Paths.get(TestData.testCodebaseUri))
 
         // Modules
         val expectedModuleNames = listOf("maven_test_module_a", "maven_test_module_b")

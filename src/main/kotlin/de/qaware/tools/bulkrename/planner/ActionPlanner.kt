@@ -1,59 +1,20 @@
 package de.qaware.tools.bulkrename.planner
 
-import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.model.plan.NewFileLocation
 import de.qaware.tools.bulkrename.model.reference.Reference
 
 /**
- * Action planner for refactoring.
+ * The action planner.
  *
- * @author Alexander Lannes alexander.lannes@qaware.de
+ * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class ActionPlanner {
+interface ActionPlanner {
 
     /**
-     * Plans all needed actions for a given refactoring plan with references
+     * Given a refactoring plan and a list of references, compute the operations that must be made to each file.
      */
-    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: List<Reference>, codebase: Codebase) : List<FileOperation> {
-
-        val actions : List<FileOperation> = listOf()
-
-        val referencesByFile: Map<File, List<Reference>> = allReferences.groupBy(Reference::target)
-        val moveActions = mutableListOf<FileOperation>()
-
-        for ((file, newLocation) in refactoringPlan) {
-
-            if (fileIsMoved(file, newLocation)) {
-
-//                moveActions += FileOperation.MoveFile(sourceFile = file.fullPath.resolve(file.fileName),
-//                        targetFile = newLocation.fullPath.resolve(newLocation.fileName))
-
-                // find all references to the file
-                val references = referencesByFile[file] ?: emptyList()
-
-                for (reference in references) {
-//                    if(reference.type == ReferenceType.IMPORT_DECLARATION) {
-//                        actions += EditAction(reference.sourceFile.fileName, ActionType.EDIT_ACTION, reference.range,
-//                                step.targetPackage.toString() + "." + step.newFileName.substringBefore(".java"))
-//                    }
-//                    if(reference.type == ReferenceType.CLASS_DECLARATION || reference.type == ReferenceType.CLASS_REFERENCE) {
-//                        actions += EditAction(reference.sourceFile.fileName, ActionType.EDIT_ACTION, reference.range, step.newFileName.substringBefore(".java"))
-//                    }
-                }
-            }
-
-        }
-        return actions
-    }
-
-    private fun fileIsMoved(file: File, newFileLocation: NewFileLocation) : Boolean =
-            !(file.fullPath == newFileLocation.fullPath && file.fileName == newFileLocation.fileName);
-
-
-
-
-
+    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: List<Reference>) : List<FileOperation>
 
 }
