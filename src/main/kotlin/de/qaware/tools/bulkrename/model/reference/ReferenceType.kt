@@ -18,7 +18,9 @@ enum class ReferenceType {
     FQ_CLASS_OR_INTERFACE_REFERENCE,
 
     /**
-     * A simple type reference
+     * A simple reference to a top-level type.
+     *
+     * The corresponding range contains the simple name of the type.
      */
     CLASS_OR_INTERFACE_REFERENCE
 }

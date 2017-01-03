@@ -1,6 +1,5 @@
-package de.qaware.tools.bulkrename.model.action
+package de.qaware.tools.bulkrename.model.operation
 
-import de.qaware.tools.bulkrename.model.reference.Location
 import java.nio.file.Path
 
 /**

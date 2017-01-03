@@ -1,6 +1,6 @@
 package de.qaware.tools.bulkrename.executor
 
-import de.qaware.tools.bulkrename.model.reference.Location
+import de.qaware.tools.bulkrename.model.operation.Location
 
 
 /**

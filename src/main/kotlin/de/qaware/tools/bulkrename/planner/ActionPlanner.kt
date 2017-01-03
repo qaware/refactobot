@@ -1,10 +1,10 @@
 package de.qaware.tools.bulkrename.planner
 
-import de.qaware.tools.bulkrename.model.action.FileOperation
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
+import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.model.plan.NewFileLocation
-import de.qaware.tools.bulkrename.model.reference.Reference
+import de.qaware.tools.bulkrename.model.reference.OldReference
 
 /**
  * Action planner for refactoring.
@@ -16,11 +16,11 @@ class ActionPlanner {
     /**
      * Plans all needed actions for a given refactoring plan with references
      */
-    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: List<Reference>, codebase: Codebase) : List<FileOperation> {
+    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: List<OldReference>, codebase: Codebase) : List<FileOperation> {
 
         val actions : List<FileOperation> = listOf()
 
-        val referencesByFile: Map<File, List<Reference>> = allReferences.groupBy(Reference::target)
+        val referencesByFile: Map<File, List<OldReference>> = allReferences.groupBy(OldReference::target)
         val moveActions = mutableListOf<FileOperation>()
 
         for ((file, newLocation) in refactoringPlan) {

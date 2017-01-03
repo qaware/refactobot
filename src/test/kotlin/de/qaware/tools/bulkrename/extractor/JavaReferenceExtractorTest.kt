@@ -2,8 +2,8 @@ package de.qaware.tools.bulkrename.extractor
 
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
-import de.qaware.tools.bulkrename.model.reference.Location
-import de.qaware.tools.bulkrename.model.reference.Reference
+import de.qaware.tools.bulkrename.model.operation.Location
+import de.qaware.tools.bulkrename.model.reference.OldReference
 import de.qaware.tools.bulkrename.model.reference.ReferenceType
 import de.qaware.tools.bulkrename.scanner.MavenScanner
 import org.assertj.core.api.Assertions.assertThat
@@ -37,13 +37,13 @@ class JavaReferenceExtractorTest {
         val testClassB = getFileByEntity(codebase, "TestClassB.java")
 
         val expectedReferences = setOf(
-                Reference(classA, interfaceA, Location(3, 8), Location(3, 40), ReferenceType.IMPORT),
-                Reference(classA, interfaceA, Location(5, 32), Location(5, 41), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
-                Reference(classA, interfaceA, Location(7, 13), Location(7, 22), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
-                Reference(testClassA, testClassB, Location(2, 8), Location(2, 40), ReferenceType.IMPORT),
-                Reference(testClassA, testClassB, Location(6, 13), Location(6, 22), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
-                Reference(testClassA, interfaceA, Location(7, 13), Location(7, 45), ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE),
-                Reference(classB, enumB, Location(5, 13), Location(5, 40), ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE)
+                OldReference(classA, interfaceA, Location(3, 8), Location(3, 40), ReferenceType.IMPORT),
+                OldReference(classA, interfaceA, Location(5, 32), Location(5, 41), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
+                OldReference(classA, interfaceA, Location(7, 13), Location(7, 22), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
+                OldReference(testClassA, testClassB, Location(2, 8), Location(2, 40), ReferenceType.IMPORT),
+                OldReference(testClassA, testClassB, Location(6, 13), Location(6, 22), ReferenceType.CLASS_OR_INTERFACE_REFERENCE),
+                OldReference(testClassA, interfaceA, Location(7, 13), Location(7, 45), ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE),
+                OldReference(classB, enumB, Location(5, 13), Location(5, 40), ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE)
         )
 
         assertThat(extractedReferences).isEqualTo(expectedReferences);

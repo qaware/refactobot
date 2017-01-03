@@ -1,7 +1,7 @@
 package de.qaware.tools.bulkrename.executor
 
-import de.qaware.tools.bulkrename.model.action.FileOperation
 import de.qaware.tools.bulkrename.model.codebase.Codebase
+import de.qaware.tools.bulkrename.model.operation.FileOperation
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
