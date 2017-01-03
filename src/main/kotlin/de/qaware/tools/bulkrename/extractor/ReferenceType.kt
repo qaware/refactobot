@@ -1,4 +1,4 @@
-package de.qaware.tools.bulkrename.model.reference
+package de.qaware.tools.bulkrename.extractor
 
 /**
  * Types of references.

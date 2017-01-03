@@ -11,7 +11,6 @@ import de.qaware.tools.bulkrename.model.operation.Span
 import de.qaware.tools.bulkrename.model.reference.JavaQualifiedTypeReference
 import de.qaware.tools.bulkrename.model.reference.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.model.reference.Reference
-import de.qaware.tools.bulkrename.model.reference.ReferenceType
 import de.qaware.tools.bulkrename.util.fileToClass
 import java.io.FileInputStream
 import java.nio.file.Path
