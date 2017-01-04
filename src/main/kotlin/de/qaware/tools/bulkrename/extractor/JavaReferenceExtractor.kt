@@ -69,13 +69,11 @@ class JavaReferenceExtractor : ReferenceExtractor {
     private fun extractReferencesFromFile(file: File, absoluteSourceFolderPath: Path, filesByClass: Map<String, File>): Set<Reference> {
         val filePath = absoluteSourceFolderPath.resolve(file.path).resolve(file.fileName)
         if (file.type == FileType.JAVA) {
-            FileInputStream(filePath.toFile()).use {
-                val compilationUnit = JavaParser.parse(it)
-                val visitors = listOf(ImportVisitor(), ClassDeclarationVisitor(), ClassReferenceVisitor(file))
-                val localReferences = visitors.flatMap { v -> v.extractReferences(compilationUnit) }
+            val compilationUnit = FileInputStream(filePath.toFile()).use { JavaParser.parse(it) }
+            val visitors = listOf(ImportVisitor(), ClassDeclarationVisitor(), ClassReferenceVisitor(file))
+            val localReferences = visitors.flatMap { v -> v.extractReferences(compilationUnit) }
 
-                return createReferencesFromLocalReferences(localReferences, file, filesByClass)
-            }
+            return createReferencesFromLocalReferences(localReferences, file, filesByClass)
         }
         // todo other files
         return HashSet()
