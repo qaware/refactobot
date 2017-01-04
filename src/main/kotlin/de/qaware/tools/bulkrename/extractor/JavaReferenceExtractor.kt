@@ -2,6 +2,7 @@ package de.qaware.tools.bulkrename.extractor
 
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.ImportDeclaration
+import com.github.javaparser.ast.Node
 import com.github.javaparser.ast.expr.QualifiedNameExpr
 import com.github.javaparser.ast.type.ClassOrInterfaceType
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
@@ -90,10 +91,10 @@ class JavaReferenceExtractor : ReferenceExtractor {
         val fullyQualifiedClassReferences = rawReferences.filter { it.referenceType == ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE && filesByClass.containsKey(it.scope!! + "." + it.name) }
         val relevantUnqualifiedReferences = rawReferences.filter { it.referenceType == ReferenceType.CLASS_OR_INTERFACE_REFERENCE && relevantImports.map { it.name }.contains(it.name) }
 
-        val importReferences = relevantImports.map { JavaQualifiedTypeReference(sourceFile, filesByClass[it.scope!! + "." + it.name]!!, Span(it.begin, it.end)) }
-        val fqcReferences = fullyQualifiedClassReferences.map { JavaQualifiedTypeReference(sourceFile, filesByClass[it.scope!! + "." + it.name]!!, Span(it.begin, it.end)) }
+        val importReferences = relevantImports.map { JavaQualifiedTypeReference(sourceFile, filesByClass[it.scope!! + "." + it.name]!!, it.span) }
+        val fqcReferences = fullyQualifiedClassReferences.map { JavaQualifiedTypeReference(sourceFile, filesByClass[it.scope!! + "." + it.name]!!, it.span) }
         val localToFQN = relevantImports.associateBy({ it.name }, { it.scope + "." + it.name })
-        val unqualifiedReferences = relevantUnqualifiedReferences.map { JavaSimpleTypeReference(sourceFile, filesByClass[localToFQN[it.name]]!!, Span(it.begin, it.end)) }
+        val unqualifiedReferences = relevantUnqualifiedReferences.map { JavaSimpleTypeReference(sourceFile, filesByClass[localToFQN[it.name]]!!, it.span) }
 
         return importReferences
                 .union(fqcReferences)
@@ -112,8 +113,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
             if (n != null) {
                 references.add(RawReference(
                         ReferenceType.IMPORT,
-                        Location.oneBased(n.name.begin.line, n.name.begin.column),
-                        Location.oneBased(n.name.end.line, n.name.end.column + 1),
+                        n.name.getSpan(),
                         (n.name as? QualifiedNameExpr)?.qualifier?.toString() ?: throw UnsupportedOperationException("Imports must be qualified."),
                         n.name.name
                 ))
@@ -138,8 +138,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
                         if (n.typeArguments.typeArguments.isEmpty()) Location.oneBased(n.end.line, n.end.column + 1)
                         else Location.oneBased(n.typeArguments.typeArguments.first().begin.line, n.typeArguments.typeArguments.first().begin.column - 1)
                 references.add(RawReference(type,
-                        Location.oneBased(n.begin.line, n.begin.column),
-                        endLocation,
+                        Span(Location.oneBased(n.begin.line, n.begin.column), endLocation),
                         n.scope?.toString(),
                         n.name
                 ))
@@ -150,9 +149,14 @@ class JavaReferenceExtractor : ReferenceExtractor {
 
     private data class RawReference(
             val referenceType: ReferenceType,
-            val begin: Location,
-            val end: Location,
+            val span: Span,
             val scope: String?,
             val name: String
     )
 }
+
+/**
+ * Creates a span for a given node.
+ */
+private fun Node.getSpan() =
+        Span(Location.oneBased(this.begin.line, this.begin.column), Location.oneBased(this.end.line, this.end.column + 1))
