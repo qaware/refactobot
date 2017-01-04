@@ -32,7 +32,7 @@ class LineSource(private val lines : List<String>) {
         }
 
         if (newPosition.column > 0) {
-            sb.append(lines[currentPosition.line].substring(0, newPosition.column))
+            sb.append(lines[currentPosition.line].substring(currentPosition.column, newPosition.column))
         }
 
         currentPosition = newPosition

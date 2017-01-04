@@ -3,6 +3,7 @@ package de.qaware.tools.bulkrename.executor
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.operation.Span
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.StringWriter
 import kotlin.test.assertEquals
@@ -45,5 +46,17 @@ class EditProcessorTest {
         |Hello, this is a nice piece of text
         |that was edited automatically. The end.
         |""".trimMargin())
+    }
+
+    @Test
+    fun testMultipleEditsOnALine() {
+
+        val writer = StringWriter()
+        EditProcessor(listOf("We need apples and oranges."), writer).applyEdits(listOf(
+                FileOperation.Edit(Span(Location(0, 8), Location(0, 14)), "lambdas"),
+                FileOperation.Edit(Span(Location(0, 19), Location(0, 26)), "recursion")
+        ))
+
+        assertThat(writer.toString()).isEqualTo("We need lambdas and recursion.\n")
     }
 }
