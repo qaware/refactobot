@@ -3,6 +3,7 @@ package de.qaware.tools.bulkrename.extractor
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.ImportDeclaration
 import com.github.javaparser.ast.Node
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import com.github.javaparser.ast.expr.QualifiedNameExpr
 import com.github.javaparser.ast.type.ClassOrInterfaceType
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
@@ -73,11 +74,10 @@ class JavaReferenceExtractor : ReferenceExtractor {
     private fun extractReferencesFromFile(file: File, absoluteSourceFolderPath: Path, filesByClass: Map<String, File>): Set<Reference> {
         val filePath = absoluteSourceFolderPath.resolve(file.path).resolve(file.fileName)
         if (file.type == FileType.JAVA) {
-            val inputStream = FileInputStream(filePath.toFile())
-            inputStream.use {
+            FileInputStream(filePath.toFile()).use {
                 val compilationUnit = JavaParser.parse(it)
                 val importVisitor = ReferencesVisitor(file)
-                importVisitor.visit(compilationUnit, compilationUnit.`package`.packageName)
+                importVisitor.visit(compilationUnit, Unit)
                 val localReferences = importVisitor.references
                 return createReferencesFromLocalReferences(localReferences, file, filesByClass)
             }
@@ -105,15 +105,15 @@ class JavaReferenceExtractor : ReferenceExtractor {
      * A visitor used for the JavaParser. Takes all supported references
      * and offers a set of imports as result.
      */
-    private class ReferencesVisitor(val file: File) : VoidVisitorAdapter<String>() {
+    private class ReferencesVisitor(val file: File) : VoidVisitorAdapter<Unit>() {
 
         var references = HashSet<RawReference>()
 
-        override fun visit(n: ImportDeclaration?, arg: String?) {
+        override fun visit(n: ImportDeclaration?, arg: Unit) {
             if (n != null) {
                 references.add(RawReference(
                         ReferenceType.IMPORT,
-                        n.name.getSpan(),
+                        n.name.toSpan(),
                         (n.name as? QualifiedNameExpr)?.qualifier?.toString() ?: throw UnsupportedOperationException("Imports must be qualified."),
                         n.name.name
                 ))
@@ -121,7 +121,19 @@ class JavaReferenceExtractor : ReferenceExtractor {
             super.visit(n, arg)
         }
 
-        override fun visit(n: ClassOrInterfaceType?, arg: String?) {
+        override fun visit(decl: ClassOrInterfaceDeclaration?, arg: Unit) {
+            if (decl != null) {
+                references.add(RawReference(
+                        ReferenceType.CLASS_OR_INTERFACE_REFERENCE,
+                        decl.nameExpr.toSpan(),
+                        null,
+                        decl.name
+                ))
+            }
+            super.visit(decl, arg)
+        }
+
+        override fun visit(n: ClassOrInterfaceType?, arg: Unit) {
             if (n != null) {
                 if (n.typeArguments.typeArguments.isNotEmpty() && n.begin.line != n.end.line) {
                     // The range of the name is no longer correct for multiline generics, so we simply do not support it.
@@ -158,5 +170,5 @@ class JavaReferenceExtractor : ReferenceExtractor {
 /**
  * Creates a span for a given node.
  */
-private fun Node.getSpan() =
+private fun Node.toSpan() =
         Span(Location.oneBased(this.begin.line, this.begin.column), Location.oneBased(this.end.line, this.end.column + 1))
