@@ -11,7 +11,7 @@ import de.qaware.tools.bulkrename.model.operation.Span
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-abstract class ReferenceVisitor : VoidVisitorAdapter<Unit>() {
+abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidVisitorAdapter<Unit>() {
 
     val collectedReferences: MutableSet<RawReference> = hashSetOf()
 

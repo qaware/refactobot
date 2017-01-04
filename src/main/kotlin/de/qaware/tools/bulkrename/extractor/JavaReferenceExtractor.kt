@@ -1,6 +1,7 @@
 package de.qaware.tools.bulkrename.extractor
 
 import com.github.javaparser.JavaParser
+import com.github.javaparser.ast.ImportDeclaration
 import de.qaware.tools.bulkrename.extractor.visitors.ClassDeclarationVisitor
 import de.qaware.tools.bulkrename.extractor.visitors.ClassReferenceVisitor
 import de.qaware.tools.bulkrename.extractor.visitors.ImportVisitor
@@ -70,7 +71,21 @@ class JavaReferenceExtractor : ReferenceExtractor {
         val filePath = absoluteSourceFolderPath.resolve(file.path).resolve(file.fileName)
         if (file.type == FileType.JAVA) {
             val compilationUnit = FileInputStream(filePath.toFile()).use { JavaParser.parse(it) }
-            val visitors = listOf(ImportVisitor(), ClassDeclarationVisitor(), ClassReferenceVisitor(file))
+            val importMap = compilationUnit.imports
+                    .map { analyzeImport(it) }
+                    .filterNotNull()
+                    .toMap()
+
+            val context = (object : ReferenceExtractionContext {
+                override fun getCurrentFile() = file
+                override fun getFileForClass(fqcn: String) = filesByClass[fqcn]
+                override fun getFileForImportedClass(simpleName: String): File? {
+                    val fqcn = importMap[simpleName]
+                    return if (fqcn != null) filesByClass[fqcn] else null
+                }
+            })
+
+            val visitors = listOf(ImportVisitor(context), ClassDeclarationVisitor(context), ClassReferenceVisitor(context))
             val localReferences = visitors.flatMap { v -> v.extractReferences(compilationUnit) }
 
             return createReferencesFromLocalReferences(localReferences, file, filesByClass)
@@ -93,5 +108,24 @@ class JavaReferenceExtractor : ReferenceExtractor {
                 .union(fqcReferences)
                 .union(unqualifiedReferences)
     }
+
+
+    private fun analyzeImport(importDeclaration: ImportDeclaration): Pair<String, String>? {
+
+        val name = importDeclaration.name.toString()
+        val nameParts = name.split(".")
+
+        // assume the usual capitalization conventions, to be able to tell which one is the package and which one is the file.
+
+        if (nameParts.dropLast(1).all { it[0].isLowerCase() }) {
+            // only the last part starts with an upper case letter, so by the usual naming conventions, we know that this
+            // imports a top-level declaration of a compilation unit.
+
+            return Pair(nameParts.last(), name)
+        }
+
+        return null;
+    }
+
 }
 

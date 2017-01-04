@@ -3,6 +3,7 @@ package de.qaware.tools.bulkrename.extractor.visitors
 import com.github.javaparser.ast.ImportDeclaration
 import com.github.javaparser.ast.expr.QualifiedNameExpr
 import de.qaware.tools.bulkrename.extractor.RawReference
+import de.qaware.tools.bulkrename.extractor.ReferenceExtractionContext
 import de.qaware.tools.bulkrename.extractor.ReferenceType
 import de.qaware.tools.bulkrename.extractor.ReferenceVisitor
 
@@ -11,7 +12,7 @@ import de.qaware.tools.bulkrename.extractor.ReferenceVisitor
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class ImportVisitor : ReferenceVisitor() {
+class ImportVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(context) {
 
     override fun visit(n: ImportDeclaration?, arg: Unit) {
         if (n != null) {
