@@ -38,13 +38,13 @@ class JavaReferenceExtractorTest {
         val testClassB = getFileByEntity(codebase, "TestClassB.java")
 
         val expectedReferences = setOf(
-                JavaQualifiedTypeReference(classA, interfaceA, Span(Location(3, 8), Location(3, 40))),
-                JavaSimpleTypeReference(classA, interfaceA, Span(Location(5, 32), Location(5, 41))),
-                JavaSimpleTypeReference(classA, interfaceA, Span(Location(7, 13), Location(7, 22))),
-                JavaQualifiedTypeReference(testClassA, testClassB, Span(Location(2, 8), Location(2, 40))),
-                JavaSimpleTypeReference(testClassA, testClassB, Span(Location(6, 13), Location(6, 22))),
-                JavaQualifiedTypeReference(testClassA, interfaceA, Span(Location(7, 13), Location(7, 45))),
-                JavaQualifiedTypeReference(classB, enumB, Span(Location(5, 13), Location(5, 40)))
+                JavaQualifiedTypeReference(classA, interfaceA, Span(Location(2, 7), Location(2, 39))),
+                JavaSimpleTypeReference(classA, interfaceA, Span(Location(4, 31), Location(4, 40))),
+                JavaSimpleTypeReference(classA, interfaceA, Span(Location(6, 12), Location(6, 21))),
+                JavaQualifiedTypeReference(testClassA, testClassB, Span(Location(1, 7), Location(1, 39))),
+                JavaSimpleTypeReference(testClassA, testClassB, Span(Location(5, 12), Location(5, 21))),
+                JavaQualifiedTypeReference(testClassA, interfaceA, Span(Location(6, 12), Location(6, 44))),
+                JavaQualifiedTypeReference(classB, enumB, Span(Location(4, 12), Location(4, 39)))
         )
 
         assertThat(extractedReferences).isEqualTo(expectedReferences);
