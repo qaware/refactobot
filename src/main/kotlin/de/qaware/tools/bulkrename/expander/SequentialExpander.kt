@@ -4,6 +4,7 @@ import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.plan.NewFileLocation
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
+import de.qaware.tools.bulkrename.util.slashify
 import java.nio.file.Paths
 import java.util.*
 
@@ -25,7 +26,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
                 for (file in folder.files) {
 
                     // ...apply all transformations to its location...
-                    var location = RawLocation(module.name, folder.path, file.path.toString(), file.fileName)
+                    var location = RawLocation(module.modulePath.slashify(), folder.path, file.path.toString(), file.fileName)
                     for (step in refactoringPlan.steps) {
                         location = location.applyStep(step)
                     }
@@ -42,10 +43,10 @@ class SequentialExpander(val codebase: Codebase) : Expander {
 
         val fileName = expansionResult.filename
         val path = expansionResult.path
-        val moduleName = expansionResult.moduleName
+        val moduleName = expansionResult.module
         val sourceRoot = expansionResult.sourceRoot
 
-        val newModule = codebase.modules.find { it.name == moduleName }
+        val newModule = codebase.modules.find { it.modulePath.slashify() == moduleName }
                 ?: throw IllegalStateException("Unknown module " + moduleName)
         val newSourceFolder = newModule.sourceFolders.find { it.path == sourceRoot }
                 ?: throw IllegalStateException("No source folder with path " + sourceRoot + " in module " + newModule.name)

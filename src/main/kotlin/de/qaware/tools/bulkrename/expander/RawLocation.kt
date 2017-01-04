@@ -9,7 +9,7 @@ import de.qaware.tools.bulkrename.model.plan.Step
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
 data class RawLocation(
-        val moduleName: String,
+        val module: String,
         val sourceRoot: String,
         val path: String,
         val filename: String
@@ -17,7 +17,7 @@ data class RawLocation(
     private fun getByKey(key: RefactoringSubject) =
             when (key) {
                 RefactoringSubject.FILE_NAME -> filename
-                RefactoringSubject.MODULE_NAME -> moduleName
+                RefactoringSubject.MODULE -> module
                 RefactoringSubject.FILE_PATH -> path
                 RefactoringSubject.SOURCE_ROOT -> sourceRoot
             }
@@ -25,7 +25,7 @@ data class RawLocation(
     private fun updateByKey(key: RefactoringSubject, newValue: String): RawLocation =
             when (key) {
                 RefactoringSubject.FILE_NAME -> this.copy(filename = newValue)
-                RefactoringSubject.MODULE_NAME -> this.copy(moduleName = newValue)
+                RefactoringSubject.MODULE -> this.copy(module = newValue)
                 RefactoringSubject.FILE_PATH -> this.copy(path = newValue)
                 RefactoringSubject.SOURCE_ROOT -> this.copy(sourceRoot = newValue)
             }

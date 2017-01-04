@@ -1,5 +1,7 @@
 package de.qaware.tools.bulkrename.util
 
+import java.nio.file.Path
+
 /**
  * Converts the file name and, to a fully-qualified class name. This merely converts slashes to dots and removes the
  * extension, which assumes the standard Java conventions on package layout.
@@ -23,3 +25,9 @@ fun fileToClass(filename: String): String {
  */
 fun classToFile(className: String) : String =
         className.replace('.', '/') + ".java"
+
+
+/**
+ * Converts a path to a slash-separated string, instead of the system dependent version, which may use backslashes.
+ */
+fun Path.slashify() = this.joinToString("/")

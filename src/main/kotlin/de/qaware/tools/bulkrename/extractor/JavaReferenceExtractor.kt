@@ -12,6 +12,7 @@ import de.qaware.tools.bulkrename.model.reference.JavaQualifiedTypeReference
 import de.qaware.tools.bulkrename.model.reference.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.model.reference.Reference
 import de.qaware.tools.bulkrename.util.fileToClass
+import de.qaware.tools.bulkrename.util.slashify
 import java.io.FileInputStream
 import java.nio.file.Path
 import java.util.*
@@ -36,7 +37,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
                 .flatMap { it.sourceFolders }
                 .flatMap { it.files }
                 .filter { it.type == FileType.JAVA }
-                .associateBy({ file -> fileToClass(file.path.resolve(file.fileName).joinToString("/")) }, { it })
+                .associateBy({ file -> fileToClass(file.path.resolve(file.fileName).slashify()) }, { it })
     }
 
     /**
