@@ -74,7 +74,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
             val inputStream = FileInputStream(filePath.toFile())
             inputStream.use {
                 val compilationUnit = JavaParser.parse(it)
-                val importVisitor = ReferencesVisitor()
+                val importVisitor = ReferencesVisitor(file)
                 importVisitor.visit(compilationUnit, compilationUnit.`package`.packageName)
                 val localReferences = importVisitor.references
                 return createReferencesFromLocalReferences(localReferences, file, filesByClass)
@@ -103,7 +103,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
      * A visitor used for the JavaParser. Takes all supported references
      * and offers a set of imports as result.
      */
-    private class ReferencesVisitor : VoidVisitorAdapter<String>() {
+    private class ReferencesVisitor(val file: File) : VoidVisitorAdapter<String>() {
 
         var references = HashSet<RawReference>()
 
@@ -124,13 +124,13 @@ class JavaReferenceExtractor : ReferenceExtractor {
             if (n != null) {
                 if (n.typeArguments.typeArguments.isNotEmpty() && n.begin.line != n.end.line) {
                     // The range of the name is no longer correct for multiline generics, so we simply do not support it.
-                    throw UnsupportedOperationException("Multiline usage of generic types is not supported: %s (%d:%d-%d:%d)"
-                            .format(n.name, n.begin.line, n.begin.column, n.end.line, n.end.column))
+                    throw UnsupportedOperationException("Multiline usage of generic types is not supported: %s (%d:%d-%d:%d) in file %s"
+                            .format(n.name, n.begin.line, n.begin.column, n.end.line, n.end.column, file))
                 }
                 val fullName = (if (n.scope != null) n.scope.toString() + "." else "") + n.name
                 if (n.typeArguments.typeArguments.isNotEmpty() && n.typeArguments.typeArguments.first().begin.column - (n.begin.column + fullName.length) != 1) {
-                    throw UnsupportedOperationException("Spaces in generic type references are not supported: %s (%d:%d-%d:%d)"
-                            .format(n.name, n.begin.line, n.begin.column, n.end.line, n.end.column))
+                    throw UnsupportedOperationException("Spaces in generic type references are not supported: %s (%d:%d-%d:%d) in file %s"
+                            .format(n.name, n.begin.line, n.begin.column, n.end.line, n.end.column, file))
                 }
                 val type = if (n.scope != null) ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE else ReferenceType.CLASS_OR_INTERFACE_REFERENCE
                 val endLocation = if (n.typeArguments.typeArguments.isEmpty()) Location(n.end.line, n.end.column) else Location(n.typeArguments.typeArguments.first().begin.line, n.typeArguments.typeArguments.first().begin.column - 2)
