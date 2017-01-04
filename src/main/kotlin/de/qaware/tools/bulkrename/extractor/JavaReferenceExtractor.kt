@@ -96,7 +96,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
 
         return importReferences
                 .union(fqcReferences)
-                .union(unqualifiedReferences);
+                .union(unqualifiedReferences)
     }
 
     /**
