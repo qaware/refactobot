@@ -14,7 +14,7 @@ class EditProcessor(input : List<String>, private val output: Writer) {
 
     fun applyEdits(edits: List<FileOperation.Edit>) {
 
-        for ((span, replacementString) in edits) {
+        for ((span, replacementString) in edits.sortedBy { it.span.start }) {
 
             // copy over any material before the edit location
             output.write(source.readUpTo(span.start));
