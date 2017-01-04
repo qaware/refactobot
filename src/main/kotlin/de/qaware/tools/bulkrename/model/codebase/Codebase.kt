@@ -18,4 +18,7 @@ data class Codebase(
          * The modules
          */
         val modules: List<Module>
-)
+) {
+        val allFiles: List<File>
+                get() = modules.flatMap { it.sourceFolders }.flatMap { it.files }
+}
