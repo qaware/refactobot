@@ -1,15 +1,10 @@
 package de.qaware.tools.bulkrename.extractor
 
 import com.github.javaparser.JavaParser
-import com.github.javaparser.ast.ImportDeclaration
-import com.github.javaparser.ast.Node
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
-import com.github.javaparser.ast.expr.QualifiedNameExpr
-import com.github.javaparser.ast.type.ClassOrInterfaceType
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter
+import de.qaware.tools.bulkrename.extractor.visitors.ClassDeclarationVisitor
+import de.qaware.tools.bulkrename.extractor.visitors.ClassReferenceVisitor
+import de.qaware.tools.bulkrename.extractor.visitors.ImportVisitor
 import de.qaware.tools.bulkrename.model.codebase.*
-import de.qaware.tools.bulkrename.model.operation.Location
-import de.qaware.tools.bulkrename.model.operation.Span
 import de.qaware.tools.bulkrename.model.reference.JavaQualifiedTypeReference
 import de.qaware.tools.bulkrename.model.reference.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.model.reference.Reference
@@ -76,9 +71,9 @@ class JavaReferenceExtractor : ReferenceExtractor {
         if (file.type == FileType.JAVA) {
             FileInputStream(filePath.toFile()).use {
                 val compilationUnit = JavaParser.parse(it)
-                val importVisitor = ReferencesVisitor(file)
-                importVisitor.visit(compilationUnit, Unit)
-                val localReferences = importVisitor.references
+                val visitors = listOf(ImportVisitor(), ClassDeclarationVisitor(), ClassReferenceVisitor(file))
+                val localReferences = visitors.flatMap { v -> v.extractReferences(compilationUnit) }
+
                 return createReferencesFromLocalReferences(localReferences, file, filesByClass)
             }
         }
@@ -86,7 +81,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
         return HashSet()
     }
 
-    private fun createReferencesFromLocalReferences(rawReferences: Set<RawReference>, sourceFile: File, filesByClass: Map<String, File>): Set<Reference> {
+    private fun createReferencesFromLocalReferences(rawReferences: Collection<RawReference>, sourceFile: File, filesByClass: Map<String, File>): Set<Reference> {
         val relevantImports = rawReferences.filter { it.referenceType == ReferenceType.IMPORT && filesByClass.containsKey(it.scope!! + "." + it.name) }
         val fullyQualifiedClassReferences = rawReferences.filter { it.referenceType == ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE && filesByClass.containsKey(it.scope!! + "." + it.name) }
         val relevantUnqualifiedReferences = rawReferences.filter { it.referenceType == ReferenceType.CLASS_OR_INTERFACE_REFERENCE && relevantImports.map { it.name }.contains(it.name) }
@@ -100,75 +95,5 @@ class JavaReferenceExtractor : ReferenceExtractor {
                 .union(fqcReferences)
                 .union(unqualifiedReferences)
     }
-
-    /**
-     * A visitor used for the JavaParser. Takes all supported references
-     * and offers a set of imports as result.
-     */
-    private class ReferencesVisitor(val file: File) : VoidVisitorAdapter<Unit>() {
-
-        var references = HashSet<RawReference>()
-
-        override fun visit(n: ImportDeclaration?, arg: Unit) {
-            if (n != null) {
-                references.add(RawReference(
-                        ReferenceType.IMPORT,
-                        n.name.toSpan(),
-                        (n.name as? QualifiedNameExpr)?.qualifier?.toString() ?: throw UnsupportedOperationException("Imports must be qualified."),
-                        n.name.name
-                ))
-            }
-            super.visit(n, arg)
-        }
-
-        override fun visit(decl: ClassOrInterfaceDeclaration?, arg: Unit) {
-            if (decl != null) {
-                references.add(RawReference(
-                        ReferenceType.CLASS_OR_INTERFACE_REFERENCE,
-                        decl.nameExpr.toSpan(),
-                        null,
-                        decl.name
-                ))
-            }
-            super.visit(decl, arg)
-        }
-
-        override fun visit(n: ClassOrInterfaceType?, arg: Unit) {
-            if (n != null) {
-                if (n.typeArguments.typeArguments.isNotEmpty() && n.begin.line != n.end.line) {
-                    // The range of the name is no longer correct for multiline generics, so we simply do not support it.
-                    throw UnsupportedOperationException("Multiline usage of generic types is not supported: %s (%d:%d-%d:%d) in file %s"
-                            .format(n.name, n.begin.line, n.begin.column, n.end.line, n.end.column, file))
-                }
-                val fullName = (if (n.scope != null) n.scope.toString() + "." else "") + n.name
-                if (n.typeArguments.typeArguments.isNotEmpty() && n.typeArguments.typeArguments.first().begin.column - (n.begin.column + fullName.length) != 1) {
-                    throw UnsupportedOperationException("Spaces in generic type references are not supported: %s (%d:%d-%d:%d) in file %s"
-                            .format(n.name, n.begin.line, n.begin.column, n.end.line, n.end.column, file))
-                }
-                val type = if (n.scope != null) ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE else ReferenceType.CLASS_OR_INTERFACE_REFERENCE
-                val endLocation =
-                        if (n.typeArguments.typeArguments.isEmpty()) Location.oneBased(n.end.line, n.end.column + 1)
-                        else Location.oneBased(n.typeArguments.typeArguments.first().begin.line, n.typeArguments.typeArguments.first().begin.column - 1)
-                references.add(RawReference(type,
-                        Span(Location.oneBased(n.begin.line, n.begin.column), endLocation),
-                        n.scope?.toString(),
-                        n.name
-                ))
-            }
-            super.visit(n, arg)
-        }
-    }
-
-    private data class RawReference(
-            val referenceType: ReferenceType,
-            val span: Span,
-            val scope: String?,
-            val name: String
-    )
 }
 
-/**
- * Creates a span for a given node.
- */
-private fun Node.toSpan() =
-        Span(Location.oneBased(this.begin.line, this.begin.column), Location.oneBased(this.end.line, this.end.column + 1))
