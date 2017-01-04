@@ -28,6 +28,11 @@ fun classToFile(className: String) : String =
 
 
 /**
+ * Splits a string into lines, but keeps newlines.
+ */
+fun String.splitLines() = this.split(Regex("(?<=\\n)"))
+
+/**
  * Converts a path to a slash-separated string, instead of the system dependent version, which may use backslashes.
  */
 fun Path.slashify() = this.joinToString("/")

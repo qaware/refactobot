@@ -3,6 +3,7 @@ package de.qaware.tools.bulkrename.executor
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.operation.Span
+import de.qaware.tools.bulkrename.util.splitLines
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.StringWriter
@@ -20,7 +21,7 @@ class EditProcessorTest {
     |that spans multiple lines.
     |
     |The end.
-    """.trimMargin().split("\n")
+    """.trimMargin().splitLines()
 
     @Test
     fun testLineSource() {
@@ -29,7 +30,7 @@ class EditProcessorTest {
         assertEquals(source.readUpTo(Location(0, 0)), "");
         assertEquals(source.readUpTo(Location(0, 6)), "Hello,");
         assertEquals(source.readUpTo(Location(3, 3)), " this is a piece of text\nthat spans multiple lines.\n\nThe");
-        assertEquals(source.readRest(), " end.\n")
+        assertEquals(source.readRest(), " end.")
     }
 
     @Test
@@ -44,8 +45,7 @@ class EditProcessorTest {
 
         assertEquals(writer.toString(), """
         |Hello, this is a nice piece of text
-        |that was edited automatically. The end.
-        |""".trimMargin())
+        |that was edited automatically. The end.""".trimMargin())
     }
 
     @Test
@@ -57,6 +57,6 @@ class EditProcessorTest {
                 FileOperation.Edit(Span(Location(0, 19), Location(0, 26)), "recursion")
         ))
 
-        assertThat(writer.toString()).isEqualTo("We need lambdas and recursion.\n")
+        assertThat(writer.toString()).isEqualTo("We need lambdas and recursion.")
     }
 }

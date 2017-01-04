@@ -2,6 +2,7 @@ package de.qaware.tools.bulkrename.executor
 
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.util.slashify
+import de.qaware.tools.bulkrename.util.splitLines
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
@@ -27,7 +28,7 @@ class Executor(private val rootPath: Path) {
             throw IllegalStateException("Target file already exists: " + operation.targetFile)
         }
 
-        val lines = File(sourcePath.toUri()).readLines()
+        val lines = File(sourcePath.toUri()).readText(Charsets.UTF_8).splitLines()
 
         Files.createDirectories(targetPath.parent)
         val writer = FileWriter(targetPath.toFile())

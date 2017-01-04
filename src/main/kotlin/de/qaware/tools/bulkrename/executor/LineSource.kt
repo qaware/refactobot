@@ -8,8 +8,6 @@ import de.qaware.tools.bulkrename.model.operation.Location
  */
 class LineSource(private val lines : List<String>) {
 
-    private val NEWLINE : String = "\n"
-
     private var currentPosition: Location = Location(0, 0)
 
     fun readUpTo(newPosition : Location) : String {
@@ -21,11 +19,11 @@ class LineSource(private val lines : List<String>) {
         } else if (currentPosition.line < newPosition.line) {
 
             // rest of current line
-            sb.append(lines[currentPosition.line].substring(currentPosition.column)).append(NEWLINE)
+            sb.append(lines[currentPosition.line].substring(currentPosition.column))
 
             // any lines in between
             for (i in IntRange(currentPosition.line + 1, newPosition.line - 1)) {
-                sb.append(lines[i]).append(NEWLINE)
+                sb.append(lines[i])
             }
 
             currentPosition = Location(newPosition.line, 0)
