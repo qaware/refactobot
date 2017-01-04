@@ -33,9 +33,9 @@ data class NewFileLocation(
 ) {
 
     /**
-     * The full path of the new file, relative to the codebase root.
+     * The full path and name of the new file, relative to the codebase root.
      */
-    val fullPath = module.modulePath.resolve(sourceFolder.path).resolve(path)
+    val fullName = module.modulePath.resolve(sourceFolder.path).resolve(path).resolve(fileName)
 
 }
 

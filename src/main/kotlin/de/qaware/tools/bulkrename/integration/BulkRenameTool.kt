@@ -19,8 +19,8 @@ object BulkRenameTool {
 
         val codebase = MavenScanner().scanCodebase(root)
 
-        val fullRefactoringPlan = SequentialExpander(codebase).expandRefactoringPlan(refactoringPlan)
         val references = JavaReferenceExtractor().extractReferences(codebase)
+        val fullRefactoringPlan = SequentialExpander(codebase).expandRefactoringPlan(refactoringPlan)
         val operations = ActionPlannerImpl().planActions(fullRefactoringPlan, references)
 
         val executor = Executor(root)

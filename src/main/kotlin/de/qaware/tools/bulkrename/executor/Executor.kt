@@ -1,6 +1,7 @@
 package de.qaware.tools.bulkrename.executor
 
 import de.qaware.tools.bulkrename.model.operation.FileOperation
+import de.qaware.tools.bulkrename.util.slashify
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
@@ -20,7 +21,9 @@ class Executor(private val rootPath: Path) {
         val sourcePath = rootPath.resolve(operation.sourceFile)
         val targetPath = rootPath.resolve(operation.targetFile)
 
-        if (Files.exists(targetPath)) {
+        println("Moving " + sourcePath.slashify() + " -> " + targetPath.slashify())
+
+        if (sourcePath != targetPath && Files.exists(targetPath)) {
             throw IllegalStateException("Target file already exists: " + operation.targetFile)
         }
 
@@ -29,6 +32,9 @@ class Executor(private val rootPath: Path) {
         Files.createDirectories(targetPath.parent)
         val writer = FileWriter(targetPath.toFile())
         EditProcessor(lines, writer).applyEdits(operation.edits)
-        Files.delete(sourcePath)
+
+        if (sourcePath != targetPath) {
+            Files.delete(sourcePath)
+        }
     }
 }

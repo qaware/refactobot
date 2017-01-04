@@ -21,7 +21,7 @@ class ActionPlannerImpl : ActionPlanner {
 
         val editsPerFile: Map<File, List<FileOperation.Edit>> = collectEditsPerFile(allReferences, refactoringPlan)
 
-        return refactoringPlan.map { entry -> FileOperation(entry.key.fullPath, entry.value.fullPath, editsPerFile[entry.key] ?: emptyList()) }
+        return refactoringPlan.map { entry -> FileOperation(entry.key.fullName, entry.value.fullName, editsPerFile[entry.key] ?: emptyList()) }
     }
 
     private fun collectEditsPerFile(allReferences: Set<Reference>, refactoringPlan: Map<File, NewFileLocation>): Map<File, List<FileOperation.Edit>> {

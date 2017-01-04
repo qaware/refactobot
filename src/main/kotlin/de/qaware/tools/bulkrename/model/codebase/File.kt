@@ -28,5 +28,7 @@ data class File(
          * The type of the file.
          */
         val type: FileType
-)
+) {
+    val fullName = fullPath.resolve(fileName)
+}
 
