@@ -32,18 +32,23 @@ class ClassReferenceVisitor(context: ReferenceExtractionContext) : ReferenceVisi
             }
 
             // extract span
-            val endLocation =
-                    if (n.typeArguments.typeArguments.isEmpty()) Location.oneBased(n.end.line, n.end.column + 1)
-                    else Location.oneBased(n.typeArguments.typeArguments.first().begin.line, n.typeArguments.typeArguments.first().begin.column - 1)
+            val endLocation = when {
+                n.typeArguments.typeArguments.isNotEmpty() ->
+                    Location.oneBased(n.typeArguments.typeArguments.first().begin.line, n.typeArguments.typeArguments.first().begin.column - 1)
+                n.isUsingDiamondOperator ->
+                    Location.oneBased(n.end.line, n.end.column - 1)
+                else -> Location.oneBased(n.end.line, n.end.column + 1)
+            }
+
             val span = Span(n.begin.toLocation(), endLocation)
 
             if (n.scope != null) {
-                val target = context.getFileForClass(fullName)
+                val target = context.resolveFullName(fullName)
                 if (target != null) {
                     emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, span))
                 }
             } else {
-                val target = context.getFileForImportedClass(fullName)
+                val target = context.resolveSimpleName(fullName)
                 if (target != null) {
                     emit(JavaSimpleTypeReference(context.getCurrentFile(), target, span))
                 }

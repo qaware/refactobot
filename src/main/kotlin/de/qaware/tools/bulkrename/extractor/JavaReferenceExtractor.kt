@@ -19,12 +19,16 @@ class JavaReferenceExtractor : ReferenceExtractor {
     override fun extractReferences(codebase: Codebase): Set<Reference> {
 
         val javaFiles = codebase.allFiles.filter { it.type == FileType.JAVA }
+
         val filesByClassName =
                 javaFiles.associateBy { file -> fileToClass(file.path.resolve(file.fileName).slashify()) }
 
+
+        val filesByPackage = javaFiles.groupBy(File::path)
+
         fun analyseFile(file: File): Set<Reference> {
             val inputStream = FileInputStream(codebase.rootPath.resolve(file.fullName).toFile())
-            return JavaAnalyzer().extractReferences(file, inputStream, filesByClassName)
+            return JavaAnalyzer().extractReferences(file, inputStream, filesByClassName, filesByPackage[file.path]!!)
         }
 
         return javaFiles.flatMap { analyseFile(it) }.toSet()

@@ -7,6 +7,7 @@ import de.qaware.tools.bulkrename.extractor.visitors.ClassReferenceVisitor
 import de.qaware.tools.bulkrename.extractor.visitors.ImportVisitor
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.reference.Reference
+import de.qaware.tools.bulkrename.util.fileToClass
 import java.io.InputStream
 
 /**
@@ -24,7 +25,8 @@ class JavaAnalyzer {
      * @param filesByClass a map of each known entity in the codebase to its file
      * @return a set of files which are referenced by the given file.
      */
-    fun extractReferences(file: File, inputStream: InputStream, filesByClass: Map<String, File>): Set<Reference> {
+    fun extractReferences(file: File, inputStream: InputStream, filesByClass: Map<String, File>,
+                          filesInSamePackage: List<File>): Set<Reference> {
         val compilationUnit = inputStream.use { JavaParser.parse(it) }
 
         if (compilationUnit.types.size != 1) {
@@ -35,13 +37,20 @@ class JavaAnalyzer {
                 .map { analyzeImport(it) }
                 .filterNotNull()
                 .toMap()
+                .mapValues { entry -> filesByClass[entry.value] }
+                .filterValues { it != null }
+
+        val implicitImportMap = filesInSamePackage
+                .associateBy { fileToClass(it.fileName) }
 
         val context = (object : ReferenceExtractionContext {
             override fun getCurrentFile() = file
-            override fun getFileForClass(fqcn: String) = filesByClass[fqcn]
-            override fun getFileForImportedClass(simpleName: String): File? {
-                val fqcn = importMap[simpleName]
-                return if (fqcn != null) filesByClass[fqcn] else null
+            override fun resolveFullName(fqcn: String) = filesByClass[fqcn]
+            override fun resolveSimpleName(simpleName: String): File? =
+                    when {
+                        simpleName in importMap -> importMap[simpleName]
+                        simpleName in implicitImportMap -> implicitImportMap[simpleName]
+                        else -> null
             }
         })
 

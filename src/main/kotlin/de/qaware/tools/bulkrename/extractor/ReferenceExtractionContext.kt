@@ -10,7 +10,7 @@ import de.qaware.tools.bulkrename.model.codebase.File
 interface ReferenceExtractionContext {
 
     fun getCurrentFile(): File
-    fun getFileForClass(fqcn: String): File?
-    fun getFileForImportedClass(simpleName: String): File?
+    fun resolveFullName(fqcn: String): File?
+    fun resolveSimpleName(simpleName: String): File?
 
 }

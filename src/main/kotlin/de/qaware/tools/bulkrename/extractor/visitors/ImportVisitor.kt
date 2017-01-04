@@ -15,7 +15,7 @@ class ImportVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(cont
     override fun visit(n: ImportDeclaration?, arg: Unit) {
         if (n != null) {
 
-            val target = context.getFileForClass(n.name.toString())
+            val target = context.resolveFullName(n.name.toString())
             if (target != null) {
                 emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, n.name.toSpan()))
             }
