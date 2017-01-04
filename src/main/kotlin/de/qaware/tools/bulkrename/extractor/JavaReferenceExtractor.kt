@@ -69,6 +69,11 @@ class JavaReferenceExtractor : ReferenceExtractor {
         val filePath = absoluteSourceFolderPath.resolve(file.path).resolve(file.fileName)
         if (file.type == FileType.JAVA) {
             val compilationUnit = FileInputStream(filePath.toFile()).use { JavaParser.parse(it) }
+
+            if (compilationUnit.types.size != 1) {
+                throw UnsupportedOperationException("Multiple types per compilation unit not supported, but found in " + file)
+            }
+
             val importMap = compilationUnit.imports
                     .map { analyzeImport(it) }
                     .filterNotNull()
