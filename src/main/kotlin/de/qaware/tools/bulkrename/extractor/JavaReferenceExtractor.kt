@@ -113,7 +113,7 @@ class JavaReferenceExtractor : ReferenceExtractor {
                 references.add(RawReference(
                         ReferenceType.IMPORT,
                         Location.oneBased(n.name.begin.line, n.name.begin.column),
-                        Location.oneBased(n.name.end.line, n.name.end.column),
+                        Location.oneBased(n.name.end.line, n.name.end.column + 1),
                         (n.name as? QualifiedNameExpr)?.qualifier?.toString() ?: throw UnsupportedOperationException("Imports must be qualified."),
                         n.name.name
                 ))
@@ -135,8 +135,8 @@ class JavaReferenceExtractor : ReferenceExtractor {
                 }
                 val type = if (n.scope != null) ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE else ReferenceType.CLASS_OR_INTERFACE_REFERENCE
                 val endLocation =
-                        if (n.typeArguments.typeArguments.isEmpty()) Location.oneBased(n.end.line, n.end.column)
-                        else Location.oneBased(n.typeArguments.typeArguments.first().begin.line, n.typeArguments.typeArguments.first().begin.column - 2)
+                        if (n.typeArguments.typeArguments.isEmpty()) Location.oneBased(n.end.line, n.end.column + 1)
+                        else Location.oneBased(n.typeArguments.typeArguments.first().begin.line, n.typeArguments.typeArguments.first().begin.column - 1)
                 references.add(RawReference(type,
                         Location.oneBased(n.begin.line, n.begin.column),
                         endLocation,
