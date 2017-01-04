@@ -8,7 +8,6 @@ import de.qaware.tools.bulkrename.model.reference.JavaQualifiedTypeReference
 import de.qaware.tools.bulkrename.model.reference.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.scanner.MavenScanner
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import java.nio.file.Paths
 import kotlin.test.fail
@@ -21,7 +20,7 @@ import kotlin.test.fail
 class JavaReferenceExtractorTest {
 
     @Test
-    @Ignore // deactivate for now, since this is far too unstable under current changes.
+//    @Ignore // deactivate for now, since this is far too unstable under current changes.
     fun testExtractReferences() {
 
         // Read resources/maven_test_modules as codebase

@@ -6,8 +6,6 @@ import de.qaware.tools.bulkrename.extractor.visitors.ClassDeclarationVisitor
 import de.qaware.tools.bulkrename.extractor.visitors.ClassReferenceVisitor
 import de.qaware.tools.bulkrename.extractor.visitors.ImportVisitor
 import de.qaware.tools.bulkrename.model.codebase.*
-import de.qaware.tools.bulkrename.model.reference.JavaQualifiedTypeReference
-import de.qaware.tools.bulkrename.model.reference.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.model.reference.Reference
 import de.qaware.tools.bulkrename.util.fileToClass
 import de.qaware.tools.bulkrename.util.slashify
@@ -86,27 +84,10 @@ class JavaReferenceExtractor : ReferenceExtractor {
             })
 
             val visitors = listOf(ImportVisitor(context), ClassDeclarationVisitor(context), ClassReferenceVisitor(context))
-            val localReferences = visitors.flatMap { v -> v.extractReferences(compilationUnit) }
-
-            return createReferencesFromLocalReferences(localReferences, file, filesByClass)
+            return visitors.flatMap { v -> v.extractReferences(compilationUnit) }.toSet()
         }
         // todo other files
         return HashSet()
-    }
-
-    private fun createReferencesFromLocalReferences(rawReferences: Collection<RawReference>, sourceFile: File, filesByClass: Map<String, File>): Set<Reference> {
-        val relevantImports = rawReferences.filter { it.referenceType == ReferenceType.IMPORT && filesByClass.containsKey(it.scope!! + "." + it.name) }
-        val fullyQualifiedClassReferences = rawReferences.filter { it.referenceType == ReferenceType.FQ_CLASS_OR_INTERFACE_REFERENCE && filesByClass.containsKey(it.scope!! + "." + it.name) }
-        val relevantUnqualifiedReferences = rawReferences.filter { it.referenceType == ReferenceType.CLASS_OR_INTERFACE_REFERENCE && relevantImports.map { it.name }.contains(it.name) }
-
-        val importReferences = relevantImports.map { JavaQualifiedTypeReference(sourceFile, filesByClass[it.scope!! + "." + it.name]!!, it.span) }
-        val fqcReferences = fullyQualifiedClassReferences.map { JavaQualifiedTypeReference(sourceFile, filesByClass[it.scope!! + "." + it.name]!!, it.span) }
-        val localToFQN = relevantImports.associateBy({ it.name }, { it.scope + "." + it.name })
-        val unqualifiedReferences = relevantUnqualifiedReferences.map { JavaSimpleTypeReference(sourceFile, filesByClass[localToFQN[it.name]]!!, it.span) }
-
-        return importReferences
-                .union(fqcReferences)
-                .union(unqualifiedReferences)
     }
 
 
