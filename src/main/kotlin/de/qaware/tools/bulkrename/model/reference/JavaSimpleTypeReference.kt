@@ -13,9 +13,13 @@ import de.qaware.tools.bulkrename.util.fileToClass
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-data class JavaSimpleTypeReference(override val origin: File, override val target: File, val span: Span): Reference {
+data class JavaSimpleTypeReference(override val origin: File, val target: File, val span: Span): Reference {
 
-    override fun getAdjustment(newTarget: NewFileLocation) =
-        FileOperation.Edit(span, fileToClass(newTarget.fileName))
+    override fun getAdjustment(refactoringPlan: Map<File, NewFileLocation>): FileOperation.Edit {
+
+        val newTarget = refactoringPlan.get(target)!!
+        return FileOperation.Edit(span, fileToClass(newTarget.fileName))
+    }
+
 
 }

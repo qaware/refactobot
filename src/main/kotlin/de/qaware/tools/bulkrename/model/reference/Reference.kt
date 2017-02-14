@@ -16,14 +16,12 @@ interface Reference {
 
     val origin : File
 
-    val target: File
-
     /**
      * Defines how the reference must be adjusted when the target is moved.
      *
      * @param newTarget the new location of the target file.
      * @return an optional edit operation that defines how the source must be rewritten.
      */
-    abstract fun getAdjustment(newTarget: NewFileLocation): FileOperation.Edit?
+    fun getAdjustment(refactoringPlan : Map<File, NewFileLocation>): FileOperation.Edit?
 
 }

@@ -30,7 +30,7 @@ class ActionPlannerImpl : ActionPlanner {
         for ((originFile, refs) in allReferences.groupBy(Reference::origin)) {
 
             editsByFile[originFile] =
-                    refs.map { ref -> ref.getAdjustment(refactoringPlan[ref.target]!!) }
+                    refs.map { ref -> ref.getAdjustment(refactoringPlan) }
                             .filterNotNull()
         }
 

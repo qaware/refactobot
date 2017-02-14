@@ -15,9 +15,11 @@ import de.qaware.tools.bulkrename.util.slashify
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-data class JavaQualifiedTypeReference(override val origin: File, override val target: File, val span: Span): Reference {
+data class JavaQualifiedTypeReference(override val origin: File, val target: File, val span: Span): Reference {
 
-    override fun getAdjustment(newTarget: NewFileLocation): FileOperation.Edit {
+    override fun getAdjustment(refactoringPlan: Map<File, NewFileLocation>): FileOperation.Edit {
+
+        val newTarget = refactoringPlan.get(target)!!;
         val newFqcn = fileToClass(newTarget.path.resolve(newTarget.fileName).slashify())
         return FileOperation.Edit(span, newFqcn)
     }
