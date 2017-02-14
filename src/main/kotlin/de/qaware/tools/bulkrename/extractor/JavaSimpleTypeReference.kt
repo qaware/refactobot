@@ -1,9 +1,10 @@
-package de.qaware.tools.bulkrename.model.reference
+package de.qaware.tools.bulkrename.extractor
 
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.operation.FileOperation
 import de.qaware.tools.bulkrename.model.operation.Span
 import de.qaware.tools.bulkrename.model.plan.NewFileLocation
+import de.qaware.tools.bulkrename.model.reference.Reference
 import de.qaware.tools.bulkrename.util.fileToClass
 
 /**

@@ -2,9 +2,9 @@ package de.qaware.tools.bulkrename.extractor.visitors
 
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
+import de.qaware.tools.bulkrename.extractor.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.extractor.ReferenceExtractionContext
 import de.qaware.tools.bulkrename.extractor.ReferenceVisitor
-import de.qaware.tools.bulkrename.model.reference.JavaSimpleTypeReference
 
 /**
  * Visitor for class definitions.

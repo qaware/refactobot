@@ -4,8 +4,6 @@ import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.operation.Span
-import de.qaware.tools.bulkrename.model.reference.JavaQualifiedTypeReference
-import de.qaware.tools.bulkrename.model.reference.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.scanner.MavenScanner
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
