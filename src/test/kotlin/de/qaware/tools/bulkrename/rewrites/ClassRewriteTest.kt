@@ -39,8 +39,17 @@ class ClassRewriteTest(val filename: String) {
     fun testRewrite() {
 
         val problem = RefactoringProblemReader.readProblem("rewrites/" + filename)
-        val thisFile = getFileForFqcn(getFqcnFromFileContent(problem.originalFile))
-        val fileEntries = problem.moveRules.map { getFileForFqcn(it.first) }.toSet() + thisFile
+        val thisClass = getFqcnFromFileContent(problem.originalFile)
+        val thisFile = getFileForFqcn(thisClass)
+
+        // in case this file is not present in the rules, add it.
+        val adjustedMoveRules =
+                if (problem.moveRules.any { it.first == thisClass })
+                    problem.moveRules
+                else
+                    problem.moveRules + Pair(thisClass, thisClass)
+
+        val fileEntries = adjustedMoveRules.map { getFileForFqcn(it.first) }
         val dummyModule = Module("module", Paths.get("."),
                 listOf(SourceFolder(".", fileEntries.toList())))
 
@@ -59,10 +68,8 @@ class ClassRewriteTest(val filename: String) {
                         filesInSamePackage)
 
         val refactoringPlan: Map<File, NewFileLocation> =
-            problem.moveRules
-                    .map { rule ->
-                        Pair(filesByClass[rule.first]!!, newLocationOf(rule.second))
-                    }
+                adjustedMoveRules
+                    .map { rule -> Pair(filesByClass[rule.first]!!, newLocationOf(rule.second)) }
                     .toMap()
 
         val edits = refs.map { ref -> ref.getAdjustment(refactoringPlan) }

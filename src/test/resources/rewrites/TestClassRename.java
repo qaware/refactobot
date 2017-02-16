@@ -1,10 +1,10 @@
+package org.example.test.code;
 //
 // Simple rename of a class.
 //
 //: org.example.test.code.TestClassRename -> org.example.test.code.NewClassName
 //: org.example.test.code.UnrelatedClass
 //
-package org.example.test.code;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
