@@ -16,6 +16,8 @@ class RefactoringProblemReaderTest {
 
         checkRewrite("Hello /*|*/World/*->Universe*/!", "Hello World!", "Hello Universe!")
         checkRewrite("ABC /*|*/DEF/*->GHI*/ JKL /*|*/MNO/*->PQR*/ STU", "ABC DEF JKL MNO STU", "ABC GHI JKL PQR STU")
+        checkRewrite("/*|*//*->foo*/", "", "foo") // just insertion
+        checkRewrite("/*|*//*->a new line\n*/next line", "next line", "a new line\nnext line") // newline handling
 
     }
 

@@ -12,7 +12,7 @@ object RefactoringProblemReader {
     /**
      * Matches strings of the form "/*|*/ABC/*->DEF*/", which means "ABC" should be replaced by "DEF".
      */
-    private val REPLACEMENT_REGEX = Regex("/\\*\\|\\*/(.*?)/\\*->(.*?)\\*/")
+    private val REPLACEMENT_REGEX = Regex("/\\*\\|\\*/(.*?)/\\*->(.*?)\\*/", RegexOption.DOT_MATCHES_ALL)
 
     /**
      * Matches rewrite rules of the form "org.example.test.Class -> org.example.othertest.OtherClass".
