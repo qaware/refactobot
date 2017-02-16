@@ -1,6 +1,7 @@
 package de.qaware.tools.bulkrename.util
 
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Converts the file name and, to a fully-qualified class name. This merely converts slashes to dots and removes the
@@ -26,6 +27,19 @@ fun fileToClass(filename: String): String {
 fun classToFile(className: String) : String =
         className.replace('.', '/') + ".java"
 
+
+/**
+ * Splits a full path (with slashes) into a path and a filename component.
+ *
+ * @param fullPath the path
+ * @return a pair of path and filename
+ */
+fun splitPath(fullPath: String): Pair<Path, String> {
+    val pathAndFile = fullPath.split("/")
+    val path = Paths.get(pathAndFile.dropLast(1).joinToString("/"))
+    val fileName = pathAndFile.last()
+    return Pair(path, fileName)
+}
 
 /**
  * Splits a string into lines, but keeps newlines.

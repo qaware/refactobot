@@ -1,6 +1,8 @@
 package de.qaware.tools.bulkrename.util
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.nio.file.Paths
 import kotlin.test.asserter
 
 /**
@@ -31,4 +33,12 @@ class ConversionsTest {
     fun testInvalid() {
         fileToClass("hello.txt")
     }
+
+    @Test
+    fun testSplitPaths() {
+        assertThat(splitPath("foo/Bar.java")).isEqualTo(Pair(Paths.get("foo"), "Bar.java"))
+        assertThat(splitPath("Bar.java")).isEqualTo(Pair(Paths.get(""), "Bar.java"))
+    }
+
+
 }
