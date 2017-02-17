@@ -3,6 +3,7 @@ package de.qaware.tools.bulkrename.integration
 import de.qaware.tools.bulkrename.executor.Executor
 import de.qaware.tools.bulkrename.expander.SequentialExpander
 import de.qaware.tools.bulkrename.extractor.java.JavaReferenceExtractor
+import de.qaware.tools.bulkrename.extractor.text.TextReferenceExtractor
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
 import de.qaware.tools.bulkrename.planner.ActionPlannerImpl
 import de.qaware.tools.bulkrename.scanner.MavenScanner
@@ -22,7 +23,10 @@ object BulkRenameTool {
         println("Found ${codebase.modules.size} modules.")
 
         println("Extracting references...")
-        val references = JavaReferenceExtractor().extractReferences(codebase)
+        val references =
+                JavaReferenceExtractor().extractReferences(codebase) +
+                TextReferenceExtractor().extractReferences(codebase)
+
         println("Found ${references.size} references.")
 
         println("Expanding refactoring plan...")
