@@ -14,14 +14,19 @@ import java.util.stream.Collectors
  * @author Alexander Krauss alexander.krauss@qaware.de
  * @author Florian Engel florian.engel@qaware.de
  */
-class MavenScanner : Scanner {
+class MavenScanner(val extensions: Set<String> = setOf("java", "xml", "xhtml", "properties")) : Scanner {
 
     companion object MavenScannerConstants {
-        val SOURCE_FOLDER_LOCATIONS = listOf("src/main/java", "src/test/java")
+        val SOURCE_FOLDER_LOCATIONS = listOf(
+                "src/main/java",
+                "src/test/java",
+                "src/main/resources",
+                "src/test/resources",
+                "src/main/webapp")
         const val JAVA_EXTENSION: String = ".java"
     }
 
-    override fun scanCodebase(rootDir: Path): Codebase {
+     override fun scanCodebase(rootDir: Path): Codebase {
 
         val modules: List<Module> = Files.find(rootDir, 50, BiPredicate { path, attrs ->
             attrs.isRegularFile && path.fileName.toString() == "pom.xml"
@@ -83,8 +88,8 @@ class MavenScanner : Scanner {
     private fun parseFile(filePath: Path, sourceRoot: Path, codebaseRoot: Path): File {
         val name = filePath.fileName.toString()
         val type = getFileTypeFromFileName(name)
-        val relativeFilePath = sourceRoot.relativize(filePath).parent
-        val fullPath = codebaseRoot.relativize(filePath).parent
+        val relativeFilePath = sourceRoot.relativize(filePath).parent ?: Paths.get("")
+        val fullPath = codebaseRoot.relativize(filePath).parent ?: Paths.get("")
         return File(fullPath, relativeFilePath, name, type)
     }
 
@@ -103,7 +108,9 @@ class MavenScanner : Scanner {
                 if (path.toFile().isDirectory) {
                     foundFiles.addAll(scanDirectory(path))
                 } else {
-                    foundFiles.add(path)
+                    if (extensions.contains(path.toFile().extension.toLowerCase())) {
+                        foundFiles.add(path)
+                    }
                 }
             }
         }
