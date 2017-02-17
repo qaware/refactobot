@@ -1,12 +1,14 @@
 package de.qaware.tools.bulkrename.extractor
 
 import com.github.javaparser.JavaParser
+import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
 import de.qaware.tools.bulkrename.extractor.visitors.ClassDeclarationVisitor
 import de.qaware.tools.bulkrename.extractor.visitors.ClassReferenceVisitor
 import de.qaware.tools.bulkrename.extractor.visitors.ConstructorDeclarationVisitor
 import de.qaware.tools.bulkrename.extractor.visitors.ImportVisitor
 import de.qaware.tools.bulkrename.model.codebase.File
+import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.reference.Reference
 import de.qaware.tools.bulkrename.util.fileToClass
 import java.io.InputStream
@@ -56,9 +58,27 @@ class JavaAnalyzer {
         })
 
         val visitors = listOf(ImportVisitor(context), ClassDeclarationVisitor(context), ClassReferenceVisitor(context), ConstructorDeclarationVisitor(context))
-        return visitors.flatMap { v -> v.extractReferences(compilationUnit) }.toSet()
+        val references = visitors.flatMap { v -> v.extractReferences(compilationUnit) }.toSet()
+
+        // check for references to implicitly imported classes
+        val usedImplicitClasses =
+                references.mapNotNull { ref -> if (ref is JavaSimpleTypeReference) ref.target else null }.toSet()
+                        .intersect(filesInSamePackage)
+
+        return references +
+                JavaImplicitImportReference(file, usedImplicitClasses, getImplicitImportLocation(compilationUnit))
     }
 
+    private fun getImplicitImportLocation(compilationUnit: CompilationUnit): Location {
+
+        val line =
+                if (compilationUnit.imports.isEmpty())
+                    compilationUnit.`package`.begin.line + 1
+                else
+                    compilationUnit.imports[0].begin.line
+
+        return Location(line - 1, 0) // our locations are zero-based
+    }
 
     private fun analyzeImport(importDeclaration: ImportDeclaration): Pair<String, String>? {
 
