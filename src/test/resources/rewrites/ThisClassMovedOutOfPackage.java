@@ -1,4 +1,4 @@
-package org.example.test.code;
+package org.example.test./*|*/code/*->otherpackage*/;
 //
 // This class is moved out of its package, so other classes it uses must now be imported.
 // The import appears right before other imports.

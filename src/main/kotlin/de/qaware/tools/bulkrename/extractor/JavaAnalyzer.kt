@@ -3,10 +3,7 @@ package de.qaware.tools.bulkrename.extractor
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
-import de.qaware.tools.bulkrename.extractor.visitors.ClassDeclarationVisitor
-import de.qaware.tools.bulkrename.extractor.visitors.ClassReferenceVisitor
-import de.qaware.tools.bulkrename.extractor.visitors.ConstructorDeclarationVisitor
-import de.qaware.tools.bulkrename.extractor.visitors.ImportVisitor
+import de.qaware.tools.bulkrename.extractor.visitors.*
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.reference.Reference
@@ -57,7 +54,8 @@ class JavaAnalyzer {
             }
         })
 
-        val visitors = listOf(ImportVisitor(context), ClassDeclarationVisitor(context), ClassReferenceVisitor(context), ConstructorDeclarationVisitor(context))
+        val visitors = listOf(ImportVisitor(context), ClassDeclarationVisitor(context), ClassReferenceVisitor(context), ConstructorDeclarationVisitor(context),
+                PackageDeclarationVisitor(context))
         val references = visitors.flatMap { v -> v.extractReferences(compilationUnit) }.toSet()
 
         // check for references to implicitly imported classes
