@@ -1,4 +1,4 @@
-package de.qaware.tools.bulkrename.extractor
+package de.qaware.tools.bulkrename.extractor.java
 
 import com.github.javaparser.Position
 import com.github.javaparser.ast.CompilationUnit
@@ -32,7 +32,7 @@ abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidV
      * Creates a span for a given node.
      */
     protected fun Node.toSpan() =
-            Span(Location.oneBased(this.begin.line, this.begin.column), Location.oneBased(this.end.line, this.end.column + 1))
+            Span(Location.Companion.oneBased(this.begin.line, this.begin.column), Location.Companion.oneBased(this.end.line, this.end.column + 1))
 
 
 }

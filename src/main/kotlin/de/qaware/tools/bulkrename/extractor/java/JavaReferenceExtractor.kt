@@ -1,5 +1,6 @@
-package de.qaware.tools.bulkrename.extractor
+package de.qaware.tools.bulkrename.extractor.java
 
+import de.qaware.tools.bulkrename.extractor.ReferenceExtractor
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.codebase.FileType

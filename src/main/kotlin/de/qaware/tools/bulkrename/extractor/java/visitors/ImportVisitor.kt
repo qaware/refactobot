@@ -1,9 +1,9 @@
-package de.qaware.tools.bulkrename.extractor.visitors
+package de.qaware.tools.bulkrename.extractor.java.visitors
 
 import com.github.javaparser.ast.ImportDeclaration
-import de.qaware.tools.bulkrename.extractor.JavaQualifiedTypeReference
-import de.qaware.tools.bulkrename.extractor.ReferenceExtractionContext
-import de.qaware.tools.bulkrename.extractor.ReferenceVisitor
+import de.qaware.tools.bulkrename.extractor.java.JavaQualifiedTypeReference
+import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
+import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
 
 /**
  * Visitor for import statements.

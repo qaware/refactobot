@@ -2,7 +2,7 @@ package de.qaware.tools.bulkrename.integration
 
 import de.qaware.tools.bulkrename.executor.Executor
 import de.qaware.tools.bulkrename.expander.SequentialExpander
-import de.qaware.tools.bulkrename.extractor.JavaReferenceExtractor
+import de.qaware.tools.bulkrename.extractor.java.JavaReferenceExtractor
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
 import de.qaware.tools.bulkrename.planner.ActionPlannerImpl
 import de.qaware.tools.bulkrename.scanner.MavenScanner

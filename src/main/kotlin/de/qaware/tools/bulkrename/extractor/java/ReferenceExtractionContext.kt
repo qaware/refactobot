@@ -1,4 +1,4 @@
-package de.qaware.tools.bulkrename.extractor
+package de.qaware.tools.bulkrename.extractor.java
 
 import de.qaware.tools.bulkrename.model.codebase.File
 

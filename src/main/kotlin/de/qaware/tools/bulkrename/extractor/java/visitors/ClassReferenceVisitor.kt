@@ -1,10 +1,10 @@
-package de.qaware.tools.bulkrename.extractor.visitors
+package de.qaware.tools.bulkrename.extractor.java.visitors
 
 import com.github.javaparser.ast.type.ClassOrInterfaceType
-import de.qaware.tools.bulkrename.extractor.JavaQualifiedTypeReference
-import de.qaware.tools.bulkrename.extractor.JavaSimpleTypeReference
-import de.qaware.tools.bulkrename.extractor.ReferenceExtractionContext
-import de.qaware.tools.bulkrename.extractor.ReferenceVisitor
+import de.qaware.tools.bulkrename.extractor.java.JavaQualifiedTypeReference
+import de.qaware.tools.bulkrename.extractor.java.JavaSimpleTypeReference
+import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
+import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.operation.Span
 

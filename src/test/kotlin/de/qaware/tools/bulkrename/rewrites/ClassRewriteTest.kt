@@ -2,7 +2,7 @@ package de.qaware.tools.bulkrename.rewrites
 
 import com.github.javaparser.JavaParser
 import de.qaware.tools.bulkrename.executor.EditProcessor
-import de.qaware.tools.bulkrename.extractor.JavaAnalyzer
+import de.qaware.tools.bulkrename.extractor.java.JavaAnalyzer
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.codebase.FileType
 import de.qaware.tools.bulkrename.model.codebase.Module

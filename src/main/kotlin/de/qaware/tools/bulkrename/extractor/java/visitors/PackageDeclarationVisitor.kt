@@ -1,9 +1,9 @@
-package de.qaware.tools.bulkrename.extractor.visitors
+package de.qaware.tools.bulkrename.extractor.java.visitors
 
 import com.github.javaparser.ast.PackageDeclaration
-import de.qaware.tools.bulkrename.extractor.JavaPackageReference
-import de.qaware.tools.bulkrename.extractor.ReferenceExtractionContext
-import de.qaware.tools.bulkrename.extractor.ReferenceVisitor
+import de.qaware.tools.bulkrename.extractor.java.JavaPackageReference
+import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
+import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
 
 /**
  * Visitor for constructor declarations. Names of constructors must be adapted when the class is renamed.

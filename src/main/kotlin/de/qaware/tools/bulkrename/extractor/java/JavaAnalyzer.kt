@@ -1,9 +1,9 @@
-package de.qaware.tools.bulkrename.extractor
+package de.qaware.tools.bulkrename.extractor.java
 
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
-import de.qaware.tools.bulkrename.extractor.visitors.*
+import de.qaware.tools.bulkrename.extractor.java.visitors.*
 import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.reference.Reference
