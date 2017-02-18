@@ -14,7 +14,8 @@ class LineSource(private val lines : List<String>) {
 
         val sb = StringBuffer()
 
-        if (currentPosition.line > newPosition.line) {
+        if (currentPosition.line > newPosition.line ||
+                currentPosition.line == newPosition.line && currentPosition.column > newPosition.column) {
             throw IllegalStateException("Cannot move backwards.")
         } else if (currentPosition.line < newPosition.line) {
 
