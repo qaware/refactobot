@@ -1,5 +1,7 @@
 package de.qaware.tools.bulkrename.extractor.java.visitors
 
+import com.github.javaparser.ast.expr.FieldAccessExpr
+import com.github.javaparser.ast.expr.NameExpr
 import com.github.javaparser.ast.type.ClassOrInterfaceType
 import de.qaware.tools.bulkrename.extractor.java.JavaQualifiedTypeReference
 import de.qaware.tools.bulkrename.extractor.java.JavaSimpleTypeReference
@@ -55,6 +57,28 @@ class ClassReferenceVisitor(context: ReferenceExtractionContext) : ReferenceVisi
             }
         }
         super.visit(n, arg)
+    }
+
+    override fun visit(n: FieldAccessExpr, arg: Unit) {
+
+        val scope = n.scope
+        when (scope) {
+            is NameExpr -> {
+                val target = context.resolveSimpleName(scope.name)
+                if (target != null) {
+                    emit(JavaSimpleTypeReference(context.getCurrentFile(), target, scope.toSpan()))
+                }
+            }
+            else -> {
+                // scope is not a simple name, so it could be a qualified class name -> look it up
+                val target = context.resolveFullName(scope.toString())
+                if (target != null) {
+                    emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, scope.toSpan()))
+                }
+            }
+        }
+
+        super.visit(n, arg);
     }
 
 
