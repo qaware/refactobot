@@ -32,34 +32,15 @@ class RefactoringProblemReaderTest {
     @Test
     fun textExtractPreamble() {
 
-        val (preamble, rest) = RefactoringProblemReader.extractPreamble("""
+        val preamble = RefactoringProblemReader.extractPreamble("""
             |Sample text for testing the extraction of the preamble from files
             |with special markers.
-            |//: These two lines are the preamble
-            |//: second line
+            |//: class -> otherclass
+            |//: justaclass
             |The end.
             """.trimMargin())
         assertThat(preamble).hasSize(2)
-        assertThat(preamble[0]).isEqualTo("These two lines are the preamble")
-        assertThat(preamble[1]).isEqualTo("second line")
-
-        assertThat(rest).isEqualTo("""
-        |Sample text for testing the extraction of the preamble from files
-        |with special markers.
-        |The end.
-        """.trimMargin())
+        assertThat(preamble[0]).isEqualTo(Pair("class", "otherclass"))
+        assertThat(preamble[1]).isEqualTo(Pair("justaclass", "justaclass"))
     }
-
-    @Test
-    fun testReadProblem() {
-
-        val problem = RefactoringProblemReader.readProblem("rewrites/TestClassRename.java")
-
-        println(problem.moveRules)
-        println(problem.originalFile)
-        println(problem.expectedResult)
-
-
-    }
-
 }

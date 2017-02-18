@@ -22,34 +22,27 @@ object RefactoringProblemReader {
     fun getOriginal(str: String): String = str.replace(REPLACEMENT_REGEX, "$1")
     fun getResult(str: String): String = str.replace(REPLACEMENT_REGEX, "$2")
 
-    fun extractPreamble(text: String): Pair<List<String>, String> {
-
-        val lines: List<String> = text.split('\n')
-        val preamble = lines
-                .filter { it.startsWith("//:")}
-                .map { it.substring(3).trim() }
-
-        val rest = lines.filterNot { it.startsWith("//:") }.joinToString("\n")
-        return Pair(preamble, rest)
-    }
+    fun extractPreamble(text: String): List<Pair<String, String>> =
+            text.split('\n')
+                    .filter { it.startsWith("//:")}
+                    .map { parseRule(it.substring(3).trim()) }
 
 
     fun readProblem(filename: String): RefactoringProblem {
 
-        val (preamble, rest) = extractPreamble(readFileFromClasspathToString(filename))
-        val originalFileContent = getOriginal(rest)
-        val expectedNewFileContent = getResult(rest)
+        val content = readFileFromClasspathToString(filename)
+        val rules = extractPreamble(content)
+        val originalFileContent = getOriginal(content)
+        val expectedNewFileContent = getResult(content)
 
-        return RefactoringProblem(preamble.map {rule -> parseRule(rule)}, originalFileContent, expectedNewFileContent)
+        return RefactoringProblem(rules, originalFileContent, expectedNewFileContent)
     }
 
     fun parseRule(rule: String): Pair<String, String> {
 
         val match = RULE_REGEX.matchEntire(rule)
         if (match != null) {
-
-            val (left, right) = match.destructured
-            return Pair(left, right)
+            return Pair(match.groupValues[1], match.groupValues[2])
 
         } else {
             // use left for right
