@@ -49,11 +49,27 @@ class ClassReferenceVisitor(context: ReferenceExtractionContext) : ReferenceVisi
                 if (target != null) {
                     emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, span))
                 }
+
+                if (fullName.endsWith("_")) {
+                    val target2 = context.resolveFullName(fullName.dropLast(1))
+                    if (target2 != null) {
+                        emit(JavaQualifiedTypeReference(context.getCurrentFile(), target2, span.shortenBy(1)))
+                    }
+                }
+
             } else {
                 val target = context.resolveSimpleName(fullName)
                 if (target != null) {
                     emit(JavaSimpleTypeReference(context.getCurrentFile(), target, span))
                 }
+
+                if (fullName.endsWith("_")) {
+                    val target2 = context.resolveSimpleName(fullName.dropLast(1))
+                    if (target2 != null) {
+                        emit(JavaQualifiedTypeReference(context.getCurrentFile(), target2, span.shortenBy(1)))
+                    }
+                }
+
             }
         }
         super.visit(n, arg)

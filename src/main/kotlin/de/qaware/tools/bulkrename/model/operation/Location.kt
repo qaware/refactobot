@@ -28,6 +28,8 @@ data class Location (
         fun oneBased(line: Int, column: Int) = Location(line - 1, column - 1)
     }
 
+    fun minus(n: Int): Location = Location(line, column - n)
+
 }
 
 

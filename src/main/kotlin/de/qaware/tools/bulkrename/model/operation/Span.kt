@@ -12,4 +12,9 @@ package de.qaware.tools.bulkrename.model.operation
  * @property start the start of the span
  * @property end the end of the span
  */
-data class Span(val start: Location, val end: Location)
+data class Span(val start: Location, val end: Location) {
+
+    fun shortenBy(n: Int) = Span(start, end = this.end.minus(1))
+
+
+}
