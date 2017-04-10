@@ -32,7 +32,7 @@ class MavenScannerTest {
         assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/ClassA.java", FileType.JAVA) })
         assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/InterfaceA.java", FileType.JAVA) })
         assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/AnnotationA.java", FileType.JAVA) })
-        assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/other_file", FileType.OTHER) })
+        assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/other_file.properties", FileType.OTHER) })
         assertTrue("Count of files in list must match", { mainFiles.count() == 4 })
 
         val testFiles = module_a.sourceFolders.find { it.path == "src/test/java" }!!.files
