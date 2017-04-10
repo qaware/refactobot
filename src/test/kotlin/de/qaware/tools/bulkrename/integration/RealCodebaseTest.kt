@@ -1,5 +1,6 @@
 package de.qaware.tools.bulkrename.integration
 
+import de.qaware.tools.bulkrename.classmap_import.ClassMapImporterImpl
 import de.qaware.tools.bulkrename.model.plan.RefactoringSubject
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
 import de.qaware.tools.bulkrename.model.plan.Step
@@ -32,11 +33,17 @@ val DTO_MOVE = SchematicRefactoringPlan(listOf(
 
 
 /**
+ * Imports a class map from structure101
+ */
+val CLASS_MAP_RENAME = ClassMapImporterImpl().importClassMap("P:/temp/classmap.xml")
+
+
+/**
  * Main function to run the tool on a real codebase.
  */
 fun main(args: Array<String>) {
 
-    BulkRenameTool.refactorMavenCodebase(Paths.get("P:/codebase2/code"), DTO_MOVE)
+    BulkRenameTool.refactorMavenCodebase(Paths.get("P:/codebase2/code"), CLASS_MAP_RENAME)
 }
 
 
