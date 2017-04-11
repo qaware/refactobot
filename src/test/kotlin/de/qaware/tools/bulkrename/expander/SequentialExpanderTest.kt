@@ -63,7 +63,7 @@ class SequentialExpanderTest{
                 Pair(file2, NewFileLocation(moduleFoo, moduleFoo.sourceFolders[0], file2.path, file2.fileName)) // unchanged
         )
 
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult)
     }
 
     @Test
@@ -83,7 +83,7 @@ class SequentialExpanderTest{
                 Pair(file2, NewFileLocation(moduleFoo, moduleFoo.sourceFolders[0], file2.path, file2.fileName)) // unchanged
         )
 
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult)
     }
 
 

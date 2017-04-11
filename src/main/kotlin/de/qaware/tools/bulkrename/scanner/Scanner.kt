@@ -19,6 +19,6 @@ interface Scanner {
      * @param rootDir the root path that should be scanned.
      * @return the codebase model.
      */
-    fun scanCodebase(rootDir: Path) : Codebase;
+    fun scanCodebase(rootDir: Path) : Codebase
 
 }

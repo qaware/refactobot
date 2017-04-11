@@ -21,7 +21,7 @@ class JavaParserExperimentTest {
 
         FileReader("src/test/resources/TestClass.java").use { reader ->
 
-            val ast = JavaParser.parse(reader);
+            val ast = JavaParser.parse(reader)
             val visitor = ImportDeclarationVisitor()
             visitor.visit(ast, Unit)
         }

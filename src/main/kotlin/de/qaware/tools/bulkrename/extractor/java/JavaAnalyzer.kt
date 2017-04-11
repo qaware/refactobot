@@ -92,7 +92,7 @@ class JavaAnalyzer {
             return Pair(nameParts.last(), name)
         }
 
-        return null;
+        return null
     }
 
 }

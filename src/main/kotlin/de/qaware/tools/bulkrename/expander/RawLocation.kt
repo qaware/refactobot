@@ -46,7 +46,7 @@ data class RawLocation(
 
             } else {
                 // otherwise ignore this rule
-                this;
+                this
             }
 
 }

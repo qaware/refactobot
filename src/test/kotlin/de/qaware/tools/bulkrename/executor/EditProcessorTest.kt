@@ -27,9 +27,9 @@ class EditProcessorTest {
     fun testLineSource() {
         val source = LineSource(EXAMPLE_LINES)
 
-        assertEquals(source.readUpTo(Location(0, 0)), "");
-        assertEquals(source.readUpTo(Location(0, 6)), "Hello,");
-        assertEquals(source.readUpTo(Location(3, 3)), " this is a piece of text\nthat spans multiple lines.\n\nThe");
+        assertEquals(source.readUpTo(Location(0, 0)), "")
+        assertEquals(source.readUpTo(Location(0, 6)), "Hello,")
+        assertEquals(source.readUpTo(Location(3, 3)), " this is a piece of text\nthat spans multiple lines.\n\nThe")
         assertEquals(source.readRest(), " end.")
     }
 

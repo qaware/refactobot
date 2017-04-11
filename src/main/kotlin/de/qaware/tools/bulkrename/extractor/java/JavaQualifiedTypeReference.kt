@@ -20,7 +20,7 @@ data class JavaQualifiedTypeReference(override val origin: File, val target: Fil
 
     override fun getAdjustment(refactoringPlan: Map<File, NewFileLocation>): FileOperation.Edit {
 
-        val newTarget = refactoringPlan.get(target)!!;
+        val newTarget = refactoringPlan.get(target)!!
         val newFqcn = fileToClass(newTarget.path.resolve(newTarget.fileName).slashify())
         return FileOperation.Edit(span, newFqcn)
     }

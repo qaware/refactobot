@@ -30,7 +30,7 @@ class ClassMapImporterImpl : ClassMapImporter {
                 .filterNot { it.from.contains('$') }
                 .map { mkStep(it) }
 
-        return SchematicRefactoringPlan(entries);
+        return SchematicRefactoringPlan(entries)
     }
 
     private fun mkStep(entry : ClassMapEntry): Step {

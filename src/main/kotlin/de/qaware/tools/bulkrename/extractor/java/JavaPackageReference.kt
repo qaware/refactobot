@@ -16,7 +16,7 @@ data class JavaPackageReference(override val origin: File, val span: Span): Refe
 
     override fun getAdjustment(refactoringPlan: Map<File, NewFileLocation>): FileOperation.Edit {
 
-        val newTarget = refactoringPlan.get(origin)!!;
+        val newTarget = refactoringPlan.get(origin)!!
         return FileOperation.Edit(span, "package " + pathToPackage(newTarget.path) + ";")
     }
 
