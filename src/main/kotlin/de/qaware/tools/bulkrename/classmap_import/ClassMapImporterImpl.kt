@@ -40,9 +40,9 @@ class ClassMapImporterImpl : ClassMapImporter {
 
         return Step(mapOf(
                 Pair(RefactoringSubject.FILE_PATH,
-                        Step.Replacement(Regex.fromLiteral(fromPath.toString()), toPath.toString())),
+                        Step.Replacement(Regex.fromLiteral(fromPath.toString()), Regex.escapeReplacement(toPath.toString()))),
                 Pair(RefactoringSubject.FILE_NAME,
-                        Step.Replacement(Regex.fromLiteral(fromFile), toFile))
+                        Step.Replacement(Regex.fromLiteral(fromFile), Regex.escapeReplacement(toFile)))
         ))
     }
 
