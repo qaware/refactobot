@@ -94,7 +94,7 @@ class ClassReferenceVisitor(context: ReferenceExtractionContext) : ReferenceVisi
             }
         }
 
-        super.visit(n, arg);
+        super.visit(n, arg)
     }
 
 

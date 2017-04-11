@@ -55,7 +55,7 @@ class JavaAnalyzer {
         })
 
         val visitors = listOf(ImportVisitor(context), ClassDeclarationVisitor(context), ClassReferenceVisitor(context), ConstructorDeclarationVisitor(context),
-                PackageDeclarationVisitor(context))
+                PackageDeclarationVisitor(context), AnnotationVisitor(context))
         val references = visitors.flatMap { v -> v.extractReferences(compilationUnit) }.toSet()
 
         // check for references to implicitly imported classes
