@@ -30,7 +30,7 @@ class JavaImplicitImportReference(override val origin: File, val targets: Set<Fi
         val importsToInsert = targets.map { file -> refactoringPlan[file]!! }
                 .filter { it.path != newPath }
                 .map { "import " + fileToClass(it.path.resolve(it.fileName).slashify()) + ";\n" }
-                .joinToString()
+                .joinToString("")
 
         return FileOperation.Edit(Span(location, location), importsToInsert)
     }
