@@ -1,6 +1,7 @@
 package de.qaware.tools.bulkrename.extractor.java
 
 import com.github.javaparser.JavaParser
+import com.github.javaparser.ParseException
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
 import de.qaware.tools.bulkrename.extractor.java.visitors.*
@@ -27,7 +28,11 @@ class JavaAnalyzer {
      */
     fun extractReferences(file: File, inputStream: InputStream, filesByClass: Map<String, File>,
                           filesInSamePackage: List<File>): Set<Reference> {
-        val compilationUnit = inputStream.use { JavaParser.parse(it) }
+        val compilationUnit =
+                try { inputStream.use { JavaParser.parse(it) } }
+                catch (e : ParseException) {
+                    throw IllegalStateException("Error while parsing " + file.fullName, e)
+                }
 
         if (compilationUnit.types.size != 1) {
             throw UnsupportedOperationException("Multiple types per compilation unit not supported, but found in " + file)
