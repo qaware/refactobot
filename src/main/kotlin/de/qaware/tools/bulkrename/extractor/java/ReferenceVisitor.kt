@@ -3,6 +3,9 @@ package de.qaware.tools.bulkrename.extractor.java
 import com.github.javaparser.Position
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.Node
+import com.github.javaparser.ast.expr.Expression
+import com.github.javaparser.ast.expr.FieldAccessExpr
+import com.github.javaparser.ast.expr.QualifiedNameExpr
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.operation.Span
@@ -33,6 +36,27 @@ abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidV
      */
     protected fun Node.toSpan() =
             Span(Location.Companion.oneBased(this.begin.line, this.begin.column), Location.Companion.oneBased(this.end.line, this.end.column + 1))
+
+    protected fun visitName(n: Expression) {
+
+        when (n) {
+
+            is QualifiedNameExpr, is FieldAccessExpr -> {
+                val fullName = n.toStringWithoutComments()
+                val target = context.resolveFullName(fullName)
+                if (target != null) {
+                    emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, n.toSpan()))
+                }
+            }
+            else -> {
+
+                val target = context.resolveSimpleName(n.toStringWithoutComments())
+                if (target != null) {
+                    emit(JavaSimpleTypeReference(context.getCurrentFile(), target, n.toSpan()))
+                }
+            }
+        }
+    }
 
 
 }
