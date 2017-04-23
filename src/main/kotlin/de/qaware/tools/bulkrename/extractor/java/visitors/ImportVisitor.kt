@@ -1,6 +1,7 @@
 package de.qaware.tools.bulkrename.extractor.java.visitors
 
 import com.github.javaparser.ast.ImportDeclaration
+import com.github.javaparser.ast.expr.QualifiedNameExpr
 import de.qaware.tools.bulkrename.extractor.java.JavaQualifiedTypeReference
 import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
 import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
@@ -15,9 +16,13 @@ class ImportVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(cont
     override fun visit(n: ImportDeclaration?, arg: Unit) {
         if (n != null) {
 
-            val target = context.resolveFullName(n.name.toString())
+            val importedClass =
+                    if (n.isStatic) (n.name as QualifiedNameExpr).qualifier
+                    else n.name
+
+            val target = context.resolveFullName(importedClass.toString())
             if (target != null) {
-                emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, n.name.toSpan()))
+                emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, importedClass.toSpan()))
             }
         }
         super.visit(n, arg)
