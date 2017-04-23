@@ -3,8 +3,6 @@ package de.qaware.tools.bulkrename.extractor.java.visitors
 import com.github.javaparser.ast.expr.FieldAccessExpr
 import com.github.javaparser.ast.expr.NameExpr
 import com.github.javaparser.ast.type.ClassOrInterfaceType
-import de.qaware.tools.bulkrename.extractor.java.JavaQualifiedTypeReference
-import de.qaware.tools.bulkrename.extractor.java.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
 import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
 import de.qaware.tools.bulkrename.model.operation.Location
@@ -45,31 +43,10 @@ class ClassReferenceVisitor(context: ReferenceExtractionContext) : ReferenceVisi
             val span = Span(n.begin.toLocation(), endLocation)
 
             if (n.scope != null) {
-                val target = context.resolveFullName(fullName)
-                if (target != null) {
-                    emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, span))
-                }
-
-                if (fullName.endsWith("_")) {
-                    val target2 = context.resolveFullName(fullName.dropLast(1))
-                    if (target2 != null) {
-                        emit(JavaQualifiedTypeReference(context.getCurrentFile(), target2, span.shortenBy(1)))
-                    }
-                }
+                emitQualifiedReference(fullName, span)
 
             } else {
-                val target = context.resolveSimpleName(fullName)
-                if (target != null) {
-                    emit(JavaSimpleTypeReference(context.getCurrentFile(), target, span))
-                }
-
-                if (fullName.endsWith("_")) {
-                    val target2 = context.resolveSimpleName(fullName.dropLast(1))
-                    if (target2 != null) {
-                        emit(JavaQualifiedTypeReference(context.getCurrentFile(), target2, span.shortenBy(1)))
-                    }
-                }
-
+                emitSimpleReference(fullName, span)
             }
         }
         super.visit(n, arg)
@@ -80,17 +57,11 @@ class ClassReferenceVisitor(context: ReferenceExtractionContext) : ReferenceVisi
         val scope = n.scope
         when (scope) {
             is NameExpr -> {
-                val target = context.resolveSimpleName(scope.name)
-                if (target != null) {
-                    emit(JavaSimpleTypeReference(context.getCurrentFile(), target, scope.toSpan()))
-                }
+                emitSimpleReference(scope.name, scope.toSpan())
             }
             else -> {
                 // scope is not a simple name, so it could be a qualified class name -> look it up
-                val target = context.resolveFullName(scope.toString())
-                if (target != null) {
-                    emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, scope.toSpan()))
-                }
+                emitQualifiedReference(scope.toString(), scope.toSpan())
             }
         }
 

@@ -58,5 +58,32 @@ abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidV
         }
     }
 
+    protected fun emitQualifiedReference(name: String, span: Span) {
+        val target = context.resolveFullName(name)
+        if (target != null) {
+            emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, span))
+        }
+
+        if (name.endsWith("_")) {
+            val target2 = context.resolveFullName(name.dropLast(1))
+            if (target2 != null) {
+                emit(JavaQualifiedTypeReference(context.getCurrentFile(), target2, span.shortenBy(1)))
+            }
+        }
+    }
+
+    protected fun emitSimpleReference(name: String, span: Span) {
+        val target = context.resolveSimpleName(name)
+        if (target != null) {
+            emit(JavaSimpleTypeReference(context.getCurrentFile(), target, span))
+        }
+
+        if (name.endsWith("_")) {
+            val target2 = context.resolveSimpleName(name.dropLast(1))
+            if (target2 != null) {
+                emit(JavaSimpleTypeReference(context.getCurrentFile(), target2, span.shortenBy(1)))
+            }
+        }
+    }
 
 }
