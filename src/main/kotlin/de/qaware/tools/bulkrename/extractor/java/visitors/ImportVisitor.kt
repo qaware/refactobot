@@ -17,7 +17,7 @@ class ImportVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(cont
         if (n != null) {
 
             val importedClass =
-                    if (n.isStatic) (n.name as QualifiedNameExpr).qualifier
+                    if (n.isStatic && !n.isAsterisk) (n.name as QualifiedNameExpr).qualifier
                     else n.name
 
             val target = context.resolveFullName(importedClass.toString())
