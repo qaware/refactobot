@@ -19,7 +19,7 @@ class ImportVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(cont
                     if (n.isStatic && !n.isAsterisk) (n.name as QualifiedNameExpr).qualifier
                     else n.name
 
-            emitQualifiedReference(importedClass.toString(), importedClass.toSpan())
+            emitReferenceForFullClassName(importedClass)
         }
         super.visit(n, arg)
     }

@@ -5,6 +5,7 @@ import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.Node
 import com.github.javaparser.ast.expr.Expression
 import com.github.javaparser.ast.expr.FieldAccessExpr
+import com.github.javaparser.ast.expr.NameExpr
 import com.github.javaparser.ast.expr.QualifiedNameExpr
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
 import de.qaware.tools.bulkrename.model.operation.Location
@@ -83,6 +84,25 @@ abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidV
             if (target2 != null) {
                 emit(JavaSimpleTypeReference(context.getCurrentFile(), target2, span.shortenBy(1)))
             }
+        }
+    }
+
+    /**
+     * Emits a qualified name reference for the given name, or any matching prefixes.
+     *
+     * For example, a.b.C.D.E could refer to classes a.b.C or a.b.C.D or a.b.C.D.E.
+     */
+    protected fun emitReferenceForFullClassName(name: NameExpr) {
+        val target = context.resolveFullName(name.toString())
+        if (target != null) {
+            emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, name.toSpan()))
+        } else if (name.toString().endsWith("_")) {
+            val target2 = context.resolveFullName(name.toString().dropLast(1))
+            if (target2 != null) {
+                emit(JavaQualifiedTypeReference(context.getCurrentFile(), target2, name.toSpan().shortenBy(1)))
+            }
+        } else if (name is QualifiedNameExpr) {
+            emitReferenceForFullClassName(name.qualifier);
         }
     }
 
