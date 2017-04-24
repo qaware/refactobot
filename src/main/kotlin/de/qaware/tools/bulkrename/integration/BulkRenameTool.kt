@@ -22,15 +22,15 @@ object BulkRenameTool {
         val codebase = MavenScanner().scanCodebase(root)
         println("Found ${codebase.modules.size} modules.")
 
+        println("Expanding refactoring plan...")
+        val fullRefactoringPlan = SequentialExpander(codebase).expandRefactoringPlan(refactoringPlan)
+
         println("Extracting references...")
         val references =
                 JavaReferenceExtractor().extractReferences(codebase) +
                 TextReferenceExtractor().extractReferences(codebase)
 
         println("Found ${references.size} references.")
-
-        println("Expanding refactoring plan...")
-        val fullRefactoringPlan = SequentialExpander(codebase).expandRefactoringPlan(refactoringPlan)
 
         println("Planning actions...")
         val operations = ActionPlannerImpl().planActions(fullRefactoringPlan, references)
