@@ -52,7 +52,6 @@ class MavenScanner(val extensions: Set<String> = setOf("java", "xml", "xhtml", "
 
         val sourceFolders = SOURCE_FOLDER_LOCATIONS
                 .map { path -> createSourceFolder(absoluteModulePath, path, codebaseRoot) }
-                .filter { !it.files.isEmpty() } // source roots containing no files are considered non-existing
 
         val moduleName = absoluteModulePath.fileName.toString()
 

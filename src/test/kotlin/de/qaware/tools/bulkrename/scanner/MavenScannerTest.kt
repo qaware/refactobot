@@ -6,7 +6,6 @@ import de.qaware.tools.bulkrename.model.codebase.Module
 import de.qaware.tools.bulkrename.test.TestData
 import org.junit.Test
 import java.nio.file.Paths
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -45,8 +44,6 @@ class MavenScannerTest {
         assertTrue("List must contain file", { mainFilesB.containsFile("org/example/codebase/b/ClassB.java", FileType.JAVA) })
         assertTrue("List must contain file", { mainFilesB.containsFile("org/example/codebase/b/EnumB.java", FileType.JAVA) })
         assertTrue("Count of files in list must match", { mainFilesB.count() == 2 })
-
-        assertNull(module_b.sourceFolders.find { it.path == "src/test/java" })
     }
 
     private fun List<File>.containsFile(fullPath: String, type: FileType): Boolean {
