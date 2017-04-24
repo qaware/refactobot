@@ -26,7 +26,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
                 for (file in folder.files) {
 
                     // ...apply all transformations to its location...
-                    var location = RawLocation(module.modulePath.slashify(), folder.path, file.path.toString(), file.fileName)
+                    var location = RawLocation(module.modulePath.slashify(), folder.path, file.path.slashify(), file.fileName)
                     for (step in refactoringPlan.steps) {
                         location = location.applyStep(step)
                     }

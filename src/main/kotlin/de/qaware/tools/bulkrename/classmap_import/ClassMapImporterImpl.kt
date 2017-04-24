@@ -4,6 +4,7 @@ import de.qaware.tools.bulkrename.model.plan.RefactoringSubject
 import de.qaware.tools.bulkrename.model.plan.SchematicRefactoringPlan
 import de.qaware.tools.bulkrename.model.plan.Step
 import de.qaware.tools.bulkrename.util.classToFile
+import de.qaware.tools.bulkrename.util.slashify
 import de.qaware.tools.bulkrename.util.splitPath
 import org.jdom2.input.SAXBuilder
 import java.io.File
@@ -40,7 +41,7 @@ class ClassMapImporterImpl : ClassMapImporter {
 
         return Step(mapOf(
                 Pair(RefactoringSubject.FILE_PATH,
-                        Step.Replacement(Regex.fromLiteral(fromPath.toString()), Regex.escapeReplacement(toPath.toString()))),
+                        Step.Replacement(Regex.fromLiteral(fromPath.slashify()), Regex.escapeReplacement(toPath.slashify()))),
                 Pair(RefactoringSubject.FILE_NAME,
                         Step.Replacement(Regex.fromLiteral(fromFile), Regex.escapeReplacement(toFile)))
         ))
