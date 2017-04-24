@@ -14,7 +14,7 @@ import java.util.stream.Collectors
  * @author Alexander Krauss alexander.krauss@qaware.de
  * @author Florian Engel florian.engel@qaware.de
  */
-class MavenScanner(val extensions: Set<String> = setOf("java", "xml", "xhtml", "properties")) : Scanner {
+class MavenScanner(val extensions: Set<String> = setOf("java", "xml", "xhtml", "properties", "xjb")) : Scanner {
 
     companion object MavenScannerConstants {
         val SOURCE_FOLDER_LOCATIONS = listOf(
