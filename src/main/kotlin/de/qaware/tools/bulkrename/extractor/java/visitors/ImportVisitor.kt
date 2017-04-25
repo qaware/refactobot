@@ -15,6 +15,10 @@ class ImportVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(cont
     override fun visit(n: ImportDeclaration?, arg: Unit) {
         if (n != null) {
 
+            if (n.isAsterisk && !n.isStatic) {
+                throw UnsupportedOperationException("Found non-static *-import, which is currently unsupported.")
+            }
+
             val importedClass =
                     if (n.isStatic && !n.isAsterisk) (n.name as QualifiedNameExpr).qualifier
                     else n.name
