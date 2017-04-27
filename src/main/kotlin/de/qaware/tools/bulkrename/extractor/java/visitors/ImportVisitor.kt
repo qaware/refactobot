@@ -16,7 +16,8 @@ class ImportVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(cont
         if (n != null) {
 
             if (n.isAsterisk && !n.isStatic) {
-                throw UnsupportedOperationException("Found non-static *-import, which is currently unsupported.")
+                throw UnsupportedOperationException("Found non-static *-import, which is currently unsupported: " +
+                        context.getCurrentFile().fullName)
             }
 
             val importedClass =
