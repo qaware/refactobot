@@ -22,6 +22,7 @@ class MavenScanner(val extensions: Set<String> = setOf("java", "xml", "xhtml", "
                 "src/test/java",
                 "src/main/resources",
                 "src/test/resources",
+                "src/main/assembly",
                 "src/main/webapp")
         const val JAVA_EXTENSION: String = ".java"
     }
