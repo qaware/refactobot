@@ -5,6 +5,7 @@ import de.qaware.tools.bulkrename.model.codebase.File
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.operation.Span
 import de.qaware.tools.bulkrename.model.reference.Reference
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Util methods for extracting fully qualified class names in text (e.g., xml files or string literals)
@@ -40,9 +41,26 @@ object FqcnExtractor {
 
                 // report it as a reference.
                 emit(JavaQualifiedTypeReference(file, fileEntry,
-                        Span(startLocation + match.range.first, startLocation + match.range.endInclusive + 1)))
+                        Span(relativeLocation(str, startLocation, match.range.first),
+                                relativeLocation(str, startLocation, match.range.endInclusive + 1))))
             }
         }
     }
+
+    private fun relativeLocation(str: String, startLocation: Location, offset: Int): Location {
+
+        val before = str.substring(0, offset)
+        val lineOffset = StringUtils.countMatches(before, '\n')
+
+        if (lineOffset > 0) {
+
+            val newCol = offset - before.indexOfLast { it == '\n' } - 1
+            return Location(startLocation.line + lineOffset, newCol)
+
+        } else {
+            return startLocation + offset
+        }
+    }
+
 
 }

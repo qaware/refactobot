@@ -84,6 +84,7 @@ class JavaAnalyzer {
                 AnnotationVisitor(context),
                 MethodCallVisitor(context),
                 StringLiteralVisitor(context),
+                JavadocVisitor(context),
                 NamedQueryVisitor(context))
 
         val references = visitors.flatMap { v -> v.extractReferences(compilationUnit) }.toSet()
