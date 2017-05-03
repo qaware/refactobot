@@ -16,8 +16,10 @@ import de.qaware.tools.bulkrename.model.reference.Reference
  * Abstract visitor implementation that can be used to extract references from a compilation unit.
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
+ *
+ * @param <A> a context parameter that can be used to pass values down the structure. Can be set to Unit if not used
  */
-abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidVisitorAdapter<Unit>() {
+abstract class ReferenceVisitor<A>(val context: ReferenceExtractionContext) : VoidVisitorAdapter<A>(), CompilationUnitReferenceExtractor {
 
     val collectedReferences: MutableSet<Reference> = hashSetOf()
 
@@ -25,8 +27,13 @@ abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidV
         collectedReferences += ref
     }
 
-    fun extractReferences(file: CompilationUnit): Set<Reference> {
-        visit(file, Unit)
+    /**
+     * Returns the initial context.
+     */
+    protected abstract fun initialContext() : A;
+
+    override fun extractReferences(file: CompilationUnit): Set<Reference> {
+        visit(file, initialContext())
         return collectedReferences
     }
 
@@ -51,7 +58,7 @@ abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidV
             }
             else -> {
 
-                val target = context.resolveSimpleName(n.toStringWithoutComments())
+                val target = context.resolveImportedName(n.toStringWithoutComments())
                 if (target != null) {
                     emit(JavaSimpleTypeReference(context.getCurrentFile(), target, n.toSpan()))
                 }
@@ -74,13 +81,13 @@ abstract class ReferenceVisitor(val context: ReferenceExtractionContext) : VoidV
     }
 
     protected fun emitSimpleReference(name: String, span: Span) {
-        val target = context.resolveSimpleName(name)
+        val target = context.resolveImportedName(name)
         if (target != null) {
             emit(JavaSimpleTypeReference(context.getCurrentFile(), target, span))
         }
 
         if (name.endsWith("_")) {
-            val target2 = context.resolveSimpleName(name.dropLast(1))
+            val target2 = context.resolveImportedName(name.dropLast(1))
             if (target2 != null) {
                 emit(JavaSimpleTypeReference(context.getCurrentFile(), target2, span.shortenBy(1)))
             }

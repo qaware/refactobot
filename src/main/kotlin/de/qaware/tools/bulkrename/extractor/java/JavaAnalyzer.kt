@@ -12,7 +12,8 @@ import de.qaware.tools.bulkrename.util.fileToClass
 import java.io.InputStream
 
 /**
- * TODO describe type.
+ * Analysis of java files. Contains certain special treatment of import statements, and the coordinates a bunch of
+ * visitors that do the actual extraction work.
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
@@ -26,7 +27,9 @@ class JavaAnalyzer {
      * @param filesByClass a map of each known entity in the codebase to its file
      * @return a set of files which are referenced by the given file.
      */
-    fun extractReferences(file: File, inputStream: InputStream, filesByClass: Map<String, File>,
+    fun extractReferences(file: File, inputStream: InputStream,
+                          filesByClass: Map<String, File>,
+                          filesBySimpleClassName: Map<String, List<File>>,
                           filesInSamePackage: List<File>): Set<Reference> {
         val compilationUnit =
                 try { inputStream.use { JavaParser.parse(it) } }
@@ -51,16 +54,38 @@ class JavaAnalyzer {
         val context = (object : ReferenceExtractionContext {
             override fun getCurrentFile() = file
             override fun resolveFullName(fqcn: String) = filesByClass[fqcn]
-            override fun resolveSimpleName(simpleName: String): File? =
+            override fun resolveImportedName(simpleName: String): File? =
                     when {
                         simpleName in importMap -> importMap[simpleName]
                         simpleName in implicitImportMap -> implicitImportMap[simpleName]
                         else -> null
             }
+
+            override fun resolveUniqueSimpleName(simpleName: String): File? {
+
+                val found = filesBySimpleClassName[simpleName].orEmpty()
+                when (found.size) {
+                    0 -> return null
+                    1 -> return found[0]
+                    else -> {
+                        throw UnsupportedOperationException("Ambiguous simple class reference in " + file + ": "
+                                + simpleName + " matches several canditanes:\n" + found.joinToString("\n"))
+                    }
+                }
+            }
         })
 
-        val visitors = listOf(ImportVisitor(context), ClassDeclarationVisitor(context), ClassReferenceVisitor(context), ConstructorDeclarationVisitor(context),
-                PackageDeclarationVisitor(context), AnnotationVisitor(context), MethodCallVisitor(context))
+        val visitors : List<CompilationUnitReferenceExtractor> = listOf(
+                ImportVisitor(context),
+                ClassDeclarationVisitor(context),
+                ClassReferenceVisitor(context),
+                ConstructorDeclarationVisitor(context),
+                PackageDeclarationVisitor(context),
+                AnnotationVisitor(context),
+                MethodCallVisitor(context),
+                StringLiteralVisitor(context),
+                NamedQueryVisitor(context))
+
         val references = visitors.flatMap { v -> v.extractReferences(compilationUnit) }.toSet()
 
         // check for references to implicitly imported classes

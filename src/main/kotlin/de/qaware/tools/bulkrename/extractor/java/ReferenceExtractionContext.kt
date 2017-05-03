@@ -11,6 +11,7 @@ interface ReferenceExtractionContext {
 
     fun getCurrentFile(): File
     fun resolveFullName(fqcn: String): File?
-    fun resolveSimpleName(simpleName: String): File?
+    fun resolveImportedName(simpleName: String): File?
+    fun resolveUniqueSimpleName(simpleName: String): File?
 
 }

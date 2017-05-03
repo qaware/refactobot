@@ -6,14 +6,14 @@ import com.github.javaparser.ast.body.EnumDeclaration
 import com.github.javaparser.ast.body.TypeDeclaration
 import de.qaware.tools.bulkrename.extractor.java.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
-import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
+import de.qaware.tools.bulkrename.extractor.java.UnitReferenceVisitor
 
 /**
  * Visitor for class, interface and enum definitions.
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class ClassDeclarationVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(context) {
+class ClassDeclarationVisitor(context: ReferenceExtractionContext) : UnitReferenceVisitor(context) {
 
     override fun visit(decl: ClassOrInterfaceDeclaration?, arg: Unit) {
         if (decl != null) {

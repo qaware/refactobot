@@ -14,7 +14,7 @@ package de.qaware.tools.bulkrename.model.operation
  */
 data class Span(val start: Location, val end: Location) {
 
-    fun shortenBy(n: Int) = Span(start, end = this.end.minus(1))
+    fun shortenBy(n: Int) = Span(start, end = this.end - n)
 
 
 }

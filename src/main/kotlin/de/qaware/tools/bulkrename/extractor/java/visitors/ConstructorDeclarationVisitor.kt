@@ -4,14 +4,14 @@ import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.body.ConstructorDeclaration
 import de.qaware.tools.bulkrename.extractor.java.JavaSimpleTypeReference
 import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
-import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
+import de.qaware.tools.bulkrename.extractor.java.UnitReferenceVisitor
 
 /**
  * Visitor for constructor declarations. Names of constructors must be adapted when the class is renamed.
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class ConstructorDeclarationVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(context) {
+class ConstructorDeclarationVisitor(context: ReferenceExtractionContext) : UnitReferenceVisitor(context) {
 
     override fun visit(decl: ConstructorDeclaration?, arg: Unit) {
         if (decl != null) {

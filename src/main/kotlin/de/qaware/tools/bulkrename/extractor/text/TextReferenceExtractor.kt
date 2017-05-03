@@ -1,11 +1,10 @@
 package de.qaware.tools.bulkrename.extractor.text
 
 import de.qaware.tools.bulkrename.extractor.ReferenceExtractor
-import de.qaware.tools.bulkrename.extractor.java.JavaQualifiedTypeReference
+import de.qaware.tools.bulkrename.extractor.general.FqcnExtractor
 import de.qaware.tools.bulkrename.model.codebase.Codebase
 import de.qaware.tools.bulkrename.model.codebase.FileType
 import de.qaware.tools.bulkrename.model.operation.Location
-import de.qaware.tools.bulkrename.model.operation.Span
 import de.qaware.tools.bulkrename.model.reference.Reference
 import de.qaware.tools.bulkrename.util.fileToClass
 import de.qaware.tools.bulkrename.util.slashify
@@ -18,15 +17,6 @@ import de.qaware.tools.bulkrename.util.slashify
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
 class TextReferenceExtractor : ReferenceExtractor {
-
-    /**
-     * Matches occurrences of possible class names.
-     *
-     * We make a few assumptions:
-     * - A fully-qualified class name contains at least one dot, since non-packaged classes are unsupported.</li>
-     * - Class names are surrounded by non-alphanumeric characters</li>
-     */
-    private val PATTERN = Regex("([a-z]\\w+\\.)+[A-Z]\\w*")
 
 
     override fun extractReferences(codebase: Codebase): Set<Reference> {
@@ -46,17 +36,9 @@ class TextReferenceExtractor : ReferenceExtractor {
             codebase.rootPath.resolve(file.fullName).toFile().useLines {
                 for ((lineNo, line) in it.withIndex()) {
 
-                    // for each pattern that looks like a class...
-                    for (match in PATTERN.findAll(line)) {
-
-                        // if the class name matches a file in the codebase...
-                        val fileEntry = filesByClassName[match.value]
-                        if (fileEntry != null) {
-
-                            // report it as a reference.
-                            val span = Span(Location(lineNo, match.range.first), Location(lineNo, match.range.endInclusive + 1))
-                            refs += JavaQualifiedTypeReference(file, fileEntry, span)
-                        }
+                    // for each thing that is found that looks like a class...
+                    FqcnExtractor.findFqcnReferences(file, filesByClassName::get, line, Location(lineNo, 0)) {
+                        refs += it
                     }
                 }
 
@@ -65,6 +47,5 @@ class TextReferenceExtractor : ReferenceExtractor {
 
         return refs.toSet()
     }
-
 
 }

@@ -1,7 +1,5 @@
 package de.qaware.tools.bulkrename.model.operation
 
-import kotlin.comparisons.compareValuesBy
-
 /**
  * Location in a text file, given by line and column indices.
  *
@@ -28,7 +26,9 @@ data class Location (
         fun oneBased(line: Int, column: Int) = Location(line - 1, column - 1)
     }
 
-    fun minus(n: Int): Location = Location(line, column - n)
+    operator fun plus(n: Int): Location = Location(line, column + n)
+
+    operator fun minus(n: Int): Location = Location(line, column - n)
 
 }
 

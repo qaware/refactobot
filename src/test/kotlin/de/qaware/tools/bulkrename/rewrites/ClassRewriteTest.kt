@@ -54,6 +54,7 @@ class ClassRewriteTest(val filename: String) {
                 listOf(SourceFolder(".", fileEntries.toList())))
 
         val filesByClass = fileEntries.associateBy { file -> fileToClass(file.fullName.slashify()) }
+        val filesBySimpleClassName = fileEntries.groupBy { file -> fileToClass(file.fileName) }
         val filesInSamePackage = fileEntries.filter { file -> file.path == thisFile.path }
 
         fun newLocationOf(newFqcn: String): NewFileLocation {
@@ -65,6 +66,7 @@ class ClassRewriteTest(val filename: String) {
                 JavaAnalyzer().extractReferences(thisFile,
                         ByteArrayInputStream(problem.originalFile.toByteArray(Charsets.UTF_8)),
                         filesByClass,
+                        filesBySimpleClassName,
                         filesInSamePackage)
 
         val refactoringPlan: Map<File, NewFileLocation> =

@@ -4,14 +4,14 @@ import com.github.javaparser.ast.expr.MarkerAnnotationExpr
 import com.github.javaparser.ast.expr.NormalAnnotationExpr
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr
 import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
-import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
+import de.qaware.tools.bulkrename.extractor.java.UnitReferenceVisitor
 
 /**
  * Visitor for annotation usage.
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class AnnotationVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(context) {
+class AnnotationVisitor(context: ReferenceExtractionContext) : UnitReferenceVisitor(context) {
 
     override fun visit(n: SingleMemberAnnotationExpr?, arg: Unit?) {
 

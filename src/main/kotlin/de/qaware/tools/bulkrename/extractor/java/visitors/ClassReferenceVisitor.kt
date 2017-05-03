@@ -4,7 +4,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr
 import com.github.javaparser.ast.expr.NameExpr
 import com.github.javaparser.ast.type.ClassOrInterfaceType
 import de.qaware.tools.bulkrename.extractor.java.ReferenceExtractionContext
-import de.qaware.tools.bulkrename.extractor.java.ReferenceVisitor
+import de.qaware.tools.bulkrename.extractor.java.UnitReferenceVisitor
 import de.qaware.tools.bulkrename.model.operation.Location
 import de.qaware.tools.bulkrename.model.operation.Span
 
@@ -13,7 +13,7 @@ import de.qaware.tools.bulkrename.model.operation.Span
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class ClassReferenceVisitor(context: ReferenceExtractionContext) : ReferenceVisitor(context) {
+class ClassReferenceVisitor(context: ReferenceExtractionContext) : UnitReferenceVisitor(context) {
 
     override fun visit(n: ClassOrInterfaceType?, arg: Unit) {
         if (n != null) {
