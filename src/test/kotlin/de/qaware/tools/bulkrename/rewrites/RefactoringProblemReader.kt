@@ -31,6 +31,7 @@ object RefactoringProblemReader {
     fun readProblem(filename: String): RefactoringProblem {
 
         val content = readFileFromClasspathToString(filename)
+                .replace("\r\n", "\n")
         val rules = extractPreamble(content)
         val originalFileContent = getOriginal(content)
         val expectedNewFileContent = getResult(content)
