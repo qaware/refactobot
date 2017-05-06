@@ -45,13 +45,13 @@ class SequentialExpanderTest{
                 Step(mapOf(
                         Pair(RefactoringSubject.MODULE, Step.Replacement(Regex("modules/foo"), "modules/FOO")),
                         Pair(RefactoringSubject.FILE_NAME, Step.Replacement(Regex("([a-zA-Z]*)DTO.java"), "$1Dto.java")),
-                        Pair(RefactoringSubject.FILE_PATH, Step.Replacement(Regex("""de\\qaware\\tools\\bulkrename\\([a-zA-Z\\]*)"""), """de\\qaware\\tools\\bulkrename\\foobar\\$1"""))
+                        Pair(RefactoringSubject.FILE_PATH, Step.Replacement(Regex("""de/qaware/tools/bulkrename/([a-zA-Z/]*)"""), """de/qaware/tools/bulkrename/foobar/$1"""))
                 )),
                 Step(mapOf(
                         Pair(RefactoringSubject.MODULE, Step.Replacement(Regex("modules/FOO"), "modules/foobar")),
                         Pair(RefactoringSubject.SOURCE_ROOT, Step.Replacement(Regex("src/main/java"), "src/test/java")),
                         Pair(RefactoringSubject.FILE_NAME, Step.Replacement(Regex("([a-zA-Z]*)Dto.java"), "$1Bean.java")),
-                        Pair(RefactoringSubject.FILE_PATH, Step.Replacement(Regex("""de\\qaware\\tools\\bulkrename\\foobar\\([a-zA-Z\\]*)"""), """de\\qaware\\tools\\bulkrename\\foobar\\$1\\beans"""))
+                        Pair(RefactoringSubject.FILE_PATH, Step.Replacement(Regex("""de/qaware/tools/bulkrename/foobar/([a-zA-Z/]*)"""), """de/qaware/tools/bulkrename/foobar/$1/beans"""))
                 ))
         ))
 
