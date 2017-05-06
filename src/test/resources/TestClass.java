@@ -1,7 +1,7 @@
 
 package org.example.test;
 
-import de.qaware.tools.bulkrename.model.codebase.File;
+import de.qaware.repackager.model.codebase.File;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
