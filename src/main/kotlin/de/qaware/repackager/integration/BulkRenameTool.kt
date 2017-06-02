@@ -1,6 +1,6 @@
 package de.qaware.repackager.integration
 
-import de.qaware.repackager.executor.Executor
+import de.qaware.repackager.executor.filesystem.FilesystemActionExecutor
 import de.qaware.repackager.expander.SequentialExpander
 import de.qaware.repackager.extractor.java.JavaReferenceExtractor
 import de.qaware.repackager.extractor.text.TextReferenceExtractor
@@ -36,8 +36,7 @@ object BulkRenameTool {
         val operations = ActionPlannerImpl().planActions(fullRefactoringPlan, references)
 
         println("Executing actions...")
-        val executor = Executor(root)
-        operations.forEach { executor.execute(it) }
+        FilesystemActionExecutor(root).execute(operations)
 
     }
 

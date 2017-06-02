@@ -1,5 +1,6 @@
 package de.qaware.repackager.executor
 
+import de.qaware.repackager.executor.filesystem.FilesystemActionExecutor
 import de.qaware.repackager.model.operation.FileOperation
 import de.qaware.repackager.model.operation.Location
 import de.qaware.repackager.model.operation.Span
@@ -16,7 +17,7 @@ import java.nio.file.Paths
 
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class ExecutorTest {
+class FilesystemActionExecutorTest {
 
     @Rule
     @JvmField
@@ -43,9 +44,7 @@ class ExecutorTest {
                 FileOperation(source2, target2, emptyList())
         )
 
-        val executor = Executor(codebase)
-
-        operations.forEach { executor.execute(it) }
+        FilesystemActionExecutor(codebase).execute(operations)
 
         // TODO AKR assert results
     }

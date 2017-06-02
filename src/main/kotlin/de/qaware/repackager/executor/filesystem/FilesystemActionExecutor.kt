@@ -1,5 +1,7 @@
-package de.qaware.repackager.executor
+package de.qaware.repackager.executor.filesystem
 
+import de.qaware.repackager.executor.ActionExecutor
+import de.qaware.repackager.executor.EditProcessor
 import de.qaware.repackager.model.operation.FileOperation
 import de.qaware.repackager.util.slashify
 import de.qaware.repackager.util.splitLines
@@ -13,12 +15,12 @@ import java.nio.file.Path
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class Executor(private val rootPath: Path) {
+class FilesystemActionExecutor(private val rootPath: Path) : ActionExecutor {
 
     /**
      * Executes a single file move/edit operation
      */
-    fun execute(operation: FileOperation) {
+    private fun execute(operation: FileOperation) {
         val sourcePath = rootPath.resolve(operation.sourceFile)
         val targetPath = rootPath.resolve(operation.targetFile)
 
@@ -37,5 +39,9 @@ class Executor(private val rootPath: Path) {
         if (sourcePath != targetPath) {
             Files.delete(sourcePath)
         }
+    }
+
+    override fun execute(operations: List<FileOperation>) {
+        operations.forEach { execute(it) }
     }
 }
