@@ -15,6 +15,7 @@ interface ActionExecutor {
      * Executes all of the given operations.
      *
      * @param operations a list of file operations.
+     * @param commitMsg the commit message to use (if applicable).
      */
-    fun execute(operations: List<FileOperation>)
+    fun execute(operations: List<FileOperation>, commitMsg: String = "")
 }

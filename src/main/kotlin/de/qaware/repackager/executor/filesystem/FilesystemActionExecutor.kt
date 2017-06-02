@@ -41,7 +41,7 @@ class FilesystemActionExecutor(private val rootPath: Path) : ActionExecutor {
         }
     }
 
-    override fun execute(operations: List<FileOperation>) {
+    override fun execute(operations: List<FileOperation>, commitMsg: String) {
         operations.forEach { execute(it) }
     }
 }
