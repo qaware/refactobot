@@ -21,6 +21,7 @@ dependencies {
     compile "org.lucee:jdom2:2.0.6"
     compile "commons-io:commons-io:2.5"
     compile "org.apache.commons:commons-lang3:3.5"
+    compile "org.eclipse.jgit:org.eclipse.jgit:4.8.0.201705170830-rc1"
     testCompile 'junit:junit:4.12'
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile 'org.assertj:assertj-core:3.6.1'
