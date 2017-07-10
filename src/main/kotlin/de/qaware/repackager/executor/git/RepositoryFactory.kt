@@ -24,6 +24,6 @@ interface RepositoryFactory {
      * @param rootPath some path pointing to a repository
      * @return the repository object, or null, if no repository is found on disk.
      */
-    fun getRepository(rootPath: Path): Repository?
+    fun getRepository(rootPath: Path): Repository
 
 }

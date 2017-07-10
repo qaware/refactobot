@@ -1,6 +1,8 @@
 package de.qaware.repackager.integration
 
-import de.qaware.repackager.executor.filesystem.FilesystemActionExecutor
+import de.qaware.repackager.executor.batch.BatchedActionExecutor
+import de.qaware.repackager.executor.git.GitActionExecutor
+import de.qaware.repackager.executor.git.impl.JgitRepositoryFactory
 import de.qaware.repackager.expander.SequentialExpander
 import de.qaware.repackager.extractor.java.JavaReferenceExtractor
 import de.qaware.repackager.extractor.text.TextReferenceExtractor
@@ -16,7 +18,7 @@ import java.nio.file.Path
  */
 object BulkRenameTool {
 
-    fun refactorMavenCodebase(root : Path, refactoringPlan: SchematicRefactoringPlan) {
+    fun refactorMavenCodebase(root : Path, refactoringPlan: SchematicRefactoringPlan, commitMsg: String, batchSize: Int) {
 
         println("Scanning codebase...")
         val codebase = MavenScanner().scanCodebase(root)
@@ -36,8 +38,8 @@ object BulkRenameTool {
         val operations = ActionPlannerImpl().planActions(fullRefactoringPlan, references)
 
         println("Executing actions...")
-        FilesystemActionExecutor(root).execute(operations)
-
+        BatchedActionExecutor(batchSize, GitActionExecutor(JgitRepositoryFactory(), root))
+                .execute(operations, commitMsg)
     }
 
 }

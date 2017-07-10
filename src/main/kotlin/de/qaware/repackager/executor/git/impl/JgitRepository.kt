@@ -13,14 +13,14 @@ import java.nio.file.Path
  */
 class JgitRepository(val repo: org.eclipse.jgit.lib.Repository) : Repository {
 
-    override fun commit(addedFiles: Set<Path>, deletedFiles: Set<Path>, msg: String) {
+    override val root = repo.workTree.toPath()
 
-        val repoRoot = repo.workTree.toPath()
+    override fun commit(addedFiles: Set<Path>, deletedFiles: Set<Path>, msg: String) {
 
         if (addedFiles.isNotEmpty()) {
             val gitAdd = Git(repo).add()
             addedFiles.forEach { file ->
-                gitAdd.addFilepattern(repoRoot.relativize(file).slashify())
+                gitAdd.addFilepattern(root.relativize(file).slashify())
             }
             gitAdd.call()
         }
@@ -28,7 +28,7 @@ class JgitRepository(val repo: org.eclipse.jgit.lib.Repository) : Repository {
         if (deletedFiles.isNotEmpty()) {
             val gitRm = Git(repo).rm()
             deletedFiles.forEach { file ->
-                gitRm.addFilepattern(repoRoot.relativize(file).slashify()) }
+                gitRm.addFilepattern(root.relativize(file).slashify()) }
             gitRm.call()
         }
 

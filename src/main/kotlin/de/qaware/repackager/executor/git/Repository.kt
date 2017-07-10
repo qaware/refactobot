@@ -9,6 +9,10 @@ import java.nio.file.Path
  */
 interface Repository {
 
+    /**
+     * The repository root.
+     */
+    val root : Path
 
     /**
      * Commits changes to files to the repository.

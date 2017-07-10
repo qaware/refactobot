@@ -15,7 +15,7 @@ class JgitRepositoryFactory : RepositoryFactory {
     override fun findRepositoryRoot(path: Path): Path? {
         TODO("not implemented")
     }
-    override fun getRepository(rootPath: Path): Repository? {
+    override fun getRepository(rootPath: Path): Repository {
 
         val repo = FileRepositoryBuilder()
                 .setMustExist(true)

@@ -1,6 +1,7 @@
 package de.qaware.repackager.executor.git
 
 import de.qaware.repackager.executor.ActionExecutor
+import de.qaware.repackager.executor.filesystem.FilesystemActionExecutor
 import de.qaware.repackager.model.operation.FileOperation
 import java.nio.file.Path
 
@@ -9,20 +10,21 @@ import java.nio.file.Path
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class GitActionExecutor(private val rootPath: Path) : ActionExecutor {
+class GitActionExecutor(repositoryFactory: RepositoryFactory, private val codebaseRoot: Path) : ActionExecutor {
 
-
-    init {
-
-    }
-
-
-
-
-
+    val repo = repositoryFactory.getRepository(codebaseRoot)
 
     override fun execute(operations: List<FileOperation>, commitMsg: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+        // first perform the file operations as usual
+        FilesystemActionExecutor(codebaseRoot).execute(operations)
+
+        // compute paths that must be added / removed from git
+        val addedPaths = operations.map { codebaseRoot.resolve(it.targetFile) }.toSet()
+        val deletedPaths = operations.map { codebaseRoot.resolve(it.sourceFile) }.toSet() - addedPaths
+
+        // commit
+        repo.commit(addedPaths, deletedPaths, commitMsg)
     }
 
 
