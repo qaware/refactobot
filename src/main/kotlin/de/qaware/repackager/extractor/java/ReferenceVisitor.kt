@@ -49,7 +49,10 @@ abstract class ReferenceVisitor<A>(val context: ReferenceExtractionContext) : Vo
                 emitQualifiedReference(n.toStringWithoutComments(), n.toSpan())
             }
             is ThisExpr -> {
-                visitName(n.classExpr)
+                if (n.classExpr != null) {
+                    // qualified this, might contain a name.
+                    visitName(n.classExpr)
+                }
             }
             else -> {
                 emitSimpleReference(n.toStringWithoutComments(), n.toSpan())
