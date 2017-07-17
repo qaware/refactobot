@@ -48,20 +48,11 @@ abstract class ReferenceVisitor<A>(val context: ReferenceExtractionContext) : Vo
     protected fun visitName(n: Expression) {
 
         when (n) {
-
             is QualifiedNameExpr, is FieldAccessExpr -> {
-                val fullName = n.toStringWithoutComments()
-                val target = context.resolveFullName(fullName)
-                if (target != null) {
-                    emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, n.toSpan()))
-                }
+                emitQualifiedReference(n.toStringWithoutComments(), n.toSpan())
             }
             else -> {
-
-                val target = context.resolveImportedName(n.toStringWithoutComments())
-                if (target != null) {
-                    emit(JavaSimpleTypeReference(context.getCurrentFile(), target, n.toSpan()))
-                }
+                emitSimpleReference(n.toStringWithoutComments(), n.toSpan())
             }
         }
     }

@@ -43,7 +43,7 @@ val CLASS_MAP_RENAME = ClassMapImporterImpl().importClassMap("P:/temp/classmap.x
  */
 fun main(args: Array<String>) {
 
-    BulkRenameTool.refactorMavenCodebase(Paths.get("P:/codebase2/code"), CLASS_MAP_RENAME)
+    BulkRenameTool.refactorMavenCodebase(Paths.get("P:/codebase2/code"), CLASS_MAP_RENAME, "Code reorganization", 30)
 }
 
 

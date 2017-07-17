@@ -5,7 +5,7 @@ import de.qaware.repackager.extractor.java.ReferenceExtractionContext
 import de.qaware.repackager.extractor.java.UnitReferenceVisitor
 
 /**
- * Visitor for annotation usage.
+ * Visitor for method calls.
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */

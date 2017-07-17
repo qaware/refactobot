@@ -42,8 +42,7 @@ class JavaAnalyzer {
         }
 
         val importMap = compilationUnit.imports
-                .map { analyzeImport(it) }
-                .filterNotNull()
+                .flatMap { analyzeImport(it) }
                 .toMap()
                 .mapValues { entry -> filesByClass[entry.value] }
                 .filterValues { it != null }
@@ -109,7 +108,9 @@ class JavaAnalyzer {
         return Location(line - 1, 0) // our locations are zero-based
     }
 
-    private fun analyzeImport(importDeclaration: ImportDeclaration): Pair<String, String>? {
+    private fun analyzeImport(importDeclaration: ImportDeclaration): List<Pair<String, String>> {
+
+        var result = listOf<Pair<String, String>>()
 
         val name = importDeclaration.name.toString()
         val nameParts = name.split(".")
@@ -120,10 +121,18 @@ class JavaAnalyzer {
             // only the last part starts with an upper case letter, so by the usual naming conventions, we know that this
             // imports a top-level declaration of a compilation unit.
 
-            return Pair(nameParts.last(), name)
+            val baseName = nameParts.last()
+
+            result += Pair(baseName, name)
+
+            // Underscore hack. When a _ class is imported, also count the original class as imported, to make sure that
+            // references are properly rewritten.
+            if (baseName.last() == '_') {
+                result += Pair(baseName.dropLast(1), name.dropLast(1))
+            }
         }
 
-        return null
+        return result
     }
 
 }
