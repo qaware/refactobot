@@ -25,6 +25,7 @@ class GitActionExecutor(repositoryFactory: RepositoryFactory, private val codeba
 
         // commit
         repo.commit(addedPaths, deletedPaths, commitMsg)
+        println("Committed revision: " + commitMsg)
     }
 
 
