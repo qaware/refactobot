@@ -3,10 +3,7 @@ package de.qaware.repackager.extractor.java
 import com.github.javaparser.Position
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.Node
-import com.github.javaparser.ast.expr.Expression
-import com.github.javaparser.ast.expr.FieldAccessExpr
-import com.github.javaparser.ast.expr.NameExpr
-import com.github.javaparser.ast.expr.QualifiedNameExpr
+import com.github.javaparser.ast.expr.*
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
 import de.qaware.repackager.model.operation.Location
 import de.qaware.repackager.model.operation.Span
@@ -50,6 +47,9 @@ abstract class ReferenceVisitor<A>(val context: ReferenceExtractionContext) : Vo
         when (n) {
             is QualifiedNameExpr, is FieldAccessExpr -> {
                 emitQualifiedReference(n.toStringWithoutComments(), n.toSpan())
+            }
+            is ThisExpr -> {
+                visitName(n.classExpr)
             }
             else -> {
                 emitSimpleReference(n.toStringWithoutComments(), n.toSpan())

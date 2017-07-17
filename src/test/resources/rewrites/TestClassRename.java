@@ -20,4 +20,10 @@ public class /*|*/TestClassRename/*->NewClassName*/ {
         greeting.add("World");
     }
 
+    private void qualifiedThisExpression() {
+
+        /*|*/TestClassRename/*->NewClassName*/.this.getClass();
+
+    }
+
 }
