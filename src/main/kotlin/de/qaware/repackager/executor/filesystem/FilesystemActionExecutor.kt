@@ -3,8 +3,8 @@ package de.qaware.repackager.executor.filesystem
 import de.qaware.repackager.executor.ActionExecutor
 import de.qaware.repackager.executor.EditProcessor
 import de.qaware.repackager.model.operation.FileOperation
-import de.qaware.repackager.util.slashify
 import de.qaware.repackager.util.splitLines
+import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
@@ -24,20 +24,37 @@ class FilesystemActionExecutor(private val rootPath: Path) : ActionExecutor {
         val sourcePath = rootPath.resolve(operation.sourceFile)
         val targetPath = rootPath.resolve(operation.targetFile)
 
-        println("Moving " + sourcePath.slashify() + " -> " + targetPath.slashify())
-
         if (sourcePath != targetPath && Files.exists(targetPath)) {
             throw IllegalStateException("Target file already exists: " + operation.targetFile)
         }
 
-        val lines = File(sourcePath.toUri()).readText(Charsets.UTF_8).splitLines()
+        if (operation.edits.isEmpty()) {
 
-        Files.createDirectories(targetPath.parent)
-        val writer = FileWriter(targetPath.toFile())
-        EditProcessor(lines, writer).applyEdits(operation.edits)
+            if (sourcePath == targetPath) {
 
-        if (sourcePath != targetPath) {
-            Files.delete(sourcePath)
+                // fast path 1: nothing to do if source and target are identical and the file is unchanged
+                return;
+
+            } else {
+
+                // fast path 2: plain move operation, with the file content unchanged.
+                Files.createDirectories(targetPath.parent)
+                FileUtils.moveFile(sourcePath.toFile(), targetPath.toFile());
+
+            }
+        } else {
+
+            // We edit the file content. The following code assumes that we are dealing with a text file.
+
+            val lines = File(sourcePath.toUri()).readText(Charsets.UTF_8).splitLines()
+
+            Files.createDirectories(targetPath.parent)
+            val writer = FileWriter(targetPath.toFile())
+            EditProcessor(lines, writer).applyEdits(operation.edits)
+
+            if (sourcePath != targetPath) {
+                Files.delete(sourcePath)
+            }
         }
     }
 
