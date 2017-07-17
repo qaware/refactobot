@@ -20,7 +20,7 @@ class BatchedActionExecutor(val batchSize : Int, val executor: ActionExecutor) :
         val numBatches = batches.size
 
         for ((i, batch) in batches.withIndex()) {
-            executor.execute(batch, commitMsg + " (${i}/${numBatches})")
+            executor.execute(batch, commitMsg + " (${i+1}/${numBatches})")
         }
     }
 
