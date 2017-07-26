@@ -1,6 +1,7 @@
 package de.qaware.refactobot.classmap_import
 
 import org.junit.Test
+import java.io.File
 
 /**
  * TODO describe type.
@@ -12,7 +13,8 @@ class ClassMapImporterImplTest {
     @Test
     fun importClassMap() {
 
-        ClassMapImporterImpl().importClassMap("P:/temp/classmap.xml")
+        val filePath = File(javaClass.classLoader.getResource("classmap/classmap.xml").file).absolutePath
+        ClassMapImporterImpl().importClassMap(filePath)
 
     }
 

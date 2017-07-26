@@ -1,0 +1,10 @@
+<restructuring generated-at="Thu Jul 06 00:54:23 CEST 2017">
+  <set version="3" name="Some transformation" hiview="Codemap" active="true" todo="false" list="0">
+    <namemap applyMappings="true">
+      <map from="org.example.cade.ClassA" to="org.example.newpackage.ClassARenamed" />
+      <map from="org.example.cade.ClassB" to="org.example.newpackage.ClassB" />
+      <map from="org.example.cade.ClassC" to="org.example.newpackage.ClassC" />
+    </namemap>
+    <!-- Other elements will usually appear here, but we can ignore them and focus only on the class map. -->
+  </set>
+</restructuring>
