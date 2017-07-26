@@ -110,11 +110,11 @@ class MavenScanner(val extensions: Set<String> = setOf("java", "xml", "xhtml", "
                 if (path.toFile().isDirectory) {
                     foundFiles.addAll(scanDirectory(path))
                 } else {
-                    if (extensions.contains(path.toFile().extension.toLowerCase())) {
-                        foundFiles.add(path)
-                    }
-                }
+//                    if (extensions.contains(path.toFile().extension.toLowerCase())) {
+                    foundFiles.add(path)
+//                }
             }
+        }
         }
         return foundFiles
     }
