@@ -30,7 +30,7 @@ class JgitRepositoryFactoryTest {
         Git.init().setDirectory(tempFolder.root).call()
 
         // create repo handler
-        val repo = JgitRepositoryFactory().getRepository(tempFolder.root.toPath())!!
+        val repo = JgitRepositoryFactory().getRepository(tempFolder.root.toPath())
 
         // commit two files
         val file1 = tempFolder.newFile("file1.txt")
