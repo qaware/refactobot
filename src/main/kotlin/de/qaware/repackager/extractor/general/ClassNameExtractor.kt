@@ -7,7 +7,7 @@ import de.qaware.repackager.model.operation.Span
 import de.qaware.repackager.model.reference.Reference
 
 /**
- * Util methods for extracting fully qualified class names in text (e.g., xml files or string literals)
+ * Util methods for extracting simple class names in text (e.g., xml files or string literals)
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
