@@ -1,5 +1,7 @@
 = Refactobot - Automate code reorganizations in large Java codebases.
 
+image:https://travis-ci.org/qaware/refactobot.svg?branch=master["Build Status", link="https://travis-ci.org/qaware/refactobot"]
+
 Moving or renaming individual classes is a no-brainer in today's IDEs. But what if you want to rename thousands of
 classes in hundreds of packages? What if you want to reorganize an entire codebase into a new module structure?
 
