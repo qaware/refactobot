@@ -11,14 +11,6 @@ import java.nio.file.Path
 interface RepositoryFactory {
 
     /**
-     * Returns the repository root path, given some path that points into a repository.
-     *
-     * @param path a path
-     * @return the root of the repository, or null, if no repository is found.
-     */
-    fun findRepositoryRoot(path: Path): Path?
-
-    /**
      * Returns a repository object, for a given root path which must point to an existing repository on disk.
      *
      * @param rootPath some path pointing to a repository

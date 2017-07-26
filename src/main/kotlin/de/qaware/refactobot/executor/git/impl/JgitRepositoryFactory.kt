@@ -12,9 +12,6 @@ import java.nio.file.Path
  */
 class JgitRepositoryFactory : RepositoryFactory {
 
-    override fun findRepositoryRoot(path: Path): Path? {
-        TODO("not implemented")
-    }
     override fun getRepository(rootPath: Path): Repository {
 
         val repo = FileRepositoryBuilder()
