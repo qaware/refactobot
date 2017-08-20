@@ -1,4 +1,4 @@
-package de.qaware.refactobot.model.plan
+package de.qaware.refactobot.model.plan.old
 
 /**
  * All available refactoring subject types.

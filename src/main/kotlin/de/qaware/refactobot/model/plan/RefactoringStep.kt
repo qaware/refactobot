@@ -1,4 +1,4 @@
-package de.qaware.refactobot.configuration
+package de.qaware.refactobot.model.plan
 
 import de.qaware.refactobot.model.plan.FileLocation
 

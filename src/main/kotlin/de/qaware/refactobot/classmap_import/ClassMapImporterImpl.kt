@@ -1,8 +1,8 @@
 package de.qaware.refactobot.classmap_import
 
-import de.qaware.refactobot.model.plan.RefactoringSubject
-import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
-import de.qaware.refactobot.model.plan.Step
+import de.qaware.refactobot.model.plan.old.RefactoringSubject
+import de.qaware.refactobot.model.plan.old.SchematicRefactoringPlan
+import de.qaware.refactobot.model.plan.old.Step
 import de.qaware.refactobot.util.classToFile
 import de.qaware.refactobot.util.slashify
 import de.qaware.refactobot.util.splitPath

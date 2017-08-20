@@ -1,6 +1,6 @@
 package de.qaware.refactobot.configuration
 
-import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
+import de.qaware.refactobot.model.plan.old.SchematicRefactoringPlan
 
 /**
  * Root configuration object.

@@ -1,9 +1,9 @@
 package de.qaware.refactobot.expander
 
+import de.qaware.refactobot.configuration.RefactoringStep
 import de.qaware.refactobot.model.codebase.Codebase
 import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.plan.FileLocation
-import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
 import de.qaware.refactobot.util.slashify
 import java.util.*
 
@@ -16,7 +16,7 @@ import java.util.*
  */
 class SequentialExpander(val codebase: Codebase) : Expander {
 
-    override fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, FileLocation> {
+    override fun expandRefactoringPlan(refactoringPlan: List<RefactoringStep>): Map<File, FileLocation> {
         val fullRefactoringPlan = HashMap<File, FileLocation>()
 
         // for each file in the codebase...
@@ -25,13 +25,11 @@ class SequentialExpander(val codebase: Codebase) : Expander {
                 for (file in folder.files) {
 
                     // ...apply all transformations to its location...
-                    var location = FileLocation(module.modulePath.slashify(), folder.path, file.path.slashify(), file.fileName)
-                    for (step in refactoringPlan.steps) {
-                        location = LocationMapper.applyStep(step, location)
-                    }
+                    val initialLocation = FileLocation(module.modulePath.slashify(), folder.path, file.path.slashify(), file.fileName)
+                    val finalLocation = refactoringPlan.fold(initialLocation, { loc, step -> step(loc) })
 
                     // ...and save the result as the final location of the file
-                    fullRefactoringPlan.put(file, createNewFileLocation(location))
+                    fullRefactoringPlan.put(file, createNewFileLocation(finalLocation))
                 }
             }
         }

@@ -1,6 +1,6 @@
 package de.qaware.refactobot.classmap_import
 
-import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
+import de.qaware.refactobot.model.plan.old.SchematicRefactoringPlan
 
 /**
  * TODO describe type.

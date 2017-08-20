@@ -1,8 +1,9 @@
-package de.qaware.refactobot.expander
+package de.qaware.refactobot.model.plan.old
 
+import de.qaware.refactobot.configuration.RefactoringStep
 import de.qaware.refactobot.model.plan.FileLocation
-import de.qaware.refactobot.model.plan.RefactoringSubject
-import de.qaware.refactobot.model.plan.Step
+import de.qaware.refactobot.model.plan.old.RefactoringSubject
+import de.qaware.refactobot.model.plan.old.Step
 
 /**
  * Methods that apply symbolic steps to a location.
@@ -33,7 +34,7 @@ object LocationMapper {
     private fun applyRule(location: FileLocation, rule : Map.Entry<RefactoringSubject, Step.Replacement>): FileLocation =
             updateByKey(location, rule.key, getByKey(location, rule.key).replace(rule.value.regex, rule.value.replacement))
 
-    fun applyStep(step: Step, location: FileLocation): FileLocation =
+    fun getStep(step: Step): RefactoringStep = { location: FileLocation ->
 
             // if all regexes match their corresponding components...
             if (step.replacements.all { ruleMatches(location, it) }) {
@@ -45,5 +46,5 @@ object LocationMapper {
                 // otherwise ignore this rule
                 location
             }
-
+    }
 }

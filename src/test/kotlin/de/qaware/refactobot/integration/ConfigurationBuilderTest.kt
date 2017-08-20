@@ -16,7 +16,7 @@ class ConfigurationBuilderTest {
         ConfigurationBuilder().build {
 
             steps {
-                rename("abc" to "def")
+
 
 
             }

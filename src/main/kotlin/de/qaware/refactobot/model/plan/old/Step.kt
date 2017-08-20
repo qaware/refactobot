@@ -1,4 +1,6 @@
-package de.qaware.refactobot.model.plan
+package de.qaware.refactobot.model.plan.old
+
+import de.qaware.refactobot.model.plan.old.RefactoringSubject
 
 /**
  * A step in a refactoring plan.
