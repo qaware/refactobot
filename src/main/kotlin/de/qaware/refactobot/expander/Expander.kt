@@ -1,7 +1,7 @@
 package de.qaware.refactobot.expander
 
 import de.qaware.refactobot.model.codebase.File
-import de.qaware.refactobot.model.plan.NewFileLocation
+import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
 
 /**
@@ -13,6 +13,6 @@ import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
  */
 interface Expander {
 
-        fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, NewFileLocation>
+        fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, FileLocation>
 
 }

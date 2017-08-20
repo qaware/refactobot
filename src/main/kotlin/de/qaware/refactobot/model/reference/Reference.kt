@@ -2,7 +2,7 @@ package de.qaware.refactobot.model.reference
 
 import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.operation.FileOperation
-import de.qaware.refactobot.model.plan.NewFileLocation
+import de.qaware.refactobot.model.plan.FileLocation
 
 /**
  * Abstract superclass of all reference types. Each reference has an origin and a target file, which must be known
@@ -22,6 +22,6 @@ interface Reference {
      * @param newTarget the new location of the target file.
      * @return an optional edit operation that defines how the source must be rewritten.
      */
-    fun getAdjustment(refactoringPlan : Map<File, NewFileLocation>): FileOperation.Edit?
+    fun getAdjustment(refactoringPlan : Map<File, FileLocation>): FileOperation.Edit?
 
 }

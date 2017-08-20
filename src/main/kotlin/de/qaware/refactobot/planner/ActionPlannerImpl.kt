@@ -2,7 +2,7 @@ package de.qaware.refactobot.planner
 
 import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.operation.FileOperation
-import de.qaware.refactobot.model.plan.NewFileLocation
+import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.reference.Reference
 
 /**
@@ -17,14 +17,14 @@ class ActionPlannerImpl : ActionPlanner {
     /**
      * Plans all needed actions for a given refactoring plan with references
      */
-    override fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: Set<Reference>) : List<FileOperation> {
+    override fun planActions(refactoringPlan: Map<File, FileLocation>, allReferences: Set<Reference>) : List<FileOperation> {
 
         val editsPerFile: Map<File, List<FileOperation.Edit>> = collectEditsPerFile(allReferences, refactoringPlan)
 
         return refactoringPlan.map { entry -> FileOperation(entry.key.fullName, entry.value.fullName, editsPerFile[entry.key] ?: emptyList()) }
     }
 
-    private fun collectEditsPerFile(allReferences: Set<Reference>, refactoringPlan: Map<File, NewFileLocation>): Map<File, List<FileOperation.Edit>> {
+    private fun collectEditsPerFile(allReferences: Set<Reference>, refactoringPlan: Map<File, FileLocation>): Map<File, List<FileOperation.Edit>> {
         val editsByFile: MutableMap<File, List<FileOperation.Edit>> = hashMapOf()
 
         for ((originFile, refs) in allReferences.groupBy(Reference::origin)) {

@@ -9,7 +9,7 @@ import java.nio.file.Path
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-data class NewFileLocation(
+data class FileLocation(
 
         /**
          * The new module.

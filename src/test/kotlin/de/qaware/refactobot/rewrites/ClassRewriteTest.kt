@@ -7,7 +7,7 @@ import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.codebase.FileType
 import de.qaware.refactobot.model.codebase.Module
 import de.qaware.refactobot.model.codebase.SourceFolder
-import de.qaware.refactobot.model.plan.NewFileLocation
+import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.util.*
 import org.apache.commons.io.IOUtils
 import org.assertj.core.api.Assertions.assertThat
@@ -57,9 +57,9 @@ class ClassRewriteTest(val filename: String) {
         val filesBySimpleClassName = fileEntries.groupBy { file -> fileToClass(file.fileName) }
         val filesInSamePackage = fileEntries.filter { file -> file.path == thisFile.path }
 
-        fun newLocationOf(newFqcn: String): NewFileLocation {
+        fun newLocationOf(newFqcn: String): FileLocation {
             val (path, filename) = splitPath(classToFile(newFqcn))
-            return NewFileLocation(dummyModule, dummyModule.sourceFolders[0], path, filename)
+            return FileLocation(dummyModule, dummyModule.sourceFolders[0], path, filename)
         }
 
         val refs =
@@ -69,7 +69,7 @@ class ClassRewriteTest(val filename: String) {
                         filesBySimpleClassName,
                         filesInSamePackage)
 
-        val refactoringPlan: Map<File, NewFileLocation> =
+        val refactoringPlan: Map<File, FileLocation> =
                 adjustedMoveRules
                     .map { rule -> Pair(filesByClass[rule.first]!!, newLocationOf(rule.second)) }
                     .toMap()

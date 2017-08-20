@@ -2,7 +2,7 @@ package de.qaware.refactobot.planner
 
 import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.operation.FileOperation
-import de.qaware.refactobot.model.plan.NewFileLocation
+import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.reference.Reference
 
 /**
@@ -15,6 +15,6 @@ interface ActionPlanner {
     /**
      * Given a refactoring plan and a list of references, compute the operations that must be made to each file.
      */
-    fun planActions(refactoringPlan: Map<File, NewFileLocation>, allReferences: Set<Reference>) : List<FileOperation>
+    fun planActions(refactoringPlan: Map<File, FileLocation>, allReferences: Set<Reference>) : List<FileOperation>
 
 }

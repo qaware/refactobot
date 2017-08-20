@@ -1,7 +1,7 @@
 package de.qaware.refactobot.expander
 
 import de.qaware.refactobot.model.codebase.*
-import de.qaware.refactobot.model.plan.NewFileLocation
+import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.plan.RefactoringSubject
 import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
 import de.qaware.refactobot.model.plan.Step
@@ -59,8 +59,8 @@ class SequentialExpanderTest{
         val actualResult = SequentialExpander(codebase).expandRefactoringPlan(refactoringPlan)
 
         val expectedResult = mapOf(
-                Pair(file1, NewFileLocation(moduleFoobar, moduleFoobar.sourceFolders[0], Paths.get("de/qaware/tools/bulkrename/foobar/test/beans"), "TestBean.java")),
-                Pair(file2, NewFileLocation(moduleFoo, moduleFoo.sourceFolders[0], file2.path, file2.fileName)) // unchanged
+                Pair(file1, FileLocation(moduleFoobar, moduleFoobar.sourceFolders[0], Paths.get("de/qaware/tools/bulkrename/foobar/test/beans"), "TestBean.java")),
+                Pair(file2, FileLocation(moduleFoo, moduleFoo.sourceFolders[0], file2.path, file2.fileName)) // unchanged
         )
 
         assertThat(actualResult).isEqualTo(expectedResult)
@@ -79,8 +79,8 @@ class SequentialExpanderTest{
         val actualResult = SequentialExpander(codebase).expandRefactoringPlan(refactoringPlan)
 
         val expectedResult = mapOf(
-                Pair(file1, NewFileLocation(moduleFoo, moduleFoo.sourceFolders[0], Paths.get("de/qaware/tools/bulkrename/test"), "TestDto.java")),
-                Pair(file2, NewFileLocation(moduleFoo, moduleFoo.sourceFolders[0], file2.path, file2.fileName)) // unchanged
+                Pair(file1, FileLocation(moduleFoo, moduleFoo.sourceFolders[0], Paths.get("de/qaware/tools/bulkrename/test"), "TestDto.java")),
+                Pair(file2, FileLocation(moduleFoo, moduleFoo.sourceFolders[0], file2.path, file2.fileName)) // unchanged
         )
 
         assertThat(actualResult).isEqualTo(expectedResult)

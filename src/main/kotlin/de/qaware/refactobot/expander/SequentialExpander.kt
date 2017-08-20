@@ -2,7 +2,7 @@ package de.qaware.refactobot.expander
 
 import de.qaware.refactobot.model.codebase.Codebase
 import de.qaware.refactobot.model.codebase.File
-import de.qaware.refactobot.model.plan.NewFileLocation
+import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
 import de.qaware.refactobot.util.slashify
 import java.nio.file.Paths
@@ -17,8 +17,8 @@ import java.util.*
  */
 class SequentialExpander(val codebase: Codebase) : Expander {
 
-    override fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, NewFileLocation> {
-        val fullRefactoringPlan = HashMap<File, NewFileLocation>()
+    override fun expandRefactoringPlan(refactoringPlan: SchematicRefactoringPlan): Map<File, FileLocation> {
+        val fullRefactoringPlan = HashMap<File, FileLocation>()
 
         // for each file in the codebase...
         for (module in codebase.modules) {
@@ -39,7 +39,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
         return fullRefactoringPlan
     }
 
-    private fun createNewFileLocation(expansionResult: RawLocation): NewFileLocation {
+    private fun createNewFileLocation(expansionResult: RawLocation): FileLocation {
 
         val fileName = expansionResult.filename
         val path = expansionResult.path
@@ -51,7 +51,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
         val newSourceFolder = newModule.sourceFolders.find { it.path == sourceRoot }
                 ?: throw IllegalStateException("No source folder with path " + sourceRoot + " in module " + newModule.name)
 
-        return NewFileLocation(newModule, newSourceFolder, Paths.get(path), fileName)
+        return FileLocation(newModule, newSourceFolder, Paths.get(path), fileName)
 
     }
 
