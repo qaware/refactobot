@@ -7,7 +7,6 @@ import de.qaware.refactobot.model.operation.Span
 import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.reference.Reference
 import de.qaware.refactobot.util.fileToClass
-import de.qaware.refactobot.util.slashify
 
 /**
  * A special type of reference object for the classes that are implicitly in scope for this file, since they are in
@@ -29,7 +28,7 @@ class JavaImplicitImportReference(override val origin: File, val targets: Set<Fi
         // have moved, or both), and generate imports for them.
         val importsToInsert = targets.map { file -> refactoringPlan[file]!! }
                 .filter { it.path != newPath }
-                .map { "import " + fileToClass(it.path.resolve(it.fileName).slashify()) + ";\n" }
+                .map { "import " + fileToClass(it.path + "/" + it.fileName) + ";\n" }
                 .sorted()
                 .joinToString("")
 

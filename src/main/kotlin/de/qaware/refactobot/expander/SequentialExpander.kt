@@ -5,7 +5,6 @@ import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.plan.SchematicRefactoringPlan
 import de.qaware.refactobot.util.slashify
-import java.nio.file.Paths
 import java.util.*
 
 /**
@@ -51,7 +50,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
         val newSourceFolder = newModule.sourceFolders.find { it.path == sourceRoot }
                 ?: throw IllegalStateException("No source folder with path " + sourceRoot + " in module " + newModule.name)
 
-        return FileLocation(newModule, newSourceFolder, Paths.get(path), fileName)
+        return FileLocation(newModule.modulePath.slashify(), newSourceFolder.path, path, fileName)
 
     }
 

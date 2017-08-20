@@ -5,8 +5,6 @@ import de.qaware.refactobot.executor.EditProcessor
 import de.qaware.refactobot.extractor.java.JavaAnalyzer
 import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.codebase.FileType
-import de.qaware.refactobot.model.codebase.Module
-import de.qaware.refactobot.model.codebase.SourceFolder
 import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.util.*
 import org.apache.commons.io.IOUtils
@@ -17,7 +15,6 @@ import org.junit.runners.Parameterized
 import java.io.ByteArrayInputStream
 import java.io.StringReader
 import java.io.StringWriter
-import java.nio.file.Paths
 
 /**
  * Test that asserts that the various references in a class file are rewritten correctly when classes are moved around.
@@ -50,8 +47,6 @@ class ClassRewriteTest(val filename: String) {
                     problem.moveRules + Pair(thisClass, thisClass)
 
         val fileEntries = adjustedMoveRules.map { getFileForFqcn(it.first) }
-        val dummyModule = Module("module", Paths.get("."),
-                listOf(SourceFolder(".", fileEntries.toList())))
 
         val filesByClass = fileEntries.associateBy { file -> fileToClass(file.fullName.slashify()) }
         val filesBySimpleClassName = fileEntries.groupBy { file -> fileToClass(file.fileName) }
@@ -59,7 +54,7 @@ class ClassRewriteTest(val filename: String) {
 
         fun newLocationOf(newFqcn: String): FileLocation {
             val (path, filename) = splitPath(classToFile(newFqcn))
-            return FileLocation(dummyModule, dummyModule.sourceFolders[0], path, filename)
+            return FileLocation(".", ".", path.slashify(), filename)
         }
 
         val refs =

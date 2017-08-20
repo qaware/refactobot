@@ -4,6 +4,7 @@ import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.operation.FileOperation
 import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.reference.Reference
+import java.nio.file.Paths
 
 /**
  * Action planner that determines the operations to apply to each file.
@@ -21,7 +22,7 @@ class ActionPlannerImpl : ActionPlanner {
 
         val editsPerFile: Map<File, List<FileOperation.Edit>> = collectEditsPerFile(allReferences, refactoringPlan)
 
-        return refactoringPlan.map { entry -> FileOperation(entry.key.fullName, entry.value.fullName, editsPerFile[entry.key] ?: emptyList()) }
+        return refactoringPlan.map { entry -> FileOperation(entry.key.fullName, Paths.get(entry.value.fullName), editsPerFile[entry.key] ?: emptyList()) }
     }
 
     private fun collectEditsPerFile(allReferences: Set<Reference>, refactoringPlan: Map<File, FileLocation>): Map<File, List<FileOperation.Edit>> {

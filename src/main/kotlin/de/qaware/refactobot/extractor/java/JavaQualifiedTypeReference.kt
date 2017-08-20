@@ -6,7 +6,6 @@ import de.qaware.refactobot.model.operation.Span
 import de.qaware.refactobot.model.plan.FileLocation
 import de.qaware.refactobot.model.reference.Reference
 import de.qaware.refactobot.util.fileToClass
-import de.qaware.refactobot.util.slashify
 
 /**
  * A fully qualified type reference, which is textually represented as the fully qualified class name, e.g.
@@ -21,7 +20,7 @@ data class JavaQualifiedTypeReference(override val origin: File, val target: Fil
     override fun getAdjustment(refactoringPlan: Map<File, FileLocation>): FileOperation.Edit {
 
         val newTarget = refactoringPlan.get(target)!!
-        val newFqcn = fileToClass(newTarget.path.resolve(newTarget.fileName).slashify())
+        val newFqcn = fileToClass(newTarget.path + "/" + newTarget.fileName)
         return FileOperation.Edit(span, newFqcn)
     }
 
