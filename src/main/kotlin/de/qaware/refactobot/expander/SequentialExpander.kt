@@ -25,9 +25,9 @@ class SequentialExpander(val codebase: Codebase) : Expander {
                 for (file in folder.files) {
 
                     // ...apply all transformations to its location...
-                    var location = RawLocation(module.modulePath.slashify(), folder.path, file.path.slashify(), file.fileName)
+                    var location = FileLocation(module.modulePath.slashify(), folder.path, file.path.slashify(), file.fileName)
                     for (step in refactoringPlan.steps) {
-                        location = location.applyStep(step)
+                        location = LocationMapper.applyStep(step, location)
                     }
 
                     // ...and save the result as the final location of the file
@@ -38,12 +38,14 @@ class SequentialExpander(val codebase: Codebase) : Expander {
         return fullRefactoringPlan
     }
 
-    private fun createNewFileLocation(expansionResult: RawLocation): FileLocation {
+    private fun createNewFileLocation(expansionResult: FileLocation): FileLocation {
 
-        val fileName = expansionResult.filename
+        // TODO, this is now a mere check.
+
+        val fileName = expansionResult.fileName
         val path = expansionResult.path
         val moduleName = expansionResult.module
-        val sourceRoot = expansionResult.sourceRoot
+        val sourceRoot = expansionResult.sourceFolder
 
         val newModule = codebase.modules.find { it.modulePath.slashify() == moduleName }
                 ?: throw IllegalStateException("Unknown module " + moduleName)
