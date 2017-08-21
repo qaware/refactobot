@@ -13,7 +13,7 @@ class CodebaseBuilderTest {
     @Test
     fun buildCodebase() {
 
-        codebaseBuilder(Paths.get(".")) {
+        val c = codebaseBuilder(Paths.get(".")) {
             module("module_a") {
                 sourceFolder("src/main/java") {
                     file("org/example/Class1.java", FileType.JAVA)
