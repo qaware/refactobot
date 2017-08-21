@@ -1,9 +1,7 @@
 package de.qaware.refactobot.model.plan.old
 
-import de.qaware.refactobot.configuration.RefactoringStep
 import de.qaware.refactobot.model.plan.FileLocation
-import de.qaware.refactobot.model.plan.old.RefactoringSubject
-import de.qaware.refactobot.model.plan.old.Step
+import de.qaware.refactobot.model.plan.RefactoringStep
 
 /**
  * Methods that apply symbolic steps to a location.

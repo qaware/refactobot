@@ -1,12 +1,12 @@
 package de.qaware.refactobot.integration
 
-import de.qaware.refactobot.configuration.RefactoringStep
 import de.qaware.refactobot.executor.batch.BatchedActionExecutor
 import de.qaware.refactobot.executor.git.GitActionExecutor
 import de.qaware.refactobot.executor.git.impl.JgitRepositoryFactory
 import de.qaware.refactobot.expander.SequentialExpander
 import de.qaware.refactobot.extractor.java.JavaReferenceExtractor
 import de.qaware.refactobot.extractor.text.TextReferenceExtractor
+import de.qaware.refactobot.model.plan.RefactoringStep
 import de.qaware.refactobot.planner.ActionPlannerImpl
 import de.qaware.refactobot.scanner.MavenScanner
 import java.nio.file.Path
