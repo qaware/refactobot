@@ -1,6 +1,6 @@
 package de.qaware.refactobot.configuration
 
-import de.qaware.refactobot.model.plan.old.SchematicRefactoringPlan
+import de.qaware.refactobot.model.plan.RefactoringStep
 import de.qaware.refactobot.model.plan.old.Step
 
 /**
@@ -10,14 +10,14 @@ import de.qaware.refactobot.model.plan.old.Step
  */
 class ConfigurationBuilder {
 
-    val steps : MutableList<Step> = mutableListOf()
+    val steps : MutableList<RefactoringStep> = mutableListOf()
 
     fun build(init: ConfigurationBuilder.() -> Unit): Configuration {
 
         this.init()
 
 
-        return Configuration("", SchematicRefactoringPlan(steps.toList()))
+        return Configuration("", steps)
     }
 
     fun steps(initSteps: StepsBuilder.() -> Unit) {
