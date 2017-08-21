@@ -3,7 +3,6 @@ package de.qaware.refactobot.scanner
 import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.codebase.FileType
 import de.qaware.refactobot.test.TestData
-import de.qaware.refactobot.util.slashify
 import org.junit.Test
 import java.nio.file.Paths
 import kotlin.test.assertTrue
@@ -24,7 +23,7 @@ class MavenScannerTest {
         assertTrue("Count of modules must match", { codebase.modules.count() == 2 })
 
         // Entities
-        val module_a = codebase.modules.find { m -> m.modulePath.slashify() == "maven_test_module_a" }!!
+        val module_a = codebase.modules.find { m -> m.modulePath == "maven_test_module_a" }!!
         val mainFiles = module_a.sourceFolders.find { it.path == "src/main/java" }!!.files
         assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/ClassA.java", FileType.JAVA) })
         assertTrue("List must contain file", { mainFiles.containsFile("org/example/codebase/a/InterfaceA.java", FileType.JAVA) })
@@ -37,7 +36,7 @@ class MavenScannerTest {
         assertTrue("List must contain file", { testFiles.containsFile("org/example/codebase/a/TestClassB.java", FileType.JAVA) })
         assertTrue("Count of files in list must match", { testFiles.count() == 2 })
 
-        val module_b = codebase.modules.filter { m -> m.modulePath.slashify() == "maven_test_module_b" }.first()
+        val module_b = codebase.modules.filter { m -> m.modulePath == "maven_test_module_b" }.first()
         val mainFilesB = module_b.sourceFolders.find { it.path == "src/main/java" }!!.files
         assertTrue("List must contain file", { mainFilesB.containsFile("org/example/codebase/b/ClassB.java", FileType.JAVA) })
         assertTrue("List must contain file", { mainFilesB.containsFile("org/example/codebase/b/EnumB.java", FileType.JAVA) })

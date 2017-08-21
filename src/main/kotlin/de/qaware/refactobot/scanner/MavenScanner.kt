@@ -1,6 +1,7 @@
 package de.qaware.refactobot.scanner
 
 import de.qaware.refactobot.model.codebase.*
+import de.qaware.refactobot.util.slashify
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -51,7 +52,7 @@ class MavenScanner(val extensions: Set<String> = setOf("java", "xml", "xhtml", "
     fun createModule(pathToPom: Path, codebaseRoot: Path): Module {
 
         val absoluteModulePath = pathToPom.parent
-        val relativeModulePath = codebaseRoot.relativize(absoluteModulePath)
+        val relativeModulePath = codebaseRoot.relativize(absoluteModulePath).slashify()
 
         val sourceFolders = SOURCE_FOLDER_LOCATIONS
                 .map { path -> createSourceFolder(absoluteModulePath, path, codebaseRoot) }

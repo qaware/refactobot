@@ -24,12 +24,12 @@ class SequentialExpander(val codebase: Codebase) : Expander {
                 for (file in folder.files) {
 
                     // ...apply all transformations to its location...
-                    val initialLocation = FileLocation(module.modulePath.slashify(), folder.path, file.path.slashify(), file.fileName)
+                    val initialLocation = FileLocation(module.modulePath, folder.path, file.path.slashify(), file.fileName)
                     val finalLocation = refactoringPlan.fold(initialLocation, { loc, step -> step(loc) })
 
 
                     // ... check the result for validity
-                    val newModule = codebase.modules.find { it.modulePath.slashify() == finalLocation.module }
+                    val newModule = codebase.modules.find { it.modulePath == finalLocation.module }
                             ?: throw IllegalStateException("Unknown module " + finalLocation.module)
 
                     if (newModule.sourceFolders.none { it.path == finalLocation.sourceFolder } ) {

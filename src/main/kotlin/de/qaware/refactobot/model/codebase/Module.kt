@@ -1,7 +1,5 @@
 package de.qaware.refactobot.model.codebase
 
-import java.nio.file.Path
-
 /**
  * A module descriptor in a codebase.
  *
@@ -14,7 +12,7 @@ data class Module(
          *
          * Source paths below are relative to this module path.
          */
-        val modulePath : Path,
+        val modulePath: String,
 
         /**
          * The source folders within this module.
