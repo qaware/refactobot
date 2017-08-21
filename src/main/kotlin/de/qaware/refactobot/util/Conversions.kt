@@ -27,14 +27,6 @@ fun fileToClass(filename: String): String {
 fun pathToPackage(path: String): String = path.replace('/', '.')
 
 /**
- * Converts a path to a java package name, basically converting path separators to dots.
- *
- * @param path the path
- * @return the package name.
- */
-fun pathToPackage(path: Path): String = pathToPackage(path.slashify())
-
-/**
  * Converts the class name to a file name, assuming standard conventions.
  *
  * @param className the fully qualified class name.
