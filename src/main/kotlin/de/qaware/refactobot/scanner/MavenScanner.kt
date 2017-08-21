@@ -56,11 +56,7 @@ class MavenScanner(val extensions: Set<String> = setOf("java", "xml", "xhtml", "
         val sourceFolders = SOURCE_FOLDER_LOCATIONS
                 .map { path -> createSourceFolder(absoluteModulePath, path, codebaseRoot) }
 
-        val moduleName = absoluteModulePath.fileName.toString()
-
-        return Module(moduleName,
-                relativeModulePath,
-                sourceFolders)
+        return Module(relativeModulePath, sourceFolders)
     }
 
     /**

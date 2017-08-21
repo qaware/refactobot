@@ -10,11 +10,6 @@ import java.nio.file.Path
 data class Module(
 
         /**
-         * The name of the module.
-         */
-        val name : String,
-
-        /**
          * The module path, relative to the root path of the codebase.
          *
          * Source paths below are relative to this module path.

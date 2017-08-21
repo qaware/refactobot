@@ -33,7 +33,7 @@ class SequentialExpander(val codebase: Codebase) : Expander {
                             ?: throw IllegalStateException("Unknown module " + finalLocation.module)
 
                     if (newModule.sourceFolders.none { it.path == finalLocation.sourceFolder } ) {
-                        throw IllegalStateException("No source folder with path " + finalLocation.sourceFolder + " in module " + newModule.name)
+                        throw IllegalStateException("No source folder with path " + finalLocation.sourceFolder + " in module " + newModule.modulePath)
                     }
 
                     // ...and save the result as the final location of the file
