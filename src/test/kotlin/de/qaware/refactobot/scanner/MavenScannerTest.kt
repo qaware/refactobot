@@ -18,25 +18,25 @@ class MavenScannerTest {
     val rootPath = Paths.get(TestData.testCodebaseUri)
 
     val expectedCodebase = codebaseBuilder(rootPath) {
-        module("maven_test_module_a") {
-            sourceFolder("src/main/java") {
-                file("org/example/codebase/a/AnnotationA.java", FileType.JAVA)
-                file("org/example/codebase/a/ClassA.java", FileType.JAVA)
-                file("org/example/codebase/a/InterfaceA.java", FileType.JAVA)
-                file("org/example/codebase/a/other_file.properties", FileType.OTHER)
+            module("maven_test_module_a") {
+                sourceFolder("src/main/java") {
+                    file("org/example/codebase/a/AnnotationA.java", FileType.JAVA)
+                    file("org/example/codebase/a/ClassA.java", FileType.JAVA)
+                    file("org/example/codebase/a/InterfaceA.java", FileType.JAVA)
+                    file("org/example/codebase/a/other_file.properties", FileType.OTHER)
+                }
+                sourceFolder("src/test/java") {
+                    file("org/example/codebase/a/TestClassA.java", FileType.JAVA)
+                    file("org/example/codebase/a/TestClassB.java", FileType.JAVA)
+                }
             }
-            sourceFolder("src/test/java") {
-                file("org/example/codebase/a/TestClassA.java", FileType.JAVA)
-                file("org/example/codebase/a/TestClassB.java", FileType.JAVA)
+            module("maven_test_module_b") {
+                sourceFolder("src/main/java") {
+                    file("org/example/codebase/b/ClassB.java", FileType.JAVA)
+                    file("org/example/codebase/b/EnumB.java", FileType.JAVA)
+                }
             }
         }
-        module("maven_test_module_b") {
-            sourceFolder("src/main/java") {
-                file("org/example/codebase/b/ClassB.java", FileType.JAVA)
-                file("org/example/codebase/b/EnumB.java", FileType.JAVA)
-            }
-        }
-    }
 
     @Test
     fun scanMavenCodebase() {
