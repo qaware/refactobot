@@ -7,8 +7,10 @@ import de.qaware.refactobot.model.plan.RefactoringStep
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-class Configuration(val codebaseLocation: String, val refactoring: List<RefactoringStep>) {
-
-
+class Configuration(
+        val codebaseLocation: String,
+        val refactoring: RefactoringStep,
+        val batchSize: Int,
+        val commitMessage: String) {
 
 }
