@@ -9,7 +9,6 @@ import de.qaware.refactobot.model.plan.RefactoringStep
  */
 class MutableConfiguration {
 
-    var codebaseLocation : String? = null
     var steps : RefactoringStep = { it }
     var batchSize : Int = 80;
     var commitMessage : String = "Automated code reorganization"
@@ -21,8 +20,7 @@ class MutableConfiguration {
     }
 
     val configuration: Configuration
-        get() = Configuration(codebaseLocation ?: throw IllegalStateException("Undefined configuration value codebaseLocation"),
-                steps, batchSize, commitMessage)
+        get() = Configuration(steps, batchSize, commitMessage)
 
 
 }

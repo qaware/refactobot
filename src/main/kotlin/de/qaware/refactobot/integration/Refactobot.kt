@@ -22,9 +22,9 @@ class Refactobot(val config: Configuration) {
     /**
      * Runs the refactoring, based on the given configuration.
      */
-    fun run() {
+    fun run(codebaseLocation: String) {
 
-        val root = Paths.get(config.codebaseLocation)
+        val root = Paths.get(codebaseLocation)
 
         println("Scanning codebase...")
         val codebase = MavenScanner().scanCodebase(root)

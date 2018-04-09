@@ -1,7 +1,6 @@
 package de.qaware.refactobot.configuration
 
 import de.qaware.refactobot.model.plan.FileLocation
-import de.qaware.refactobot.model.plan.RefactoringStep
 
 /**
  * Context for specifying a refactoring operation.
@@ -18,11 +17,5 @@ class RefactoringContext(originalLocation: FileLocation) {
 
     val newLocation: FileLocation
         get() = FileLocation(module, sourceFolder, path, fileName)
-
-    companion object {
-        fun build(stepFn : RefactoringContext.() -> Unit): RefactoringStep = { location ->
-            RefactoringContext(location).apply(stepFn).newLocation
-        }
-    }
 
 }
