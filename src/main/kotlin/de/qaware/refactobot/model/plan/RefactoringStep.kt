@@ -10,4 +10,4 @@ import de.qaware.refactobot.model.plan.FileLocation
  *
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
-typealias RefactoringStep = (FileLocation) -> FileLocation
+typealias RefactoringMapping = (FileLocation) -> FileLocation

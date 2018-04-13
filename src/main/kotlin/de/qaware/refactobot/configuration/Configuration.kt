@@ -1,6 +1,6 @@
 package de.qaware.refactobot.configuration
 
-import de.qaware.refactobot.model.plan.RefactoringStep
+import de.qaware.refactobot.model.plan.RefactoringMapping
 
 /**
  * Root configuration object.
@@ -8,7 +8,7 @@ import de.qaware.refactobot.model.plan.RefactoringStep
  * @author Alexander Krauss alexander.krauss@qaware.de
  */
 class Configuration(
-        val refactoring: RefactoringStep,
+        val refactoring: RefactoringMapping,
         val batchSize: Int,
         val commitMessage: String) {
 

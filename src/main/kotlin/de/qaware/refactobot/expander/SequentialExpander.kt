@@ -3,7 +3,7 @@ package de.qaware.refactobot.expander
 import de.qaware.refactobot.model.codebase.Codebase
 import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.plan.FileLocation
-import de.qaware.refactobot.model.plan.RefactoringStep
+import de.qaware.refactobot.model.plan.RefactoringMapping
 import de.qaware.refactobot.util.slashify
 
 /**
@@ -15,7 +15,7 @@ import de.qaware.refactobot.util.slashify
  */
 class SequentialExpander(val codebase: Codebase) : Expander {
 
-    override fun expandRefactoringPlan(refactoringPlan: List<RefactoringStep>): Map<File, FileLocation> {
+    override fun expandRefactoringPlan(refactoringPlan: List<RefactoringMapping>): Map<File, FileLocation> {
         val fullRefactoringPlan = mutableMapOf<File, FileLocation>()
 
         // for each file in the codebase...

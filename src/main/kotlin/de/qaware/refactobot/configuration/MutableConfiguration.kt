@@ -1,6 +1,6 @@
 package de.qaware.refactobot.configuration
 
-import de.qaware.refactobot.model.plan.RefactoringStep
+import de.qaware.refactobot.model.plan.RefactoringMapping
 
 /**
  * Builder/DSL for configurations.
@@ -9,7 +9,7 @@ import de.qaware.refactobot.model.plan.RefactoringStep
  */
 class MutableConfiguration {
 
-    var steps : RefactoringStep = { it }
+    var steps : RefactoringMapping = { it }
     var batchSize : Int = 80;
     var commitMessage : String = "Automated code reorganization"
 

@@ -1,7 +1,12 @@
 package de.qaware.refactobot.expander
 
+import de.qaware.refactobot.integration.Refactobot
+import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.codebase.FileType
 import de.qaware.refactobot.model.codebase.codebaseBuilder
+import de.qaware.refactobot.model.plan.FileLocation
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 import java.nio.file.Paths
 
 /**
@@ -31,4 +36,25 @@ class ExpanderTest {
                 }
             }
         }
+
+    @Test
+    fun testExpander() {
+
+        val bot = Refactobot.configure {
+
+            refactor {
+                if (fileName == "AnnotationA.java") {
+                    fileName = "AnnotationB.java"
+                }
+
+            }
+
+        }
+
+        val plan: Map<File, FileLocation> = SequentialExpander(codebase).expandRefactoringPlan(listOf(bot.config.refactoring))
+        val annFile = codebase.allFiles.find { it.fileName == "AnnotationA.java" }!!
+        assertThat(plan[annFile]!!.fileName).isEqualTo("AnnotationB.java")
+
+    }
+
 }
