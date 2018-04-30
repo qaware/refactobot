@@ -10,6 +10,6 @@ import de.qaware.refactobot.model.plan.RefactoringMapping
 class Configuration(
         val refactoring: RefactoringMapping,
         val batchSize: Int,
-        val commitMessage: String) {
+        val commitMessage: String?) {
 
 }

@@ -2,7 +2,6 @@ package de.qaware.refactobot.scanner
 
 import de.qaware.refactobot.model.codebase.FileType
 import de.qaware.refactobot.model.codebase.codebaseBuilder
-import de.qaware.refactobot.test.TestData
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.nio.file.Paths
@@ -15,7 +14,7 @@ import java.nio.file.Paths
  */
 class MavenScannerTest {
 
-    val rootPath = Paths.get(TestData.testCodebaseUri)
+    val rootPath = Paths.get(javaClass.classLoader.getResource("integration_test/example_codebase").toURI())
 
     val expectedCodebase = codebaseBuilder(rootPath) {
             module("maven_test_module_a") {

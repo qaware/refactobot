@@ -3,6 +3,7 @@ package de.qaware.refactobot.integration
 import de.qaware.refactobot.configuration.Configuration
 import de.qaware.refactobot.configuration.MutableConfiguration
 import de.qaware.refactobot.executor.batch.BatchedActionExecutor
+import de.qaware.refactobot.executor.filesystem.FilesystemActionExecutor
 import de.qaware.refactobot.executor.git.GitActionExecutor
 import de.qaware.refactobot.executor.git.impl.JgitRepositoryFactory
 import de.qaware.refactobot.expander.SequentialExpander
@@ -44,8 +45,19 @@ class Refactobot(val config: Configuration) {
         val operations = ActionPlannerImpl().planActions(fullRefactoringPlan, references)
 
         println("Executing actions...")
-        BatchedActionExecutor(config.batchSize, GitActionExecutor(JgitRepositoryFactory(), root))
-                .execute(operations, config.commitMessage)
+        if (config.commitMessage != null) {
+
+            // if a commit message is specified, do git commit in batches
+            BatchedActionExecutor(config.batchSize, GitActionExecutor(JgitRepositoryFactory(), root))
+                    .execute(operations, config.commitMessage)
+        } else {
+
+            // otherwise just operate on plain file system
+            FilesystemActionExecutor(codebase.rootPath).execute(operations)
+        }
+
+
+
     }
 
     companion object {

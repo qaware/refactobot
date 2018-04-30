@@ -11,7 +11,12 @@ class MutableConfiguration {
 
     var steps : RefactoringMapping = { it }
     var batchSize : Int = 80;
-    var commitMessage : String = "Automated code reorganization"
+    var commitMessage : String? = null
+
+    fun doGitCommits(msg: String, batchSize: Int) {
+        commitMessage = msg
+        this.batchSize = batchSize
+    }
 
     fun refactor(stepFn : RefactoringContext.() -> Unit) {
         steps = { location ->
