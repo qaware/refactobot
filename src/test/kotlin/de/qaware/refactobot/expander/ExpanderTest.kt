@@ -1,10 +1,9 @@
 package de.qaware.refactobot.expander
 
 import de.qaware.refactobot.integration.Refactobot
-import de.qaware.refactobot.model.codebase.File
 import de.qaware.refactobot.model.codebase.FileType
 import de.qaware.refactobot.model.codebase.codebaseBuilder
-import de.qaware.refactobot.model.plan.FileLocation
+import de.qaware.refactobot.util.slashify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.nio.file.Paths
@@ -26,10 +25,9 @@ class ExpanderTest {
                 }
                 sourceFolder("src/test/java") {
                     file("org/example/codebase/a/TestClassA.java", FileType.JAVA)
-                    file("org/example/codebase/a/TestClassB.java", FileType.JAVA)
                 }
             }
-            module("maven_test_module_b") {
+            module("module_b") {
                 sourceFolder("src/main/java") {
                     file("org/example/codebase/b/ClassB.java", FileType.JAVA)
                     file("org/example/codebase/b/EnumB.java", FileType.JAVA)
@@ -43,17 +41,24 @@ class ExpanderTest {
         val bot = Refactobot.configure {
 
             refactor {
-                if (fileName == "AnnotationA.java") {
-                    fileName = "AnnotationB.java"
-                }
-
+                renameFile("(.*)A.java", "$1B.java")
             }
 
         }
 
-        val plan: Map<File, FileLocation> = SequentialExpander(codebase).expandRefactoringPlan(listOf(bot.config.refactoring))
-        val annFile = codebase.allFiles.find { it.fileName == "AnnotationA.java" }!!
-        assertThat(plan[annFile]!!.fileName).isEqualTo("AnnotationB.java")
+        val plan = SequentialExpander(codebase).expandRefactoringPlan(listOf(bot.config.refactoring))
+
+
+        assertThat(codebase.allFiles.map { it.fullName.slashify() to plan[it]!!.fullName }.toMap())
+                .isEqualTo(mapOf(
+                        "module_a/src/main/java/org/example/codebase/a/AnnotationA.java" to "module_a/src/main/java/org/example/codebase/a/AnnotationB.java",
+                        "module_a/src/main/java/org/example/codebase/a/ClassA.java" to "module_a/src/main/java/org/example/codebase/a/ClassB.java",
+                        "module_a/src/main/java/org/example/codebase/a/InterfaceA.java" to "module_a/src/main/java/org/example/codebase/a/InterfaceB.java",
+                        "module_a/src/main/java/org/example/codebase/a/other_file.properties" to "module_a/src/main/java/org/example/codebase/a/other_file.properties",
+                        "module_a/src/test/java/org/example/codebase/a/TestClassA.java" to "module_a/src/test/java/org/example/codebase/a/TestClassB.java",
+                        "module_b/src/main/java/org/example/codebase/b/ClassB.java" to "module_b/src/main/java/org/example/codebase/b/ClassB.java",
+                        "module_b/src/main/java/org/example/codebase/b/EnumB.java" to "module_b/src/main/java/org/example/codebase/b/EnumB.java"
+                ))
 
     }
 

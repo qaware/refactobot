@@ -18,4 +18,14 @@ class RefactoringContext(originalLocation: FileLocation) {
     val newLocation: FileLocation
         get() = FileLocation(module, sourceFolder, path, fileName)
 
+
+
+    fun renameFile(regex: String, newName: String) {
+        fileName = fileName.replace(regex.toRegex(), newName)
+    }
+
+
+
+
+
 }

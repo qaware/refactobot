@@ -1,5 +1,6 @@
 package de.qaware.refactobot.model.codebase
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.nio.file.Paths
 
@@ -25,6 +26,9 @@ class CodebaseBuilderTest {
                 }
             }
         }
+
+        assertThat(c.rootPath).isEqualTo(".")
+        
 
     }
 
