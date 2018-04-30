@@ -27,7 +27,7 @@ class CodebaseBuilderTest {
             }
         }
 
-        assertThat(c.rootPath).isEqualTo(".")
+        assertThat(c.rootPath).isEqualTo(Paths.get("."))
         
 
     }
