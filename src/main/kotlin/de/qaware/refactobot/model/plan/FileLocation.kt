@@ -15,7 +15,7 @@ data class FileLocation(val module: String, val sourceFolder: String, val path: 
     /**
      * The full path and name of the new file, relative to the codebase root.
      */
-    val fullName = "$module/$path/$fileName"
+    val fullName = "$module/$sourceFolder/$path/$fileName"
 
 }
 
