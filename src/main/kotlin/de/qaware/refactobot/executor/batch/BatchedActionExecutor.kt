@@ -2,7 +2,6 @@ package de.qaware.refactobot.executor.batch
 
 import de.qaware.refactobot.executor.ActionExecutor
 import de.qaware.refactobot.model.operation.FileOperation
-import de.qaware.refactobot.util.partition
 
 /**
  * Action executor that splits the operation into manageable batches, which are then passed to another executor.
@@ -16,7 +15,7 @@ class BatchedActionExecutor(val batchSize : Int, val executor: ActionExecutor) :
 
     override fun execute(operations: List<FileOperation>, commitMsg: String) {
 
-        val batches = partition(operations, batchSize)
+        val batches = operations.chunked(batchSize)
         val numBatches = batches.size
 
         for ((i, batch) in batches.withIndex()) {
