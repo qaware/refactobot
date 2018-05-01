@@ -17,7 +17,7 @@ class JavadocVisitor(context: ReferenceExtractionContext) : UnitReferenceVisitor
         if (comment != null) {
 
             FqcnExtractor.findFqcnReferences(context.getCurrentFile(), context::resolveFullName,
-                    comment.content, comment.range.begin.toLocation() + 3, this::emit)
+                    comment.content, comment.range.get().begin.toLocation() + 3, this::emit)
 
         }
 

@@ -28,7 +28,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.18"
 
-    compile "com.github.javaparser:javaparser-core:2.5.1"
+    compile "com.github.javaparser:javaparser-core:3.6.3"
     compile "org.lucee:jdom2:2.0.6"
     compile "commons-io:commons-io:2.5"
     compile "org.apache.commons:commons-lang3:3.5"

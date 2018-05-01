@@ -101,9 +101,9 @@ class JavaAnalyzer {
 
         val line =
                 if (compilationUnit.imports.isEmpty())
-                    compilationUnit.`package`.begin.line + 1
+                    compilationUnit.packageDeclaration.get().begin.get().line + 1
                 else
-                    compilationUnit.imports[0].begin.line
+                    compilationUnit.imports[0].begin.get().line
 
         return Location(line - 1, 0) // our locations are zero-based
     }

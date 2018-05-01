@@ -29,10 +29,10 @@ class ClassDeclarationVisitor(context: ReferenceExtractionContext) : UnitReferen
         super.visit(decl, arg)
     }
 
-    private fun visitTypeDeclaration(decl: TypeDeclaration) {
-        if (decl.parentNode is CompilationUnit) {
+    private fun visitTypeDeclaration(decl: TypeDeclaration<*>) {
+        if (decl.parentNode.get() is CompilationUnit) {
             // we are the top-level type
-            emit(JavaSimpleTypeReference(context.getCurrentFile(), context.getCurrentFile(), decl.nameExpr.toSpan()))
+            emit(JavaSimpleTypeReference(context.getCurrentFile(), context.getCurrentFile(), decl.name.toSpan()))
         }
     }
 }

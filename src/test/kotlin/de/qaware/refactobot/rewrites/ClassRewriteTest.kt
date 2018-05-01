@@ -99,7 +99,7 @@ class ClassRewriteTest(val filename: String) {
 
         val compilationUnit = StringReader(content).use(JavaParser::parse)
         val className = compilationUnit.types[0].name
-        val packageName = compilationUnit.`package`.packageName
+        val packageName = compilationUnit.packageDeclaration.get().name.toString()
         return packageName + "." + className
     }
 

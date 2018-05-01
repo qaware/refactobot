@@ -17,7 +17,7 @@ class StringLiteralVisitor(context: ReferenceExtractionContext) : UnitReferenceV
         if (literal != null) {
 
             FqcnExtractor.findFqcnReferences(context.getCurrentFile(), context::resolveFullName,
-                    literal.value, literal.range.begin.toLocation() + 1, this::emit)
+                    literal.value, literal.range.get().begin.toLocation() + 1, this::emit)
 
         }
 

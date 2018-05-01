@@ -3,7 +3,10 @@ package de.qaware.refactobot.extractor.java
 import com.github.javaparser.Position
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.Node
-import com.github.javaparser.ast.expr.*
+import com.github.javaparser.ast.expr.Expression
+import com.github.javaparser.ast.expr.FieldAccessExpr
+import com.github.javaparser.ast.expr.Name
+import com.github.javaparser.ast.expr.ThisExpr
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
 import de.qaware.refactobot.model.operation.Location
 import de.qaware.refactobot.model.operation.Span
@@ -39,23 +42,38 @@ abstract class ReferenceVisitor<A>(val context: ReferenceExtractionContext) : Vo
     /**
      * Creates a span for a given node.
      */
-    protected fun Node.toSpan() =
-            Span(Location.Companion.oneBased(this.begin.line, this.begin.column), Location.Companion.oneBased(this.end.line, this.end.column + 1))
+    protected fun Node.toSpan(): Span {
+        val begin = this.begin.get()
+        val end = this.end.get()
+
+        return Span(Location.Companion.oneBased(begin.line, begin.column), Location.Companion.oneBased(end.line, end.column + 1))
+    }
+
+
+    protected fun visitName(n: Name) {
+
+        if (n.qualifier.isPresent()) {
+            emitQualifiedReference(n.toString(), n.toSpan())
+        } else {
+            emitSimpleReference(n.toString(), n.toSpan())
+        }
+    }
+
 
     protected fun visitName(n: Expression) {
 
         when (n) {
-            is QualifiedNameExpr, is FieldAccessExpr -> {
-                emitQualifiedReference(n.toStringWithoutComments(), n.toSpan())
+            is FieldAccessExpr -> {
+                emitQualifiedReference(n.toString(), n.toSpan())
             }
             is ThisExpr -> {
-                if (n.classExpr != null) {
+                if (n.classExpr.isPresent) {
                     // qualified this, might contain a name.
-                    visitName(n.classExpr)
+                    visitName(n.classExpr.get())
                 }
             }
             else -> {
-                emitSimpleReference(n.toStringWithoutComments(), n.toSpan())
+                emitSimpleReference(n.toString(), n.toSpan())
             }
         }
     }
@@ -93,7 +111,7 @@ abstract class ReferenceVisitor<A>(val context: ReferenceExtractionContext) : Vo
      *
      * For example, a.b.C.D.E could refer to classes a.b.C or a.b.C.D or a.b.C.D.E.
      */
-    protected fun emitReferenceForFullClassName(name: NameExpr) {
+    protected fun emitReferenceForFullClassName(name: Name) {
         val target = context.resolveFullName(name.toString())
         if (target != null) {
             emit(JavaQualifiedTypeReference(context.getCurrentFile(), target, name.toSpan()))
@@ -102,8 +120,8 @@ abstract class ReferenceVisitor<A>(val context: ReferenceExtractionContext) : Vo
             if (target2 != null) {
                 emit(JavaQualifiedTypeReference(context.getCurrentFile(), target2, name.toSpan().shortenBy(1)))
             }
-        } else if (name is QualifiedNameExpr) {
-            emitReferenceForFullClassName(name.qualifier)
+        } else if (name.qualifier.isPresent()) {
+            emitReferenceForFullClassName(name.qualifier.get())
         }
     }
 

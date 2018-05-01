@@ -13,8 +13,8 @@ class MethodCallVisitor(context: ReferenceExtractionContext) : UnitReferenceVisi
 
     override fun visit(n: MethodCallExpr?, arg: Unit?) {
 
-        if (n != null && n.scope != null) {
-            visitName(n.scope)
+        if (n != null && n.scope.isPresent) {
+            visitName(n.scope.get())
         }
 
         super.visit(n, arg)

@@ -1,7 +1,7 @@
 package de.qaware.refactobot.extractor.java.visitors
 
 import com.github.javaparser.ast.ImportDeclaration
-import com.github.javaparser.ast.expr.QualifiedNameExpr
+//import com.github.javaparser.ast.expr.QualifiedNameExpr
 import de.qaware.refactobot.extractor.java.ReferenceExtractionContext
 import de.qaware.refactobot.extractor.java.UnitReferenceVisitor
 
@@ -21,8 +21,9 @@ class ImportVisitor(context: ReferenceExtractionContext) : UnitReferenceVisitor(
             }
 
             val importedClass =
-                    if (n.isStatic && !n.isAsterisk) (n.name as QualifiedNameExpr).qualifier
-                    else n.name
+//                    if (n.isStatic && !n.isAsterisk) (n.name as QualifiedNameExpr).qualifier
+//                    else
+                        n.name
 
             emitReferenceForFullClassName(importedClass)
         }

@@ -15,9 +15,9 @@ class ConstructorDeclarationVisitor(context: ReferenceExtractionContext) : UnitR
 
     override fun visit(decl: ConstructorDeclaration?, arg: Unit) {
         if (decl != null) {
-            if (decl.parentNode.parentNode is CompilationUnit) {
+            if (decl.parentNode.get().parentNode.get() is CompilationUnit) {
                 // this is a constructor of the top-level type
-                emit(JavaSimpleTypeReference(context.getCurrentFile(), context.getCurrentFile(), decl.nameExpr.toSpan()))
+                emit(JavaSimpleTypeReference(context.getCurrentFile(), context.getCurrentFile(), decl.name.toSpan()))
             }
         }
         super.visit(decl, arg)

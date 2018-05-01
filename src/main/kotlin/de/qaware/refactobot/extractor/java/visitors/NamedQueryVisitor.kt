@@ -23,11 +23,11 @@ class NamedQueryVisitor(context: ReferenceExtractionContext) : ReferenceVisitor<
 
     override fun visit(annotation: NormalAnnotationExpr?, arg: Boolean) {
 
-        if (annotation != null && annotation.name.name == "NamedQuery") {
+        if (annotation != null && annotation.name.identifier == "NamedQuery") {
 
             for (pair in annotation.pairs) {
 
-                if (pair.name == "query") {
+                if (pair.name.identifier == "query") {
                     pair.value.accept(this, true)
                 }
             }
@@ -42,7 +42,7 @@ class NamedQueryVisitor(context: ReferenceExtractionContext) : ReferenceVisitor<
         if (arg && literal != null) {
 
             ClassNameExtractor.findSimpleClassReference(context.getCurrentFile(), context::resolveUniqueSimpleName,
-                    literal.value, literal.range.begin.toLocation() + 1, this::emit)
+                    literal.value, literal.range.get().begin.toLocation() + 1, this::emit)
 
         }
     }
