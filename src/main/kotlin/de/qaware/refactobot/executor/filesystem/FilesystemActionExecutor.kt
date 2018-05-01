@@ -50,7 +50,7 @@ class FilesystemActionExecutor(private val rootPath: Path) : ActionExecutor {
 
             Files.createDirectories(targetPath.parent)
             val writer = FileWriter(targetPath.toFile())
-            EditProcessor(lines, writer).applyEdits(operation.edits)
+            EditProcessor.applyEdits(lines, writer, operation.edits)
 
             if (sourcePath != targetPath) {
                 Files.delete(sourcePath)

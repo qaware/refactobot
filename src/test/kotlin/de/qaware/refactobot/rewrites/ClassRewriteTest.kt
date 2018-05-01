@@ -73,7 +73,7 @@ class ClassRewriteTest(val filename: String) {
                                     .filterNotNull()
 
         val writer = StringWriter()
-        EditProcessor(problem.originalFile.splitLines(), writer).applyEdits(edits)
+        EditProcessor.applyEdits(problem.originalFile.splitLines(), writer, edits)
         val actualResult = writer.toString()
 
         assertThat(actualResult).isEqualTo(problem.expectedResult)

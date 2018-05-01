@@ -25,7 +25,7 @@ class EditProcessorTest {
 
     @Test
     fun testLineSource() {
-        val source = LineSource(EXAMPLE_LINES)
+        val source = EditProcessor.LineSource(EXAMPLE_LINES)
 
         assertEquals(source.readUpTo(Location(0, 0)), "")
         assertEquals(source.readUpTo(Location(0, 6)), "Hello,")
@@ -38,7 +38,7 @@ class EditProcessorTest {
 
         val writer = StringWriter()
 
-        EditProcessor(EXAMPLE_LINES, writer).applyEdits(listOf(
+        EditProcessor.applyEdits(EXAMPLE_LINES, writer, listOf(
                 FileOperation.Edit(Span(Location(0, 17), Location(0, 17)), "nice "),
                 FileOperation.Edit(Span(Location(1, 5), Location(3, 0)), "was edited automatically. ")
         ))
@@ -52,7 +52,7 @@ class EditProcessorTest {
     fun testMultipleEditsOnALine() {
 
         val writer = StringWriter()
-        EditProcessor(listOf("We need apples and oranges."), writer).applyEdits(listOf(
+        EditProcessor.applyEdits(listOf("We need apples and oranges."), writer, listOf(
                 FileOperation.Edit(Span(Location(0, 8), Location(0, 14)), "lambdas"),
                 FileOperation.Edit(Span(Location(0, 19), Location(0, 26)), "recursion")
         ))
