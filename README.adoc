@@ -5,6 +5,60 @@ image:https://coveralls.io/repos/github/qaware/refactobot/badge.svg?branch=maste
 image:http://img.shields.io/badge/license-MIT-green.svg?style=flat["License"]
 
 Moving or renaming individual classes is a no-brainer in today's IDEs. But what if you want to rename thousands of
-classes in hundreds of packages? What if you want to reorganize an entire codebase into a new module structure?
+classes in hundreds of packages? What if you want to reorganize a large codebase into a new module structure?
 
-Refactobot takes a codebase and a list of transformations, and automatically applies them to the codebase.
+Refactobot takes a codebase and some transformations, and applies them to the codebase fully automatically,
+adapting all references. Transformations may include:
+
+- Changing class and package names
+- Moving classes between packages and modules (in a multi-module build)
+
+
+
+
+
+== Features
+
+Automated and fast::
+  Transforming a codebase just means running a script, and processes thousands of classes within seconds. This means
+  you can reliably reproduce the transformation as many times as needed, as the codebase is still undergoing changes.
+
+Fully preserves formatting, whitespace, and comments::
+  Refactobot only touches references to classes, when they are renamed or moved. All other code and formatting remains
+  as it is.
+
+Declarative and powerful transformation language::
+  Transformations are expressed declaratively in a Kotlin-based DSL. From simple move commands, to regex-based matching,
+  to custom scripting (in Kotlin), refactoring scripts usually are just a few lines of simple code.
+
+Structure101 class map import::
+  If you use Structure 101 for planning your refactoring, you can directly export a class map and apply it using Refactobot.
+
+Battle-tested::
+  Refactobot was used successfully to establish a completely revamped module structure for a 200kloc codebase, which
+  involved moving almost every class to a new place, and introduce uniform naming and packaging conventions.
+
+
+== Examples
+
+
+- Rename all classes
+
+
+
+
+
+== Assumptions and Restrictions
+
+- Build-tool-agnostic
+
+-
+
+
+
+
+
+
+
+
+
