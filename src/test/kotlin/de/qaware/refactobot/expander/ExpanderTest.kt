@@ -41,7 +41,7 @@ class ExpanderTest {
         val bot = Refactobot.configure {
 
             refactor {
-                renameFile("(.*)A.java", "$1B.java")
+                renameFile("(.*)A.java" to "$1B.java")
             }
 
         }

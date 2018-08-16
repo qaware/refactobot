@@ -52,7 +52,7 @@ Uniformly rename classes, to establish or change some naming conventions:
 val refactobot = Refactobot.configure {
 
     refactor {
-        renameFile("""(.*)DaoBean\.java""", "(.*)DaoImpl.java")
+        renameFile("""(.*)DaoBean\.java""" to "(.*)DaoImpl.java")
     }
 }
 

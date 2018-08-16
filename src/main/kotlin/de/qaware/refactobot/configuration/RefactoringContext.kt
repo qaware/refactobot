@@ -24,8 +24,8 @@ class RefactoringContext(originalLocation: FileLocation) {
     /**
      * DSL element for simple file rename
      */
-    fun renameFile(regex: String, newName: String) {
-        fileName = fileName.replace(regex.toRegex(), newName)
+    fun renameFile(replacement: Pair<String, String>) {
+        fileName = fileName.replace(replacement.first.toRegex(), replacement.second)
     }
 
     /**

@@ -26,8 +26,8 @@ class FullIntegrationTest {
         val bot = Refactobot.configure {
 
             refactor {
-                renameFile("InterfaceA.java", "FancyInterface.java")
-                renameFile("TestClassB.java", "TestClassBar.java")
+                renameFile("InterfaceA.java" to "FancyInterface.java")
+                renameFile("TestClassB.java" to "TestClassBar.java")
             }
 
         }
