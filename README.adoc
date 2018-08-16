@@ -37,28 +37,69 @@ Structure101 class map import::
 Battle-tested::
   Refactobot was used successfully to establish a completely revamped module structure for a 200kloc codebase, which
   involved moving almost every class to a new place, and introduce uniform naming and packaging conventions.
+  Of course, every project is different, so it may need some tweaking to work
+
+Hackable::
+  Since every codebase is different, some adaptation may be needed in some cases. Refactobot is easily extensible
+  due to its modular design. On the other hand, do not expect a polished product-like experience. This is for developers!
 
 
 == Examples
 
+Uniformly rename classes, to establish or change some naming conventions:
+[source,kotlin]
+----
+val refactobot = Refactobot.configure {
 
-- Rename all classes
+    refactor {
+        renameFile("""(.*)DaoBean\.java""", "(.*)DaoImpl.java")
+    }
+}
+
+refactobot.run("/path/to/codebase")
+----
+
+Fix the base package:
+[source,kotlin]
+----
+val oldBasePackage = "org/example/legacybasepackage/"
+val newBasePackage = "org/example/newbasepackage/"
+
+val refactobot = Refactobot.configure {
+
+    refactor {
+
+        if (this.path.startsWith(oldBasePackage)) {
+            this.path = newBasePackage + this.path.removePrefix(oldBasePackage)
+        }
+    }
+}
+
+refactobot.run("/path/to/codebase")
+----
+
+If you have a map with fully qualified class names, you can apply it like this:
+[source,kotlin]
+----
+val refactobot = Refactobot.configure {
+
+    refactor {
+        applyClassMap(mapOf(
+            "org.example.codebase.SomeClass" to "org.example.codebase.NewClassName",
+            "org.example.codebase.SomeOtherClass" to "org.example.codebase.ShinyNewOtherClassName"
+        ))
+    }
+}
+
+refactobot.run("/path/to/codebase")
+----
 
 
 
 
 
-== Assumptions and Restrictions
+== Assumptions and Limitations
 
-- Build-tool-agnostic
-
--
-
-
-
-
-
-
-
-
+Build-tool-agnostic::
+  TBD
 
