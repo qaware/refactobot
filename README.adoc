@@ -46,7 +46,7 @@ Refactobot has no command line interface and is simply invoked from Kotlin code 
 You can find a working test case in `FullIntegrationTest`, which you can use as a start and adapt to your use case.
 Below are some examples that illustrate the DSL.
 
-=== Rename some classes, based on regular expressions
+=== 1) Rename some classes, based on regular expressions
 
 If you want to change some class naming schemes, you can use regular expressions
 on the class name:
@@ -56,14 +56,17 @@ on the class name:
 val refactobot = Refactobot.configure { // Create and configure the refactobot instance.
 
     refactor { // In this block, we specify the transformations to apply to the codebase.
-        renameFile("""(.*)DaoBean\.java""" to "(.*)DaoImpl.java")
+        renameFile("""(.*)DaoBean\.java""" to "$1DaoImpl.java")
     }
 }
 
 refactobot.run("/path/to/codebase") // The actual invocation of the tool.
 ----
 
-=== Fix the base package name
+=== 2) Fix the base package name
+
+This example shows how you can express your transformation in simple Kotlin code, which operates on the
+file name and path:
 
 [source,kotlin]
 ----
@@ -83,7 +86,10 @@ val refactobot = Refactobot.configure {
 refactobot.run("/path/to/codebase")
 ----
 
-If you have a map with fully qualified class names, you can apply it like this:
+=== 3) Apply a mapping between class names
+
+If you have a map with fully qualified class names, you can use it like this:
+
 [source,kotlin]
 ----
 val refactobot = Refactobot.configure {
@@ -99,15 +105,41 @@ val refactobot = Refactobot.configure {
 refactobot.run("/path/to/codebase")
 ----
 
+Alternatively, if you developed that map with Structure 101, you can import the XML file exported from there:
 
+[source,kotlin]
+----
+val refactobot = Refactobot.configure {
 
+    refactor {
+        applyClassMap(Structure101ClassmapReader.readClassmapXml("classmap.xml"))
+    }
+}
+
+refactobot.run("/path/to/codebase")
+----
 
 
 == Assumptions and Limitations
 
+A tool cannot do everything by magic, so there are a few limitations that you should be aware of:
+
 Build-tool-agnostic::
-  TBD
+  Refactobot understands Java, but it does not know (or care about) your build tool, except when discovering module
+  names and directories in a codebase. It was used on a multimodule Maven project, but can equally handle Gradle
+  and other build tools. Of course this means that you must manually handle any necessary changes to your build files,
+  e.g., when module dependencies change.
+
+Some sane Java conventions::
+  Some conventions are industry standard in the Java community, although they are not enforced by the Java compiler.
+  Refactobot relies on these conventions nevertheless. If your codebase violates them, you may think about fixing this
+  first. When detecting such a case, Refactobot tries to give helpful error messages. In particular, we require that:
+  * The directory structure reflects the package structure, i.e., files under `foo/bar` belong to package `foo.bar`.
+  * Each file contains exactly one top-level type (class, interface, enum, ...).
+  * Type names start with capital letters. Package names start with small letters.
+
+No *-imports::
+  Currently, *-imports are not supported. I found it easy to work around this, since many IDEs now support expanding
+  *-imports automatically.
 
 
-Some sane conventions::
-  TBD

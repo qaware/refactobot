@@ -68,7 +68,7 @@ class JavaAnalyzer {
                     1 -> return found[0]
                     else -> {
                         throw UnsupportedOperationException("Ambiguous simple class reference in " + file + ": "
-                                + simpleName + " matches several canditanes:\n" + found.joinToString("\n"))
+                                + simpleName + " matches several candidates:\n" + found.joinToString("\n"))
                     }
                 }
             }
