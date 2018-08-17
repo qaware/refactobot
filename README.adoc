@@ -8,13 +8,9 @@ Moving or renaming individual classes is a no-brainer in today's IDEs. But what 
 classes in hundreds of packages? What if you want to reorganize a large codebase into a new module structure?
 
 Refactobot takes a codebase and some transformations, and applies them to the codebase fully automatically,
-adapting all references. Transformations may include:
-
-- Changing class and package names
-- Moving classes between packages and modules (in a multi-module build)
-
-
-
+adapting all references. Transformations may include changing class and package names
+and moving classes between packages and modules (in a multi-module build). Transformations
+are programmed in a very simple Kotlin DSL.
 
 
 == Features
@@ -25,41 +21,53 @@ Automated and fast::
 
 Fully preserves formatting, whitespace, and comments::
   Refactobot only touches references to classes, when they are renamed or moved. All other code and formatting remains
-  as it is.
+  exactly as it is.
 
 Declarative and powerful transformation language::
-  Transformations are expressed declaratively in a Kotlin-based DSL. From simple move commands, to regex-based matching,
-  to custom scripting (in Kotlin), refactoring scripts usually are just a few lines of simple code.
+  Transformations are expressed declaratively in a Kotlin-based DSL. Be it simple move commands, regex-based matching,
+  or custom scripting (in Kotlin) -- refactoring scripts usually are just a few lines of simple code.
 
 Structure101 class map import::
   If you use Structure 101 for planning your refactoring, you can directly export a class map and apply it using Refactobot.
+  If you have a class map from some other source, it should be simple to load.
 
 Battle-tested::
   Refactobot was used successfully to establish a completely revamped module structure for a 200kloc codebase, which
   involved moving almost every class to a new place, and introduce uniform naming and packaging conventions.
-  Of course, every project is different, so it may need some tweaking to work
 
 Hackable::
   Since every codebase is different, some adaptation may be needed in some cases. Refactobot is easily extensible
   due to its modular design. On the other hand, do not expect a polished product-like experience. This is for developers!
 
 
-== Examples
+== Usage Examples
 
-Uniformly rename classes, to establish or change some naming conventions:
+Refactobot has no command line interface and is simply invoked from Kotlin code via its simple API.
+You can find a working test case in `FullIntegrationTest`, which you can use as a start and adapt to your use case.
+Below are some examples that illustrate the DSL.
+
+=== Rename some classes, based on regular expressions
+
+If you want to change some class naming schemes, you can use regular expressions
+on the class name:
+
 [source,kotlin]
 ----
-val refactobot = Refactobot.configure {
+val refactobot = Refactobot.configure { // <1>
 
-    refactor {
+    refactor { // <2>
         renameFile("""(.*)DaoBean\.java""" to "(.*)DaoImpl.java")
     }
 }
 
-refactobot.run("/path/to/codebase")
+refactobot.run("/path/to/codebase") // <3>
 ----
+<1> Set up the refactobot object.
+<2> In the `refactor` block we specify the transformations to apply to the codebase.
+<3> The actual invocation of the tool.
 
-Fix the base package:
+=== Fix the base package name
+
 [source,kotlin]
 ----
 val oldBasePackage = "org/example/legacybasepackage/"
@@ -103,3 +111,6 @@ refactobot.run("/path/to/codebase")
 Build-tool-agnostic::
   TBD
 
+
+Some sane conventions::
+  TBD
