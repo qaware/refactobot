@@ -53,18 +53,15 @@ on the class name:
 
 [source,kotlin]
 ----
-val refactobot = Refactobot.configure { // <1>
+val refactobot = Refactobot.configure { // Create and configure the refactobot instance.
 
-    refactor { // <2>
+    refactor { // In this block, we specify the transformations to apply to the codebase.
         renameFile("""(.*)DaoBean\.java""" to "(.*)DaoImpl.java")
     }
 }
 
-refactobot.run("/path/to/codebase") // <3>
+refactobot.run("/path/to/codebase") // The actual invocation of the tool.
 ----
-<1> Set up the refactobot object.
-<2> In the `refactor` block we specify the transformations to apply to the codebase.
-<3> The actual invocation of the tool.
 
 === Fix the base package name
 
